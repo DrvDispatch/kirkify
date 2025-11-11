@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KIRKIFICATION.COM</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- Left / Right Ad Rails (placeholder) -->
+  <aside class="ad-rail ad-rail--left" aria-label="Advertisement">
+    <div class="ad-block">AD</div>
+    <div class="ad-block">AD</div>
+    <div class="ad-block">AD</div>
+  </aside>
+  <aside class="ad-rail ad-rail--right" aria-label="Advertisement">
+    <div class="ad-block">AD</div>
+    <div class="ad-block">AD</div>
+    <div class="ad-block">AD</div>
+  </aside>
+
+  <!-- Page -->
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="#">KIRKIFICATION.COM</a>
+      <div class="gpu-chip" aria-live="polite">
+        <svg class="icon icon-chip" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v2H7v2H5v2H3v6h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V9h-2V7h-2V5h-2V3H9Zm8 8v2H7v-2h10Z" fill="currentColor"/></svg>
+        <span class="gpu-chip__label">GPU:</span>
+        <span id="gpu-status">—</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Upload -->
+      <section class="card card--upload">
+        <div id="drop" class="drop" tabindex="0">
+          <button id="upload-btn" class="btn-upload" type="button">Upload image</button>
+          <p class="muted">Or drop / paste an image</p>
+          <div class="note-free">
+            <span>100% Automatic and</span>
+            <span class="pill">FREE</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview -->
+      <section class="card card--preview">
+        <div class="ba" id="ba-demo" aria-label="Before and after comparison">
+          <img id="before-img" alt="Before" class="ba__img ba__img--before" />
+          <img id="after-img"  alt="After"  class="ba__img ba__img--after"  />
+          <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="Reveal slider">
+          <div class="ba__divider"></div>
+          <div class="ba__knob" aria-hidden="true"></div>
+        </div>
+
+        <p class="actions">
+          <a id="download-link" class="link link--download is-disabled" href="#" download="kirkified.jpg" aria-disabled="true">Download result</a>
+          <span class="hint">Tip: drag the white knob to compare</span>
+        </p>
+
+        <p class="tos">
+          By uploading an image or URL, you agree to our
+          <a href="#" class="link">Terms of Service</a>. To learn more about how
+          <span class="brand-inline">kirkification</span> handles your personal data, check our
+          <a href="#" class="link">Privacy Policy</a>.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer" role="contentinfo">
+    <small>© <span class="brand-inline">Kirkification</span></small>
+  </footer>
+
+  <!-- Status HUD -->
+  <div id="hud" class="hud" hidden>
+    <div class="hud__card" role="dialog" aria-modal="true" aria-labelledby="hud-title">
+      <div class="hud__head">
+        <div class="hud__title" id="hud-title">
+          <svg class="icon icon-rocket" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3l7 7-4 1-4 4-1 4-7-7 1-4 4-4 4-1Z"/></svg>
+          Spinning up Kirkification AI
+        </div>
+        <div class="hud__progress" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+          <div class="hud__bar"></div>
+        </div>
+      </div>
+
+      <ol class="hud__steps">
+        <li data-step="contact"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Contacting controller</span></li>
+        <li data-step="start"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Starting GPU AI server</span></li>
+        <li data-step="tunnel"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Connecting secure tunnel</span></li>
+        <li data-step="models"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Loading face models</span></li>
+        <li data-step="process"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Processing image</span></li>
+      </ol>
+
+      <p class="hud__note">This can take ~30–90s if the GPU was asleep.</p>
+      <span id="hud-live" class="sr-only" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
