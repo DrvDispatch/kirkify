@@ -1,0 +1,2515 @@
+[2025-11-10 22:59:33] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 22:59:34] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 22:59:34] [SYNC] No valid instance data found.
+[2025-11-10 22:59:44] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 22:59:46] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 22:59:46] [SYNC] No valid instance data found.
+[2025-11-10 22:59:56] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 22:59:56] [API] /api/gpu_status called
+[2025-11-10 22:59:57] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 22:59:57] [SYNC] No valid instance data found.
+[2025-11-10 22:59:58] [HEALTH] GPU worker unreachable: HTTPConnectionPool(host='70.68.84.2', port=8001): Max retries exceeded with url: /health (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x0000028B71950980>, 'Connection to 70.68.84.2 timed out. (connect timeout=2)'))
+[2025-11-10 22:59:58] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:00:01] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:00:01] [SYNC] No valid instance data found.
+[2025-11-10 23:00:07] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:00:11] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:00:11] [SYNC] No valid instance data found.
+[2025-11-10 23:00:21] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:00:22] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:00:22] [SYNC] No valid instance data found.
+[2025-11-10 23:00:32] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:00:37] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:00:37] [SYNC] No valid instance data found.
+[2025-11-10 23:00:47] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:00:50] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:00:50] [SYNC] No valid instance data found.
+[2025-11-10 23:01:00] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:01] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:01] [SYNC] No valid instance data found.
+[2025-11-10 23:01:11] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:12] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:12] [SYNC] No valid instance data found.
+[2025-11-10 23:01:22] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:23] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:23] [SYNC] No valid instance data found.
+[2025-11-10 23:01:33] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:34] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:34] [SYNC] No valid instance data found.
+[2025-11-10 23:01:44] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:45] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:45] [SYNC] No valid instance data found.
+[2025-11-10 23:01:55] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:01:56] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:01:56] [SYNC] No valid instance data found.
+[2025-11-10 23:02:06] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:07] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:02:07] [SYNC] No valid instance data found.
+[2025-11-10 23:02:17] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:18] [VAST] ERROR 3221225786: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5109, in show__instance
+    r = http_get(args, req_url)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 346, in http_get
+    return http_request('GET', args, req_url, headers, json)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 325, in http_request
+    prep = session.prepare_request(req)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\requests\sessions.py", line 481, in prepare_request
+    auth = get_netrc_auth(request.url)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\requests\utils.py", line 217, in get_netrc_auth
+    from netrc import NetrcParseError, netrc
+KeyboardInterrupt
+[2025-11-10 23:02:18] [SYNC] No valid instance data found.
+[2025-11-10 23:02:24] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:25] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:02:25] [SYNC] No valid instance data found.
+[2025-11-10 23:02:35] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:37] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:02:37] [SYNC] No valid instance data found.
+[2025-11-10 23:02:47] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:48] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:02:48] [SYNC] No valid instance data found.
+[2025-11-10 23:02:58] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:02:59] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:02:59] [SYNC] No valid instance data found.
+[2025-11-10 23:03:09] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:03:11] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:03:11] [SYNC] No valid instance data found.
+[2025-11-10 23:03:21] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:03:22] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:03:22] [SYNC] No valid instance data found.
+[2025-11-10 23:03:32] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:03:33] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:03:33] [SYNC] No valid instance data found.
+[2025-11-10 23:03:43] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:03:44] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:03:44] [SYNC] No valid instance data found.
+[2025-11-10 23:03:54] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:03:55] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:03:55] [SYNC] No valid instance data found.
+[2025-11-10 23:05:22] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:05:23] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:05:23] [SYNC] No valid instance data found.
+[2025-11-10 23:05:33] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:05:34] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:05:34] [SYNC] No valid instance data found.
+[2025-11-10 23:05:44] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:05:45] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:05:45] [SYNC] No valid instance data found.
+[2025-11-10 23:05:55] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:05:56] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:05:56] [SYNC] No valid instance data found.
+[2025-11-10 23:06:06] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:06:07] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:06:07] [SYNC] No valid instance data found.
+[2025-11-10 23:06:17] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:06:18] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:06:18] [SYNC] No valid instance data found.
+[2025-11-10 23:08:42] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:08:43] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:08:43] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:08:43] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:08:43] [SYNC] Transition: off → ready
+[2025-11-10 23:08:43] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:08:43] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:08:43] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:08:44] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:08:54] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:08:55] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:08:55] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:08:55] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:08:55] [SYNC] Transition: off → ready
+[2025-11-10 23:08:55] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:08:55] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:08:55] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:08:56] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:09:06] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:07] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:07] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:07] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:07] [SYNC] Transition: off → ready
+[2025-11-10 23:09:07] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:09:07] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:09:07] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:09:09] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:09:17] [API] /api/gpu_status called
+[2025-11-10 23:09:19] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:19] [HEALTH] GPU worker unreachable: HTTPConnectionPool(host='70.68.84.2', port=8001): Max retries exceeded with url: /health (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001F5FF1A0980>, 'Connection to 70.68.84.2 timed out. (connect timeout=2)'))
+[2025-11-10 23:09:19] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:20] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:20] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:20] [SYNC] Transition: off → ready
+[2025-11-10 23:09:20] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:09:20] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:09:20] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:09:20] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:20] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:20] [SYNC] State unchanged: ready
+[2025-11-10 23:09:21] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:09:31] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:32] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:32] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:32] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:32] [SYNC] Transition: off → ready
+[2025-11-10 23:09:32] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:09:32] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:09:32] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:09:33] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:09:43] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:44] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:44] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:44] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:44] [SYNC] Transition: off → ready
+[2025-11-10 23:09:44] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:09:44] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:09:44] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:09:46] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:09:56] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:09:57] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:09:57] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:09:57] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:09:57] [SYNC] Transition: off → ready
+[2025-11-10 23:09:57] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:09:57] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:09:57] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:09:58] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:10:08] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:10:10] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:10:10] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:10:10] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:10:10] [SYNC] Transition: off → ready
+[2025-11-10 23:10:10] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:10:10] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:10:10] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:10:12] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:10:22] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:10:24] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:10:24] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:10:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:10:24] [SYNC] Transition: off → ready
+[2025-11-10 23:10:24] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:10:24] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:10:24] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:10:25] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:10:35] [VAST] Running: vastai show instance 27731761 --raw
+[2025-11-10 23:10:36] [VAST] ERROR 1: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5112, in show__instance
+    row['duration'] = time.time() - row['start_date']
+                                    ~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+[2025-11-10 23:10:36] [SYNC] Vast CLI traceback or invalid JSON. stderr len=689; stdout len=0
+[2025-11-10 23:10:36] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:10:36] [SYNC] Transition: off → ready
+[2025-11-10 23:10:36] [TTL] TTL expired and GPU ready → stopping instance
+[2025-11-10 23:10:36] [ACTION] Stopping GPU instance via Vast.ai...
+[2025-11-10 23:10:36] [VAST] Running: vastai stop instance 27731761
+[2025-11-10 23:10:37] [VAST] OK: stopping instance 27731761....
+[2025-11-10 23:10:52] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:10:53] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:10:53] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:10:53] [SYNC] No valid instance data found.
+[2025-11-10 23:12:20] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:12:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:12:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:12:21] [SYNC] No valid instance data found.
+[2025-11-10 23:12:23] [API] /api/gpu_status called
+[2025-11-10 23:12:24] [HEALTH] GPU worker health=200
+[2025-11-10 23:12:24] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:12:25] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:12:25] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:12:25] [SYNC] No valid instance data found.
+[2025-11-10 23:12:31] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:12:33] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:12:33] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:12:33] [SYNC] No valid instance data found.
+[2025-11-10 23:12:43] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:12:46] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:12:46] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:12:46] [SYNC] No valid instance data found.
+[2025-11-10 23:12:56] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:12:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:12:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:12:58] [SYNC] No valid instance data found.
+[2025-11-10 23:13:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:13:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:13:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:13:09] [SYNC] No valid instance data found.
+[2025-11-10 23:13:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:13:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:13:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:13:21] [SYNC] No valid instance data found.
+[2025-11-10 23:13:31] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:13:32] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:13:32] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:13:32] [SYNC] No valid instance data found.
+[2025-11-10 23:13:42] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:13:44] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:13:44] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:13:44] [SYNC] No valid instance data found.
+[2025-11-10 23:13:54] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:13:55] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:13:55] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:13:55] [SYNC] No valid instance data found.
+[2025-11-10 23:14:05] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:06] [VAST] ERROR 3221225786: Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Scripts\vastai.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 7507, in main
+    res = args.func(args)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 5109, in show__instance
+    r = http_get(args, req_url)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 346, in http_get
+    return http_request('GET', args, req_url, headers, json)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\vast.py", line 336, in http_request
+    r = session.send(prep)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\connection.py", line 790, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\connection.py", line 969, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\util\ssl_.py", line 480, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\saidm\Downloads\kirkification.com\venv\Lib\site-packages\urllib3\util\ssl_.py", line 524, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+KeyboardInterrupt
+[2025-11-10 23:14:06] [SYNC] Vast CLI traceback or invalid JSON. stderr len=3350; stdout len=0
+[2025-11-10 23:14:06] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:14:06] [SYNC] Transition: off → ready
+[2025-11-10 23:14:10] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:11] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:14:11] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:14:21] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:23] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:14:23] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:14:30] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:31] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:14:31] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:14:31] [SYNC] Vast.ai reported raw state: 
+[2025-11-10 23:14:31] [SYNC] State unchanged: off
+[2025-11-10 23:14:41] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:44] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:14:44] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:14:44] [SYNC] Vast.ai reported raw state: 
+[2025-11-10 23:14:44] [SYNC] State unchanged: off
+[2025-11-10 23:14:53] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:14:55] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:14:55] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:14:55] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:14:55] [SYNC] Transition: off → ready
+[2025-11-10 23:15:05] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:15:06] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:15:06] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:15:06] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:15:06] [SYNC] State unchanged: ready
+[2025-11-10 23:15:16] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:15:17] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:15:17] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:15:17] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:15:17] [SYNC] State unchanged: ready
+[2025-11-10 23:15:27] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:15:29] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:15:29] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:15:29] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:15:29] [SYNC] State unchanged: ready
+[2025-11-10 23:15:39] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:15:40] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:15:40] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:15:40] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:15:40] [SYNC] State unchanged: ready
+[2025-11-10 23:15:50] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:15:51] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:15:51] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:15:51] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:15:51] [SYNC] State unchanged: ready
+[2025-11-10 23:16:01] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:02] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:02] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:02] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:02] [SYNC] State unchanged: ready
+[2025-11-10 23:16:12] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:13] [SYNC] State unchanged: ready
+[2025-11-10 23:16:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:24] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:24] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:24] [SYNC] State unchanged: ready
+[2025-11-10 23:16:34] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:35] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:35] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:35] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:35] [SYNC] State unchanged: ready
+[2025-11-10 23:16:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:46] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:46] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:46] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:46] [SYNC] State unchanged: ready
+[2025-11-10 23:16:56] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:16:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:16:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:16:58] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:16:58] [SYNC] State unchanged: ready
+[2025-11-10 23:17:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:17:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:17:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:17:09] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:17:09] [SYNC] State unchanged: ready
+[2025-11-10 23:17:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:17:20] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:17:20] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:17:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:17:20] [SYNC] State unchanged: ready
+[2025-11-10 23:17:30] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:17:31] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:17:31] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:17:31] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:17:31] [SYNC] State unchanged: ready
+[2025-11-10 23:17:41] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:17:42] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:17:42] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:17:42] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:17:42] [SYNC] State unchanged: ready
+[2025-11-10 23:17:52] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:17:53] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:17:53] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:17:53] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:17:53] [SYNC] State unchanged: ready
+[2025-11-10 23:18:03] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:05] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:05] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:05] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:05] [SYNC] State unchanged: ready
+[2025-11-10 23:18:15] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:16] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:16] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:16] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:16] [SYNC] State unchanged: ready
+[2025-11-10 23:18:26] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:27] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:27] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:27] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:27] [SYNC] State unchanged: ready
+[2025-11-10 23:18:37] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:38] [API] /api/warm_gpu called
+[2025-11-10 23:18:38] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:39] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:39] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:39] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:39] [SYNC] State unchanged: ready
+[2025-11-10 23:18:40] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:40] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:40] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:40] [SYNC] State unchanged: ready
+[2025-11-10 23:18:40] [TTL] Bumped TTL from 0s → 60s
+[2025-11-10 23:18:40] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:42] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:42] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:42] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:42] [SYNC] State unchanged: ready
+[2025-11-10 23:18:42] [ENSURE] GPU already ready, skipping start.
+[2025-11-10 23:18:42] [API] Warm GPU response → status=ready ttl=60
+[2025-11-10 23:18:42] [API] /api/gpu_status called
+[2025-11-10 23:18:43] [HEALTH] GPU worker health=200
+[2025-11-10 23:18:43] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:45] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:45] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:45] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:45] [SYNC] State unchanged: ready
+[2025-11-10 23:18:45] [API] /api/swap called
+[2025-11-10 23:18:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:47] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:47] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:47] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:47] [SYNC] State unchanged: ready
+[2025-11-10 23:18:47] [TTL] Bumped TTL from 60s → 120s
+[2025-11-10 23:18:47] [SWAP] Forwarding image to GPU worker https://drinking-bbs-defines-connectivity.trycloudflare.com
+[2025-11-10 23:18:49] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:18:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:18:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:18:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:18:50] [SYNC] State unchanged: ready
+[2025-11-10 23:18:50] [TTL] Decremented TTL → 110s remaining
+[2025-11-10 23:18:54] [SWAP] Worker response 500
+[2025-11-10 23:18:54] [SWAP] Worker failed: {"error":"processing_failed","rc":0}
+[2025-11-10 23:19:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:01] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:01] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:01] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:01] [SYNC] State unchanged: ready
+[2025-11-10 23:19:01] [TTL] Decremented TTL → 100s remaining
+[2025-11-10 23:19:11] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:13] [SYNC] State unchanged: ready
+[2025-11-10 23:19:13] [TTL] Decremented TTL → 90s remaining
+[2025-11-10 23:19:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:24] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:24] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:24] [SYNC] State unchanged: ready
+[2025-11-10 23:19:24] [TTL] Decremented TTL → 80s remaining
+[2025-11-10 23:19:34] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:35] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:35] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:35] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:35] [SYNC] State unchanged: ready
+[2025-11-10 23:19:35] [TTL] Decremented TTL → 70s remaining
+[2025-11-10 23:19:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:47] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:47] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:47] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:47] [SYNC] State unchanged: ready
+[2025-11-10 23:19:47] [TTL] Decremented TTL → 60s remaining
+[2025-11-10 23:19:57] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:19:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:19:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:19:58] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:19:58] [SYNC] State unchanged: ready
+[2025-11-10 23:19:58] [TTL] Decremented TTL → 50s remaining
+[2025-11-10 23:20:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:20:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:20:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:20:09] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:20:09] [SYNC] State unchanged: ready
+[2025-11-10 23:20:09] [TTL] Decremented TTL → 40s remaining
+[2025-11-10 23:20:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:20:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:20:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:20:21] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:20:21] [SYNC] State unchanged: ready
+[2025-11-10 23:20:21] [TTL] Decremented TTL → 30s remaining
+[2025-11-10 23:20:31] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:20:32] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:20:32] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:20:32] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:20:32] [SYNC] State unchanged: ready
+[2025-11-10 23:20:32] [TTL] Decremented TTL → 20s remaining
+[2025-11-10 23:20:42] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:20:43] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:20:43] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:20:43] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:20:43] [SYNC] State unchanged: ready
+[2025-11-10 23:20:43] [TTL] Decremented TTL → 10s remaining
+[2025-11-10 23:20:53] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:20:54] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:20:54] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:20:54] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:20:54] [SYNC] State unchanged: ready
+[2025-11-10 23:20:54] [TTL] Decremented TTL → 0s remaining
+[2025-11-10 23:21:04] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:21:06] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:21:06] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:21:06] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:21:06] [SYNC] State unchanged: ready
+[2025-11-10 23:21:16] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:21:17] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:21:17] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:21:17] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:21:17] [SYNC] State unchanged: ready
+[2025-11-10 23:21:27] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:21:28] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:21:28] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:21:28] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:21:28] [SYNC] State unchanged: ready
+[2025-11-10 23:21:38] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:21:39] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:21:39] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:21:39] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:21:39] [SYNC] State unchanged: ready
+[2025-11-10 23:21:49] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:21:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:21:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:21:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:21:50] [SYNC] State unchanged: ready
+[2025-11-10 23:22:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:02] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:02] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:02] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:02] [SYNC] State unchanged: ready
+[2025-11-10 23:22:12] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:13] [SYNC] State unchanged: ready
+[2025-11-10 23:22:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:24] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:24] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:24] [SYNC] State unchanged: ready
+[2025-11-10 23:22:34] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:36] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:36] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:36] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:36] [SYNC] State unchanged: ready
+[2025-11-10 23:22:46] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:47] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:47] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:47] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:47] [SYNC] State unchanged: ready
+[2025-11-10 23:22:57] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:22:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:22:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:22:58] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:22:58] [SYNC] State unchanged: ready
+[2025-11-10 23:23:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:23:10] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:23:10] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:23:10] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:23:10] [SYNC] State unchanged: ready
+[2025-11-10 23:23:20] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:23:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:23:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:23:21] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:23:21] [SYNC] State unchanged: ready
+[2025-11-10 23:23:31] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:23:32] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:23:32] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:23:32] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:23:32] [SYNC] State unchanged: ready
+[2025-11-10 23:23:42] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:23:44] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:23:44] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:23:44] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:23:44] [SYNC] State unchanged: ready
+[2025-11-10 23:23:54] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:23:55] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:23:55] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:23:55] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:23:55] [SYNC] State unchanged: ready
+[2025-11-10 23:24:05] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:24:08] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:24:08] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:24:08] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:24:08] [SYNC] State unchanged: ready
+[2025-11-10 23:24:18] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:24:19] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:24:19] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:24:19] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:24:19] [SYNC] State unchanged: ready
+[2025-11-10 23:24:29] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:24:30] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:24:30] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:24:30] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:24:30] [SYNC] State unchanged: ready
+[2025-11-10 23:24:40] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:24:41] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:24:41] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:24:41] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:24:41] [SYNC] State unchanged: ready
+[2025-11-10 23:24:51] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:24:52] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:24:52] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:24:52] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:24:52] [SYNC] State unchanged: ready
+[2025-11-10 23:25:02] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:03] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:03] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:03] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:03] [SYNC] State unchanged: ready
+[2025-11-10 23:25:13] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:14] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:14] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:14] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:14] [SYNC] State unchanged: ready
+[2025-11-10 23:25:24] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:26] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:26] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:26] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:26] [SYNC] State unchanged: ready
+[2025-11-10 23:25:36] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:37] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:37] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:37] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:37] [SYNC] State unchanged: ready
+[2025-11-10 23:25:47] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:48] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:48] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:48] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:48] [SYNC] State unchanged: ready
+[2025-11-10 23:25:58] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:25:59] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:25:59] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:25:59] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:25:59] [SYNC] State unchanged: ready
+[2025-11-10 23:26:09] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:26:10] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:26:10] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:26:10] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:26:10] [SYNC] State unchanged: ready
+[2025-11-10 23:27:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:01] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:01] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:01] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:01] [SYNC] Transition: off → ready
+[2025-11-10 23:27:11] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:12] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:12] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:12] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:12] [SYNC] State unchanged: ready
+[2025-11-10 23:27:16] [API] /api/warm_gpu called
+[2025-11-10 23:27:16] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:17] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:17] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:17] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:17] [SYNC] State unchanged: ready
+[2025-11-10 23:27:17] [TTL] Bumped TTL from 0s → 60s
+[2025-11-10 23:27:17] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:19] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:19] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:19] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:19] [SYNC] State unchanged: ready
+[2025-11-10 23:27:19] [ENSURE] GPU already ready, skipping start.
+[2025-11-10 23:27:19] [API] Warm GPU response → status=ready ttl=60
+[2025-11-10 23:27:19] [API] /api/gpu_status called
+[2025-11-10 23:27:20] [HEALTH] GPU worker health=200
+[2025-11-10 23:27:20] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:21] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:21] [SYNC] State unchanged: ready
+[2025-11-10 23:27:21] [API] /api/swap called
+[2025-11-10 23:27:21] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:22] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:22] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:22] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:22] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:22] [SYNC] State unchanged: ready
+[2025-11-10 23:27:22] [TTL] Bumped TTL from 60s → 120s
+[2025-11-10 23:27:22] [SWAP] Forwarding image to GPU worker https://drinking-bbs-defines-connectivity.trycloudflare.com
+[2025-11-10 23:27:23] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:23] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:23] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:23] [SYNC] State unchanged: ready
+[2025-11-10 23:27:23] [TTL] Decremented TTL → 110s remaining
+[2025-11-10 23:27:30] [SWAP] Worker response 500
+[2025-11-10 23:27:30] [SWAP] Worker failed: {"error":"processing_failed","rc":0}
+[2025-11-10 23:27:33] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:34] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:34] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:34] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:34] [SYNC] State unchanged: ready
+[2025-11-10 23:27:34] [TTL] Decremented TTL → 100s remaining
+[2025-11-10 23:27:44] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:45] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:45] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:45] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:45] [SYNC] State unchanged: ready
+[2025-11-10 23:27:45] [TTL] Decremented TTL → 90s remaining
+[2025-11-10 23:27:55] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:27:57] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:27:57] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:27:57] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:27:57] [SYNC] State unchanged: ready
+[2025-11-10 23:27:57] [TTL] Decremented TTL → 80s remaining
+[2025-11-10 23:28:07] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:28:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:28:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:28:09] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:28:09] [SYNC] State unchanged: ready
+[2025-11-10 23:28:09] [TTL] Decremented TTL → 70s remaining
+[2025-11-10 23:28:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:28:20] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:28:20] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:28:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:28:20] [SYNC] State unchanged: ready
+[2025-11-10 23:28:20] [TTL] Decremented TTL → 60s remaining
+[2025-11-10 23:28:30] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:28:31] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:28:31] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:28:31] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:28:31] [SYNC] State unchanged: ready
+[2025-11-10 23:28:31] [TTL] Decremented TTL → 50s remaining
+[2025-11-10 23:28:41] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:28:42] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:28:42] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:28:42] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:28:42] [SYNC] State unchanged: ready
+[2025-11-10 23:28:42] [TTL] Decremented TTL → 40s remaining
+[2025-11-10 23:28:52] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:28:53] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:28:53] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:28:53] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:28:53] [SYNC] State unchanged: ready
+[2025-11-10 23:28:53] [TTL] Decremented TTL → 30s remaining
+[2025-11-10 23:29:03] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:29:05] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:29:05] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:29:05] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:29:05] [SYNC] State unchanged: ready
+[2025-11-10 23:29:05] [TTL] Decremented TTL → 20s remaining
+[2025-11-10 23:29:15] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:29:16] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:29:16] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:29:16] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:29:16] [SYNC] State unchanged: ready
+[2025-11-10 23:29:16] [TTL] Decremented TTL → 10s remaining
+[2025-11-10 23:29:26] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:29:27] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:29:27] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:29:27] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:29:27] [SYNC] State unchanged: ready
+[2025-11-10 23:29:27] [TTL] Decremented TTL → 0s remaining
+[2025-11-10 23:29:37] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:29:38] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:29:38] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:29:38] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:29:38] [SYNC] State unchanged: ready
+[2025-11-10 23:29:48] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:29:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:29:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:29:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:29:50] [SYNC] State unchanged: ready
+[2025-11-10 23:30:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:30:03] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:30:03] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:30:03] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:30:03] [SYNC] State unchanged: ready
+[2025-11-10 23:30:13] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:30:16] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:30:16] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:30:16] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:30:16] [SYNC] State unchanged: ready
+[2025-11-10 23:30:26] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:30:28] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:30:28] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:30:28] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:30:28] [SYNC] State unchanged: ready
+[2025-11-10 23:30:38] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:30:39] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:30:39] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:30:39] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:30:39] [SYNC] State unchanged: ready
+[2025-11-10 23:30:49] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:30:51] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:30:51] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:30:51] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:30:51] [SYNC] State unchanged: ready
+[2025-11-10 23:31:01] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:02] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:02] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:02] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:02] [SYNC] State unchanged: ready
+[2025-11-10 23:31:12] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:13] [SYNC] State unchanged: ready
+[2025-11-10 23:31:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:24] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:24] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:24] [SYNC] State unchanged: ready
+[2025-11-10 23:31:34] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:35] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:35] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:35] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:35] [SYNC] State unchanged: ready
+[2025-11-10 23:31:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:46] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:46] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:46] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:46] [SYNC] State unchanged: ready
+[2025-11-10 23:31:56] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:31:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:31:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:31:58] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:31:58] [SYNC] State unchanged: ready
+[2025-11-10 23:32:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:32:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:32:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:32:09] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:32:09] [SYNC] State unchanged: ready
+[2025-11-10 23:32:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:32:20] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:32:20] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:32:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:32:20] [SYNC] State unchanged: ready
+[2025-11-10 23:32:30] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:32:31] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:32:31] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:32:31] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:32:31] [SYNC] State unchanged: ready
+[2025-11-10 23:32:41] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:32:42] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:32:42] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:32:42] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:32:42] [SYNC] State unchanged: ready
+[2025-11-10 23:32:52] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:32:54] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:32:54] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:32:54] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:32:54] [SYNC] State unchanged: ready
+[2025-11-10 23:33:04] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:33:05] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:33:05] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:33:05] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:33:05] [SYNC] State unchanged: ready
+[2025-11-10 23:33:15] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:33:16] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:33:16] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:33:16] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:33:16] [SYNC] State unchanged: ready
+[2025-11-10 23:33:26] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:33:27] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:33:27] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:33:27] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:33:27] [SYNC] State unchanged: ready
+[2025-11-10 23:33:37] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:33:38] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:33:38] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:33:38] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:33:38] [SYNC] State unchanged: ready
+[2025-11-10 23:33:48] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:33:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:33:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:33:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:33:50] [SYNC] State unchanged: ready
+[2025-11-10 23:34:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:02] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:02] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:02] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:02] [SYNC] State unchanged: ready
+[2025-11-10 23:34:12] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:13] [SYNC] State unchanged: ready
+[2025-11-10 23:34:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:24] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:24] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:24] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:24] [SYNC] State unchanged: ready
+[2025-11-10 23:34:34] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:35] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:35] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:35] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:35] [SYNC] State unchanged: ready
+[2025-11-10 23:34:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:46] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:46] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:46] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:46] [SYNC] State unchanged: ready
+[2025-11-10 23:34:56] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:34:57] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:34:57] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:34:57] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:34:57] [SYNC] State unchanged: ready
+[2025-11-10 23:35:07] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:35:10] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:35:10] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:35:10] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:35:10] [SYNC] State unchanged: ready
+[2025-11-10 23:35:20] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:35:21] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:35:21] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:35:21] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:35:21] [SYNC] State unchanged: ready
+[2025-11-10 23:35:31] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:35:32] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:35:32] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:35:32] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:35:32] [SYNC] State unchanged: ready
+[2025-11-10 23:35:42] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:35:43] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:35:43] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:35:43] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:35:43] [SYNC] State unchanged: ready
+[2025-11-10 23:35:53] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:35:54] [VAST] OK: {
+ "actual_status": "rebooting",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "...
+[2025-11-10 23:35:54] [SYNC] Parsed Vast instance info OK (state=rebooting)
+[2025-11-10 23:35:54] [SYNC] Vast.ai reported raw state: rebooting
+[2025-11-10 23:35:54] [SYNC] Transition: ready → off
+[2025-11-10 23:36:04] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:36:06] [VAST] OK: {
+ "actual_status": "rebooting",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "...
+[2025-11-10 23:36:06] [SYNC] Parsed Vast instance info OK (state=rebooting)
+[2025-11-10 23:36:06] [SYNC] Vast.ai reported raw state: rebooting
+[2025-11-10 23:36:06] [SYNC] State unchanged: off
+[2025-11-10 23:36:16] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:36:17] [VAST] OK: {
+ "actual_status": "rebooting",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "...
+[2025-11-10 23:36:17] [SYNC] Parsed Vast instance info OK (state=rebooting)
+[2025-11-10 23:36:17] [SYNC] Vast.ai reported raw state: rebooting
+[2025-11-10 23:36:17] [SYNC] State unchanged: off
+[2025-11-10 23:36:27] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:36:28] [VAST] OK: {
+ "actual_status": "rebooting",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "...
+[2025-11-10 23:36:28] [SYNC] Parsed Vast instance info OK (state=rebooting)
+[2025-11-10 23:36:28] [SYNC] Vast.ai reported raw state: rebooting
+[2025-11-10 23:36:28] [SYNC] State unchanged: off
+[2025-11-10 23:36:38] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:36:39] [VAST] OK: {
+ "actual_status": "rebooting",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "...
+[2025-11-10 23:36:39] [SYNC] Parsed Vast instance info OK (state=rebooting)
+[2025-11-10 23:36:39] [SYNC] Vast.ai reported raw state: rebooting
+[2025-11-10 23:36:39] [SYNC] State unchanged: off
+[2025-11-10 23:36:49] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:36:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:36:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:36:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:36:50] [SYNC] Transition: off → ready
+[2025-11-10 23:37:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:01] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:01] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:01] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:01] [SYNC] State unchanged: ready
+[2025-11-10 23:37:11] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:12] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:12] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:12] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:12] [SYNC] State unchanged: ready
+[2025-11-10 23:37:22] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:23] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:23] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:23] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:23] [SYNC] State unchanged: ready
+[2025-11-10 23:37:33] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:35] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:35] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:35] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:35] [SYNC] State unchanged: ready
+[2025-11-10 23:37:45] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:46] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:46] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:46] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:46] [SYNC] State unchanged: ready
+[2025-11-10 23:37:56] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:37:58] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:37:58] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:37:58] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:37:58] [SYNC] State unchanged: ready
+[2025-11-10 23:38:08] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:38:09] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:38:09] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:38:09] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:38:09] [SYNC] State unchanged: ready
+[2025-11-10 23:38:19] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:38:20] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:38:20] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:38:20] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:38:20] [SYNC] State unchanged: ready
+[2025-11-10 23:38:30] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:38:31] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:38:31] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:38:31] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:38:31] [SYNC] State unchanged: ready
+[2025-11-10 23:38:41] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:38:43] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:38:43] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:38:43] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:38:43] [SYNC] State unchanged: ready
+[2025-11-10 23:38:53] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:38:55] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:38:55] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:38:55] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:38:55] [SYNC] State unchanged: ready
+[2025-11-10 23:39:05] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:39:06] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:39:06] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:39:06] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:39:06] [SYNC] State unchanged: ready
+[2025-11-10 23:39:16] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:39:17] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:39:17] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:39:17] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:39:17] [SYNC] State unchanged: ready
+[2025-11-10 23:39:27] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:39:28] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:39:28] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:39:28] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:39:28] [SYNC] State unchanged: ready
+[2025-11-10 23:39:38] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:39:39] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:39:39] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:39:39] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:39:39] [SYNC] State unchanged: ready
+[2025-11-10 23:39:49] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:39:50] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:39:50] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:39:50] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:39:50] [SYNC] State unchanged: ready
+[2025-11-10 23:40:00] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:02] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:02] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:02] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:02] [SYNC] State unchanged: ready
+[2025-11-10 23:40:12] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:13] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:13] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:13] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:13] [SYNC] State unchanged: ready
+[2025-11-10 23:40:23] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:25] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:25] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:25] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:25] [SYNC] State unchanged: ready
+[2025-11-10 23:40:35] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:36] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:36] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:36] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:36] [SYNC] State unchanged: ready
+[2025-11-10 23:40:46] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:47] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:47] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:47] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:47] [SYNC] State unchanged: ready
+[2025-11-10 23:40:57] [VAST] Running: vastai show instance 27744186 --raw
+[2025-11-10 23:40:59] [VAST] OK: {
+ "actual_status": "running",
+ "bundle_id": null,
+ "bw_nvlink": 0.0,
+ "client_run_time": 1.1,
+ "compute_cap": 610,
+ "cp...
+[2025-11-10 23:40:59] [SYNC] Parsed Vast instance info OK (state=running)
+[2025-11-10 23:40:59] [SYNC] Vast.ai reported raw state: running
+[2025-11-10 23:40:59] [SYNC] State unchanged: ready
