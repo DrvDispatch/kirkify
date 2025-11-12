@@ -94,31 +94,68 @@ function mark(step, state) {
   if (state === "done")   li.classList.add("is-done");
   updateProgress();
 }
-
-// API calls
+async function fetchWithTimeout(url, opts = {}, ms = 15000) {
+  const ctl = new AbortController();
+  const id = setTimeout(() => ctl.abort(new Error("timeout")), ms);
+  try { return await fetch(url, { ...opts, signal: ctl.signal }); }
+  finally { clearTimeout(id); }
+}
 async function warmGPU() {
-  const res = await fetch(`${CONTROLLER_URL}/api/warm_gpu`, { method: "POST" });
-  if (!res.ok) throw new Error("warm_gpu failed");
-  return res.json();
+  try {
+    const res = await fetchWithTimeout(`${CONTROLLER_URL}/api/warm_gpu`, { method: "POST" }, 15000);
+    if (!res.ok) throw new Error("warm_gpu failed");
+    return res.json();
+  } catch (e) {
+    // Kick the controller to force a start if it's stuck
+    try { await fetch(`${CONTROLLER_URL}/api/manual_start`, { method: "POST" }); } catch (_) {}
+    throw e;
+  }
 }
 async function gpuStatus() {
-  const res = await fetch(`${CONTROLLER_URL}/api/gpu_status`);
+  const res = await fetchWithTimeout(`${CONTROLLER_URL}/api/gpu_status`, {}, 15000);
   if (!res.ok) throw new Error("gpu_status failed");
   return res.json();
 }
 async function uploadToSwap(file) {
   const form = new FormData();
   form.append("file", file);
-  const res = await fetch(`${CONTROLLER_URL}/api/swap`, {
-    method: "POST",
-    body: form,
-  });
-  if (!res.ok) {
+
+  for (let attempt = 0; attempt < 60; attempt++) { // up to ~2 min retry window
+    const res = await fetch(`${CONTROLLER_URL}/api/swap`, {
+      method: "POST",
+      body: form,
+    });
+
+    // Handle warming phase (HTTP 425)
+    if (res.status === 425) {
+      const j = await res.json().catch(() => ({}));
+      console.log(`[warmup] GPU not ready yet (${j.status}/${j.phase})`);
+      $("#gpu-status").textContent = j.status || "warming";
+      mark("start", "done");
+      mark("tunnel", "done");
+      mark("models", "active");
+      await sleep(2000);
+      continue;
+    }
+
+    // Normal success
+    if (res.ok) return await res.blob();
+
+    // Other transient errors — wait and retry briefly
+    if (res.status >= 500 && res.status < 600) {
+      console.warn(`[retryable] ${res.status}`);
+      await sleep(3000);
+      continue;
+    }
+
+    // Hard error
     const t = await res.text().catch(() => "");
     throw new Error(`Upload failed (${res.status}) ${t}`);
   }
-  return await res.blob();
+
+  throw new Error("GPU failed to warm up after 2 minutes. Please try again.");
 }
+
 
 // keep the small chip updated
 async function loopGpuChip() {
