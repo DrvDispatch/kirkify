@@ -1,25 +1,29 @@
-// ---------------- Before/After Slider ----------------
 (function () {
   function initBA(root) {
     const range = root.querySelector(".ba__range");
+
     const setPos = (pct) => {
       const clamped = Math.max(0, Math.min(100, pct));
       root.style.setProperty("--pos", clamped + "%");
       if (range) range.value = clamped;
     };
+
     const pctFromClientX = (clientX) => {
       const rect = root.getBoundingClientRect();
       return ((clientX - rect.left) / rect.width) * 100;
     };
+
     const move = (e) => {
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       setPos(pctFromClientX(clientX));
       e.preventDefault?.();
     };
+
     const end = () => {
       window.removeEventListener("mousemove", move);
       window.removeEventListener("touchmove", move);
     };
+
     const start = (e) => {
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       setPos(pctFromClientX(clientX));
@@ -29,20 +33,22 @@
       window.addEventListener("touchend", end);
       e.preventDefault?.();
     };
+
     root.addEventListener("mousedown", start);
     root.addEventListener("touchstart", start, { passive: false });
-    if (range) range.addEventListener("input", (e) => setPos(parseFloat(e.target.value)));
+
+    if (range) {
+      range.addEventListener("input", (e) => setPos(parseFloat(e.target.value)));
+    }
+
     setPos(50);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const ba = document.getElementById("ba-demo");
-    if (ba) initBA(ba);
+    document.querySelectorAll(".ba").forEach((root) => initBA(root));
   });
 })();
 
-// ---------------- GPU CONTROLLER INTEGRATION ----------------
-// Always hit the Contabo controller (even locally)
 const CONTROLLER_URL = "https://api.keyauth.eu";
 
 // tiny helpers
@@ -50,13 +56,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-// HUD helpers
 function showHUD() {
   const hud = $("#hud");
   if (!hud) return;
   hud.hidden = false;
   hud.classList.add("is-open");
-  // reset progressbar ARIA state
   const pb = $(".hud__progress");
   if (pb) pb.setAttribute("aria-valuenow", "0");
 }
@@ -65,7 +69,6 @@ function hideHUD() {
   if (!hud) return;
   hud.classList.remove("is-open");
   hud.classList.add("is-closing");
-  // wait for exit animation
   setTimeout(() => {
     hud.hidden = true;
     hud.classList.remove("is-closing");
@@ -106,7 +109,6 @@ async function warmGPU() {
     if (!res.ok) throw new Error("warm_gpu failed");
     return res.json();
   } catch (e) {
-    // Kick the controller to force a start if it's stuck
     try { await fetch(`${CONTROLLER_URL}/api/manual_start`, { method: "POST" }); } catch (_) {}
     throw e;
   }
@@ -156,8 +158,6 @@ async function uploadToSwap(file) {
   throw new Error("GPU failed to warm up after 2 minutes. Please try again.");
 }
 
-
-// keep the small chip updated
 async function loopGpuChip() {
   try {
     const s = await gpuStatus();
@@ -173,7 +173,6 @@ async function loopGpuChip() {
 setInterval(loopGpuChip, 2000);
 document.addEventListener("DOMContentLoaded", loopGpuChip);
 
-// ---------------- FRONTEND UX ----------------
 document.addEventListener("DOMContentLoaded", () => {
   const drop = $("#drop");
   const uploadBtn = $("#upload-btn");
@@ -181,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const afterImg  = $("#after-img");
   const download  = $("#download-link");
 
-  // enable drop/paste
   function handleFile(f) {
     if (!f) return;
     beforeImg.src = URL.createObjectURL(f);
@@ -214,16 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function runPipeline(file) {
-    // reset HUD states
     $$(".hud__steps li").forEach((li) => (li.className = ""));
     showHUD();
     mark("contact", "active");
 
-    // 1) warm up
     const warm = await warmGPU();
     mark("contact", "done");
 
-    // If already ready, fast-forward the steps a bit
     if (warm.status === "ready") {
       mark("start",   "done");
       mark("tunnel",  "done");
@@ -231,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       mark("start", "active");
 
-      // 2) poll readiness and animate steps
       let ready = false;
       let tunnelShown = false, modelsShown = false;
       for (let i = 0; i < 120; i++) {
@@ -258,21 +252,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!ready) throw new Error("GPU is not ready yet");
     }
 
-    // 3) upload for processing
     mark("process", "active");
     const blob = await uploadToSwap(file);
     mark("process", "done");
     hideHUD();
 
-    // 4) show + downloadable
     afterImg.src = URL.createObjectURL(blob);
     download.href = afterImg.src;
     download.download = "kirkified.jpg";
     download.classList.remove("is-disabled");
     download.removeAttribute("aria-disabled");
-    // 5) animate download button
     download.classList.add("is-ready");
     setTimeout(() => download.classList.remove("is-ready"), 1800);
-
   }
 });

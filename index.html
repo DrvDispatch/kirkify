@@ -3,91 +3,313 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KIRKIFICATION.COM</title>
+
+  <title>Kirkify – Free AI Face Swap with Charlie</title>
+
+  <meta name="description"
+        content="Kirkify is a free AI tool that kirkifies your photos by swapping faces with Charlie. Upload a picture, see an instant before/after slider, and download the result in seconds." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://kirkify.nl/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Kirkify – Free AI Face Swap with Charlie" />
+  <meta property="og:description"
+        content="Upload a photo and kirkify it with Charlie. Free AI face swap with an instant before/after slider." />
+  <meta property="og:url" content="https://kirkify.nl/" />
+  <meta property="og:image" content="https://kirkify.nl/assets/img/kirkify-og.jpg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Kirkify – Free AI Face Swap with Charlie" />
+  <meta name="twitter:description"
+        content="Kirkify lets you kirkify your photos with Charlie using AI. Upload, compare, and download for free." />
+  <meta name="twitter:image" content="https://kirkify.nl/assets/img/kirkify-og.jpg" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Kirkify",
+    "url": "https://kirkify.nl/",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "description": "Free online AI tool that kirkifies your photos by swapping faces with Charlie and showing an instant before/after comparison.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    }
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <div class="page-shell">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a href="/" class="logo">
+          <span class="logo__mark">K</span>
+          <span class="logo__text">Kirkify</span>
+        </a>
 
-  <!-- Left / Right Ad Rails (placeholder) -->
-  <aside class="ad-rail ad-rail--left" aria-label="Advertisement">
-    <div class="ad-block">AD</div>
-    <div class="ad-block">AD</div>
-    <div class="ad-block">AD</div>
-  </aside>
-  <aside class="ad-rail ad-rail--right" aria-label="Advertisement">
-    <div class="ad-block">AD</div>
-    <div class="ad-block">AD</div>
-    <div class="ad-block">AD</div>
-  </aside>
+        <nav class="nav" aria-label="Primary">
+          <a href="#try-kirkify" class="nav__link">Try Kirkify</a>
+          <a href="#how-it-works" class="nav__link">How it works</a>
+          <a href="#faq" class="nav__link">FAQ</a>
+        </nav>
 
-  <!-- Page -->
-  <div class="page">
-    <header class="topbar">
-      <a class="brand" href="#">KIRKIFICATION.COM</a>
-      <div class="gpu-chip" aria-live="polite">
-        <svg class="icon icon-chip" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v2H7v2H5v2H3v6h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V9h-2V7h-2V5h-2V3H9Zm8 8v2H7v-2h10Z" fill="currentColor"/></svg>
-        <span class="gpu-chip__label">GPU:</span>
-        <span id="gpu-status">—</span>
+        <div class="gpu-chip" aria-live="polite">
+          <svg class="icon icon-chip" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 3v2H7v2H5v2H3v6h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V9h-2V7h-2V5h-2V3H9Zm8 8v2H7v-2h10Z" fill="currentColor"/>
+          </svg>
+          <span class="gpu-chip__label">GPU</span>
+          <span id="gpu-status" class="gpu-chip__status">—</span>
+        </div>
       </div>
     </header>
 
-    <main class="main">
-      <!-- Upload -->
-      <section class="card card--upload">
-        <div id="drop" class="drop" tabindex="0">
-          <button id="upload-btn" class="btn-upload" type="button">Upload image</button>
-          <p class="muted">Or drop / paste an image</p>
-          <div class="note-free">
-            <span>100% Automatic and</span>
-            <span class="pill">FREE</span>
+    <!-- Main -->
+    <main id="main" class="main" aria-labelledby="hero-heading">
+      <!-- HERO -->
+      <section id="try-kirkify" class="hero">
+        <div class="hero__grid">
+          <div class="hero__copy">
+            <div class="hero__text">
+              <p class="hero__eyebrow">Free AI face swap in your browser</p>
+
+              <h1 id="hero-heading" class="hero__title">
+                <span class="hero__title-highlight">Kirkify</span> your photos
+              </h1>
+
+              <p class="hero__subtitle">
+                Upload a photo and let Kirkify’s AI swap the face with <strong>Charlie Kirk’s</strong>
+                while keeping lighting and pose natural.
+              </p>
+
+              <ul class="hero-list">
+                <li>No signup, no watermark</li>
+                <li>Instant before/after slider</li>
+                <li>Best with one clear, well-lit face</li>
+              </ul>
+
+              <!-- MINI HERO BEFORE / AFTER -->
+              <div class="ba ba--mini" id="ba-hero" aria-label="Example kirkified before and after">
+                <img
+                  src="assets/images/gallery/before.png"
+                  alt="Original example portrait before kirkification"
+                  class="ba__img ba__img--before" />
+                <img
+                  src="assets/images/gallery/after.png"
+                  alt="Example portrait after kirkification"
+                  class="ba__img ba__img--after" />
+                <input
+                  class="ba__range"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  aria-label="Drag to reveal kirkified example">
+                <div class="ba__divider"></div>
+                <div class="ba__knob" aria-hidden="true"></div>
+              </div>
+              <!-- END MINI HERO BEFORE / AFTER -->
+            </div>
+
+            <div class="hero-trust" aria-hidden="true">
+              <div class="hero-trust__pill">
+                <span class="hero-trust__dot hero-trust__dot--instant"></span>
+                No signup
+              </div>
+              <div class="hero-trust__pill">
+                <span class="hero-trust__dot hero-trust__dot--clean"></span>
+                No watermark
+              </div>
+              <div class="hero-trust__pill">
+                <span class="hero-trust__dot hero-trust__dot--gpu"></span>
+                GPU-powered in the cloud
+              </div>
+            </div>
+          </div>
+
+          <div class="hero__tool">
+            <!-- Upload card -->
+            <section class="tool-card" aria-label="Upload image to kirkify">
+              <div id="drop" class="upload" tabindex="0">
+                <button id="upload-btn" type="button" class="btn-primary">
+                  Upload image
+                </button>
+                <p class="upload__hint">
+                  or drop / paste an image
+                </p>
+                <p class="upload__meta">
+                  Runs in the cloud · <span class="pill pill--accent">100% FREE</span>
+                </p>
+              </div>
+            </section>
+
+            <!-- Preview card -->
+            <section class="tool-card tool-card--preview" aria-label="Kirkified preview">
+              <div class="ba" id="ba-demo" aria-label="Before and after comparison">
+                <img id="before-img"
+                     alt="Original photo before kirkification"
+                     class="ba__img ba__img--before" />
+                <img id="after-img"
+                     alt="Photo after kirkification with Charlie"
+                     class="ba__img ba__img--after" />
+                <input class="ba__range"
+                       type="range"
+                       min="0"
+                       max="100"
+                       value="50"
+                       aria-label="Drag to reveal kirkified image">
+                <div class="ba__divider"></div>
+                <div class="ba__knob" aria-hidden="true"></div>
+              </div>
+
+              <p class="actions">
+                <a id="download-link"
+                   class="link link--download is-disabled"
+                   href="#"
+                   download="kirkified.jpg"
+                   aria-disabled="true">
+                  Download kirkified image
+                </a>
+                <span class="hint">Drag the circle to compare before/after</span>
+              </p>
+
+              <p class="tos">
+                By uploading an image, you agree to our
+                <a href="/terms.html" class="link">Terms of Service</a>.
+                Learn how <span class="brand-inline">Kirkify</span> handles your data in our
+                <a href="/privacy.html" class="link">Privacy Policy</a>.
+                Please only upload images you have the right to use.
+              </p>
+            </section>
           </div>
         </div>
       </section>
 
-      <!-- Preview -->
-      <section class="card card--preview">
-        <div class="ba" id="ba-demo" aria-label="Before and after comparison">
-          <img id="before-img" alt="Before" class="ba__img ba__img--before" />
-          <img id="after-img"  alt="After"  class="ba__img ba__img--after"  />
-          <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="Reveal slider">
-          <div class="ba__divider"></div>
-          <div class="ba__knob" aria-hidden="true"></div>
+      <!-- HOW IT WORKS -->
+      <section id="how-it-works" class="section section--split">
+        <div class="section__header">
+          <h2>How Kirkify works</h2>
+          <p>
+            Kirkify runs a custom AI model that swaps the face in your photo with Charlie and keeps
+            the rest of the image intact.
+          </p>
         </div>
 
-        <p class="actions">
-          <a id="download-link" class="link link--download is-disabled" href="#" download="kirkified.jpg" aria-disabled="true">Download result</a>
-          <span class="hint">Tip: drag the white knob to compare</span>
-        </p>
+        <div class="steps">
+          <article class="step">
+            <span class="step__badge">1</span>
+            <h3>Upload a clear photo</h3>
+            <p>Pick an image where the face is visible and not too tiny. Front or slight angle works best.</p>
+          </article>
+          <article class="step">
+            <span class="step__badge">2</span>
+            <h3>AI spins up on the GPU</h3>
+            <p>Our GPU server wakes up, loads the models, and runs the kirkification pipeline on your image.</p>
+          </article>
+          <article class="step">
+            <span class="step__badge">3</span>
+            <h3>Compare &amp; download</h3>
+            <p>Use the slider to compare original vs kirkified, then download the result in one click.</p>
+          </article>
+        </div>
+      </section>
 
-       <p class="tos">
-  By uploading an image or URL, you agree to our
-  <a href="/terms.html" class="link">Terms of Service</a>. To learn more about how
-  <span class="brand-inline">kirkification</span> handles your personal data, check our
-  <a href="/privacy.html" class="link">Privacy Policy</a>.
-</p>
+      <!-- USE CASES -->
+      <section class="section section--cards">
+        <div class="section__header">
+          <h2>What can you do with Kirkify?</h2>
+          <p>From memes to avatars – kirkify your photos in seconds.</p>
+        </div>
 
+        <div class="use-cards">
+          <article class="use-card">
+            <h3>Profile pictures</h3>
+            <p>Create funny, game-inspired profile photos featuring Charlie.</p>
+          </article>
+          <article class="use-card">
+            <h3>Memes &amp; reactions</h3>
+            <p>Turn ordinary photos into kirkified reaction images to share with friends.</p>
+          </article>
+          <article class="use-card">
+            <h3>Game content</h3>
+            <p>Make social content that ties your community and characters together visually.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="section section--faq" aria-label="Frequently asked questions">
+        <div class="section__header">
+          <h2>FAQ</h2>
+          <p>Quick answers about Kirkify, privacy, and usage.</p>
+        </div>
+
+        <dl class="faq">
+          <div class="faq__item">
+            <dt>Is Kirkify free?</dt>
+            <dd>Yes. Kirkify is currently free to use and does not require an account.</dd>
+          </div>
+
+          <div class="faq__item">
+            <dt>Do you store my images?</dt>
+            <dd>
+              Images are sent to the server only for processing and are not meant to be kept longer than
+              needed for the kirkification step. See the Privacy Policy for details.
+            </dd>
+          </div>
+
+          <div class="faq__item">
+            <dt>What kind of photos work best?</dt>
+            <dd>
+              Use photos with a single face, good lighting, and a front or slightly angled view for the
+              best kirkified result with Charlie.
+            </dd>
+          </div>
+
+          <div class="faq__item">
+            <dt>Can I use the results anywhere?</dt>
+            <dd>
+              You’re responsible for how you use the images. Please follow local laws and respect the
+              rights of other people whose photos you kirkify.
+            </dd>
+          </div>
+        </dl>
       </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer__inner">
+        <small>
+          © <span class="brand-inline">Kirkify</span>
+          · <a href="/privacy.html" class="link">Privacy Policy</a>
+          · <a href="/terms.html" class="link">Terms of Service</a>
+        </small>
+      </div>
+    </footer>
   </div>
-
-  <footer class="footer" role="contentinfo">
-  <small>
-    © <span class="brand-inline">Kirkification</span> |
-    <a href="/privacy.html" class="link">Privacy Policy</a> |
-    <a href="/terms.html" class="link">Terms of Service</a>
-  </small>
-</footer>
-
 
   <!-- Status HUD -->
   <div id="hud" class="hud" hidden>
     <div class="hud__card" role="dialog" aria-modal="true" aria-labelledby="hud-title">
       <div class="hud__head">
         <div class="hud__title" id="hud-title">
-          <svg class="icon icon-rocket" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3l7 7-4 1-4 4-1 4-7-7 1-4 4-4 4-1Z"/></svg>
-          Spinning up Kirkification AI
+          <svg class="icon icon-rocket" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M14 3l7 7-4 1-4 4-1 4-7-7 1-4 4-4 4-1Z"/>
+          </svg>
+          Spinning up Kirkify AI
         </div>
         <div class="hud__progress" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
           <div class="hud__bar"></div>
@@ -106,6 +328,12 @@
       <span id="hud-live" class="sr-only" aria-live="polite"></span>
     </div>
   </div>
+
+  <noscript>
+    <div class="noscript">
+      Kirkify needs JavaScript enabled to upload images and show the kirkified result.
+    </div>
+  </noscript>
 
   <script src="assets/js/main.js" defer></script>
 </body>
