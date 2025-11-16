@@ -914,3 +914,17 @@ h3,
   height: 26px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
 }
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  padding: 10px 0;
+}
+
+@media (max-width: 720px) {
+  .ad-container {
+    margin: 20px auto;
+    transform: scale(0.95);
+  }
+}
