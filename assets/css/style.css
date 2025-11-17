@@ -915,6 +915,7 @@ h3,
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
 }
 /* ============ Ad containers ============ */
+/* ============ Ad containers ============ */
 
 /* Base container used everywhere */
 .ad-container {
@@ -924,58 +925,54 @@ h3,
   margin: 20px auto;
   padding: 10px 0;
   max-width: 100%;
-  /* allow full ad to render, even if wider than viewport */
-  overflow-x: auto;
 }
 
-/* Inner wrapper just holds the iframe at its native size */
+/* Inner wrapper just holds the iframe at its native size on desktop */
 .ad-inner {
   display: inline-block;
 }
 
-/* IMPORTANT: do NOT override ad iframe width/height.
-   Let the ad network control its own dimensions. */
+/* IMPORTANT: desktop – let the network control size, no cropping */
 .ad-inner iframe {
   display: block;
-  max-width: none;
-  height: auto;
   border: 0;
+  width: auto;      /* use intrinsic width (e.g. 728, 300, 468, 160) */
+  height: auto;     /* use intrinsic height */
+  max-width: none;  /* don’t shrink on desktop */
 }
 
-/* Top leaderboard 728x90 */
+/* 728x90 — leaderboard top */
 .ad-container--top {
-  /* center it, but don’t crop */
-  width: 100%;
-  justify-content: center;
+  max-width: 728px;
 }
 
 /* 300x250 — hero & footer boxes */
 .ad-container--hero,
 .ad-container--footer {
-  justify-content: center;
+  max-width: 300px;
 }
 
 /* 160x300 — small vertical block */
 .ad-container--narrow {
-  justify-content: center;
+  max-width: 160px;
 }
 
 /* 160x600 — skyscraper between sections */
 .ad-container--skyscraper {
-  justify-content: center;
+  max-width: 160px;
 }
 
 /* 320x50 — under preview */
 .ad-container--below-preview {
-  justify-content: center;
+  max-width: 320px;
 }
 
 /* 468x60 — inline near footer */
 .ad-container--inline {
-  justify-content: center;
+  max-width: 468px;
 }
 
-/* Smartlink text ad under "What can you do" (unchanged) */
+/* Smartlink text ad under "What can you do" */
 .ad-smartlink {
   text-align: center;
   margin: 14px 0 4px;
@@ -993,13 +990,40 @@ h3,
   color: #e5e7eb;
 }
 
-/* Mobile tweaks for ads & layout */
+/* ============ Mobile: scale wide ads down ============ */
 @media (max-width: 720px) {
   .ad-container {
-    margin-top: 16px;
+    max-width: 100%;
+    margin: 16px auto;
     padding: 6px 0 0;
   }
 
+  /* Let containers stretch to viewport width on mobile */
+  .ad-container--top,
+  .ad-container--hero,
+  .ad-container--footer,
+  .ad-container--inline,
+  .ad-container--below-preview {
+    max-width: 100%;
+  }
+
+  /* SCALE DOWN ONLY THE WIDE UNITS (don’t touch 160px-wide ones) */
+  .ad-container--top .ad-inner iframe,
+  .ad-container--hero .ad-inner iframe,
+  .ad-container--footer .ad-inner iframe,
+  .ad-container--inline .ad-inner iframe,
+  .ad-container--below-preview .ad-inner iframe {
+    width: 100% !important;  /* fit viewport */
+    height: auto !important; /* keep entire creative visible */
+  }
+
+  /* Keep skyscraper / narrow at their natural (160px) width – they already fit */
+  .ad-container--narrow,
+  .ad-container--skyscraper {
+    max-width: 160px;
+  }
+
+  /* Existing layout tweaks */
   .hero__tool {
     gap: 12px;
   }
