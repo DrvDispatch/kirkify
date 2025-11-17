@@ -914,35 +914,68 @@ h3,
   height: 26px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
 }
+/* ============ Ad containers ============ */
+
+/* Base container used everywhere */
 .ad-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px auto;
   padding: 10px 0;
-}
-
-@media (max-width: 720px) {
-  .ad-container {
-    margin: 20px auto;
-    transform: scale(0.95);
-  }
-}
-/* Shared container for display ads */
-.ad-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto 0;
-  padding: 10px 0;
-  max-width: 320px;
-}
-
-.ad-inner iframe {
   max-width: 100%;
+  /* allow full ad to render, even if wider than viewport */
+  overflow-x: auto;
 }
 
-/* Smartlink text ad under "What can you do" */
+/* Inner wrapper just holds the iframe at its native size */
+.ad-inner {
+  display: inline-block;
+}
+
+/* IMPORTANT: do NOT override ad iframe width/height.
+   Let the ad network control its own dimensions. */
+.ad-inner iframe {
+  display: block;
+  max-width: none;
+  height: auto;
+  border: 0;
+}
+
+/* Top leaderboard 728x90 */
+.ad-container--top {
+  /* center it, but don’t crop */
+  width: 100%;
+  justify-content: center;
+}
+
+/* 300x250 — hero & footer boxes */
+.ad-container--hero,
+.ad-container--footer {
+  justify-content: center;
+}
+
+/* 160x300 — small vertical block */
+.ad-container--narrow {
+  justify-content: center;
+}
+
+/* 160x600 — skyscraper between sections */
+.ad-container--skyscraper {
+  justify-content: center;
+}
+
+/* 320x50 — under preview */
+.ad-container--below-preview {
+  justify-content: center;
+}
+
+/* 468x60 — inline near footer */
+.ad-container--inline {
+  justify-content: center;
+}
+
+/* Smartlink text ad under "What can you do" (unchanged) */
 .ad-smartlink {
   text-align: center;
   margin: 14px 0 4px;
@@ -964,7 +997,6 @@ h3,
 @media (max-width: 720px) {
   .ad-container {
     margin-top: 16px;
-    max-width: 100%;
     padding: 6px 0 0;
   }
 
@@ -976,100 +1008,3 @@ h3,
     grid-template-columns: minmax(0, 1fr);
   }
 }
-/* =========================================
-   UNIVERSAL AD CONTAINER STYLES
-   ========================================= */
-.ad-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 22px auto;
-  padding: 6px 0;
-  max-width: 100%;
-}
-
-.ad-inner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-/* Make all ad iframes responsive */
-.ad-inner iframe {
-  display: block;
-  width: 100% !important;
-  height: auto !important;
-  max-width: 100%;
-}
-
-/* =========================================
-   SPECIFIC AD SIZE CONTAINERS
-   ========================================= */
-
-/* 728x90 — leaderboard top */
-.ad-container--top {
-  max-width: 728px;
-}
-
-/* 300x250 — hero & footer */
-.ad-container--hero,
-.ad-container--footer {
-  max-width: 300px;
-}
-
-/* 320x50 — mobile horizontal banner */
-.ad-container--below-preview {
-  max-width: 320px;
-}
-
-/* 160x300 — small vertical block */
-.ad-container--narrow {
-  max-width: 160px;
-}
-
-/* 468x60 — mid-page banner */
-.ad-container--inline {
-  max-width: 468px;
-}
-
-/* 160x600 — skyscraper */
-.ad-container--skyscraper {
-  max-width: 160px;
-}
-
-/* =========================================
-   MOBILE RESPONSIVE BEHAVIOR
-   ========================================= */
-@media (max-width: 768px) {
-
-  /* Shrink leaderboard to mobile width */
-  .ad-container--top {
-    max-width: 100%;
-  }
-
-  /* Reduce margin/padding on mobile */
-  .ad-container {
-    margin: 14px auto;
-    padding: 4px 0;
-  }
-}
-
-/* =========================================
-   EXTRA MOBILE OPTIMIZATION (max 480px)
-   ========================================= */
-@media (max-width: 480px) {
-
-  /* Allow even narrower ads to shrink */
-  .ad-container--narrow,
-  .ad-container--skyscraper {
-    max-width: 100%;
-  }
-
-  /* Remove possible overflow */
-  .ad-inner iframe {
-    width: 100% !important;
-    height: auto !important;
-  }
-}
-
