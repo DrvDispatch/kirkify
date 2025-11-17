@@ -915,9 +915,8 @@ h3,
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
 }
 /* ============ Ad containers ============ */
-/* ============ Ad containers ============ */
 
-/* Base container used everywhere */
+/* Base container */
 .ad-container {
   display: flex;
   justify-content: center;
@@ -927,52 +926,61 @@ h3,
   max-width: 100%;
 }
 
-/* Inner wrapper just holds the iframe at its native size on desktop */
+/* Wrapper that defines the size + ratio */
 .ad-inner {
-  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
 }
 
-/* IMPORTANT: desktop – let the network control size, no cropping */
+/* The ad iframe always fills its wrapper, no cropping */
 .ad-inner iframe {
   display: block;
+  width: 100% !important;
+  height: 100% !important;
   border: 0;
-  width: auto;      /* use intrinsic width (e.g. 728, 300, 468, 160) */
-  height: auto;     /* use intrinsic height */
-  max-width: none;  /* don’t shrink on desktop */
 }
 
-/* 728x90 — leaderboard top */
-.ad-container--top {
+/* === Size-specific wrappers (desktop) === */
+
+/* 728x90 — top leaderboard */
+.ad-container--top .ad-inner {
   max-width: 728px;
+  aspect-ratio: 728 / 90;
 }
 
-/* 300x250 — hero & footer boxes */
-.ad-container--hero,
-.ad-container--footer {
+/* 300x250 — hero and footer boxes */
+.ad-container--hero .ad-inner,
+.ad-container--footer .ad-inner {
   max-width: 300px;
+  aspect-ratio: 300 / 250;
 }
 
 /* 160x300 — small vertical block */
-.ad-container--narrow {
+.ad-container--narrow .ad-inner {
   max-width: 160px;
+  aspect-ratio: 160 / 300;
 }
 
-/* 160x600 — skyscraper between sections */
-.ad-container--skyscraper {
+/* 160x600 — skyscraper */
+.ad-container--skyscraper .ad-inner {
   max-width: 160px;
+  aspect-ratio: 160 / 600;
 }
 
 /* 320x50 — under preview */
-.ad-container--below-preview {
+.ad-container--below-preview .ad-inner {
   max-width: 320px;
+  aspect-ratio: 320 / 50;
 }
 
 /* 468x60 — inline near footer */
-.ad-container--inline {
+.ad-container--inline .ad-inner {
   max-width: 468px;
+  aspect-ratio: 468 / 60;
 }
 
-/* Smartlink text ad under "What can you do" */
+/* Smartlink text ad under "What can you do" (unchanged) */
 .ad-smartlink {
   text-align: center;
   margin: 14px 0 4px;
@@ -990,40 +998,19 @@ h3,
   color: #e5e7eb;
 }
 
-/* ============ Mobile: scale wide ads down ============ */
+/* ============ Mobile: scale whole unit down ============ */
 @media (max-width: 720px) {
   .ad-container {
+    width: 100%;
     max-width: 100%;
     margin: 16px auto;
     padding: 6px 0 0;
   }
 
-  /* Let containers stretch to viewport width on mobile */
-  .ad-container--top,
-  .ad-container--hero,
-  .ad-container--footer,
-  .ad-container--inline,
-  .ad-container--below-preview {
-    max-width: 100%;
+  .ad-inner {
+    width: 100%;
   }
 
-  /* SCALE DOWN ONLY THE WIDE UNITS (don’t touch 160px-wide ones) */
-  .ad-container--top .ad-inner iframe,
-  .ad-container--hero .ad-inner iframe,
-  .ad-container--footer .ad-inner iframe,
-  .ad-container--inline .ad-inner iframe,
-  .ad-container--below-preview .ad-inner iframe {
-    width: 100% !important;  /* fit viewport */
-    height: auto !important; /* keep entire creative visible */
-  }
-
-  /* Keep skyscraper / narrow at their natural (160px) width – they already fit */
-  .ad-container--narrow,
-  .ad-container--skyscraper {
-    max-width: 160px;
-  }
-
-  /* Existing layout tweaks */
   .hero__tool {
     gap: 12px;
   }
