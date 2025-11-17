@@ -976,3 +976,100 @@ h3,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* =========================================
+   UNIVERSAL AD CONTAINER STYLES
+   ========================================= */
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 22px auto;
+  padding: 6px 0;
+  max-width: 100%;
+}
+
+.ad-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Make all ad iframes responsive */
+.ad-inner iframe {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+}
+
+/* =========================================
+   SPECIFIC AD SIZE CONTAINERS
+   ========================================= */
+
+/* 728x90 — leaderboard top */
+.ad-container--top {
+  max-width: 728px;
+}
+
+/* 300x250 — hero & footer */
+.ad-container--hero,
+.ad-container--footer {
+  max-width: 300px;
+}
+
+/* 320x50 — mobile horizontal banner */
+.ad-container--below-preview {
+  max-width: 320px;
+}
+
+/* 160x300 — small vertical block */
+.ad-container--narrow {
+  max-width: 160px;
+}
+
+/* 468x60 — mid-page banner */
+.ad-container--inline {
+  max-width: 468px;
+}
+
+/* 160x600 — skyscraper */
+.ad-container--skyscraper {
+  max-width: 160px;
+}
+
+/* =========================================
+   MOBILE RESPONSIVE BEHAVIOR
+   ========================================= */
+@media (max-width: 768px) {
+
+  /* Shrink leaderboard to mobile width */
+  .ad-container--top {
+    max-width: 100%;
+  }
+
+  /* Reduce margin/padding on mobile */
+  .ad-container {
+    margin: 14px auto;
+    padding: 4px 0;
+  }
+}
+
+/* =========================================
+   EXTRA MOBILE OPTIMIZATION (max 480px)
+   ========================================= */
+@media (max-width: 480px) {
+
+  /* Allow even narrower ads to shrink */
+  .ad-container--narrow,
+  .ad-container--skyscraper {
+    max-width: 100%;
+  }
+
+  /* Remove possible overflow */
+  .ad-inner iframe {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
