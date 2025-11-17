@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kirkify Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view view--active">
+      <div class="login-card">
+        <h1>Kirkify Admin</h1>
+        <p class="login-subtitle">Sign in to manage jobs and the GPU instance.</p>
+        <form id="login-form">
+          <label>
+            Username
+            <input type="text" id="login-username" autocomplete="username" required />
+          </label>
+          <label>
+            Password
+            <input type="password" id="login-password" autocomplete="current-password" required />
+          </label>
+          <div id="login-error" class="error-msg" hidden></div>
+          <button type="submit" class="btn btn--primary">Sign In</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <header class="topbar">
+        <div class="topbar__left">
+          <div class="topbar__brand">Kirkify Admin</div>
+          <nav class="topbar__nav">
+            <button class="nav-btn is-active" data-nav="nav-overview">Overview</button>
+            <button class="nav-btn" data-nav="nav-jobs">Jobs</button>
+            <button class="nav-btn" data-nav="nav-logs">Logs</button>
+            <button class="nav-btn" data-nav="nav-settings">Settings</button>
+          </nav>
+        </div>
+        <div class="topbar__right">
+          <span id="topbar-user" class="topbar__user"></span>
+          <button id="logout-btn" class="btn btn--ghost">Logout</button>
+        </div>
+      </header>
+
+      <main class="main">
+
+        <!-- OVERVIEW -->
+        <section id="nav-overview" class="nav-section nav-section--active">
+          <h2>Overview</h2>
+          <div class="grid">
+            <div class="card">
+              <div class="card__label">Jobs (sample)</div>
+              <div id="overview-total-jobs" class="card__value">—</div>
+            </div>
+            <div class="card">
+              <div class="card__label">Avg processing time</div>
+              <div id="overview-avg-ms" class="card__value">—</div>
+            </div>
+            <div class="card">
+              <div class="card__label">GPU Status</div>
+              <div id="overview-gpu-status" class="card__value">—</div>
+              <div id="overview-gpu-extra" class="card__sub"></div>
+            </div>
+          </div>
+
+          <div class="card card--wide">
+            <div class="card__head">
+              <h3>Jobs by status</h3>
+              <button id="overview-refresh" class="btn btn--sm">Refresh</button>
+            </div>
+            <div id="overview-status-table" class="table table--compact"></div>
+          </div>
+        </section>
+
+        <!-- JOBS -->
+        <section id="nav-jobs" class="nav-section">
+          <div class="section-head">
+            <h2>Jobs</h2>
+            <div class="section-head__controls">
+              <label>
+                Status
+                <select id="jobs-filter-status">
+                  <option value="">All</option>
+                  <option>queued</option>
+                  <option>starting</option>
+                  <option>processing</option>
+                  <option>completed</option>
+                  <option>failed</option>
+                  <option>timeout</option>
+                  <option>canceled</option>
+                  <option>startup_timeout</option>
+                  <option>worker_failed</option>
+                  <option>worker_unreachable</option>
+                </select>
+              </label>
+              <label>
+                Search
+                <input id="jobs-filter-q" placeholder="filename or IP" />
+              </label>
+              <label>
+                Page size
+                <input id="jobs-limit" type="number" min="5" max="200" value="50" />
+              </label>
+              <button id="jobs-refresh" class="btn btn--sm">Refresh</button>
+              <button id="jobs-prev" class="btn btn--sm">Prev</button>
+              <button id="jobs-next" class="btn btn--sm">Next</button>
+            </div>
+          </div>
+
+          <div id="jobs-table" class="table"></div>
+
+          <div id="job-detail" class="job-detail" hidden>
+            <div class="job-detail__head">
+              <div>
+                <h3 id="job-detail-title">Job</h3>
+                <div id="job-detail-status" class="badge"></div>
+              </div>
+              <div class="job-actions">
+                <button id="job-cancel" class="btn btn--sm">Cancel</button>
+                <button id="job-retry" class="btn btn--sm">Retry</button>
+                <button id="job-delete" class="btn btn--danger btn--sm">Delete</button>
+                <button id="job-detail-close" class="btn btn--ghost btn--sm">Close</button>
+              </div>
+            </div>
+            <div class="job-detail__grid">
+              <div class="card">
+                <h4>Info</h4>
+                <dl id="job-detail-info" class="detail-list"></dl>
+              </div>
+
+              <div class="card">
+                <h4>Events</h4>
+                <div id="job-events" class="job-events"></div>
+              </div>
+
+              <div class="card">
+                <h4>Input</h4>
+                <div id="job-input-img" class="job-image-placeholder">No input yet</div>
+              </div>
+              <div class="card">
+                <h4>Output</h4>
+                <div id="job-output-img" class="job-image-placeholder">No output yet</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LOGS -->
+        <section id="nav-logs" class="nav-section">
+          <div class="section-head">
+            <h2>Worker Logs</h2>
+            <div>
+              <button id="logs-refresh" class="btn btn--sm">Refresh</button>
+            </div>
+          </div>
+          <div class="table table--compact" id="logs-table"></div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="nav-settings" class="nav-section">
+          <h2>Settings</h2>
+          <div class="card card--wide">
+            <div class="card__head">
+              <h3>GPU Instance</h3>
+              <div>
+                <button id="settings-refresh" class="btn btn--sm">Refresh</button>
+              </div>
+            </div>
+            <pre id="settings-gpu-json" class="code-block">Loading…</pre>
+            <div class="settings-actions">
+              <button id="settings-warm" class="btn btn--primary">Warm GPU</button>
+              <button id="settings-start" class="btn btn--primary">Start Instance</button>
+              <button id="settings-stop" class="btn btn--danger">Stop Instance</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
