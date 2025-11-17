@@ -1069,3 +1069,15 @@ h3,
   background: #4caf50;
   transition: width 0.1s linear;
 }
+.hud__note {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+/* NEW: queue line under steps */
+.hud__queue {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: #e5e7eb;
+}
