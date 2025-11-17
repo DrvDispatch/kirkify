@@ -613,38 +613,6 @@
     </div>
   </noscript>
 
-  <!-- Adsterra popunder + social bar (lazy-load after upload click/tap) -->
-  <script>
-    (function () {
-      document.addEventListener("DOMContentLoaded", function () {
-        var trigger = document.getElementById("upload-btn");
-        if (!trigger) return;
-
-        var adsLoaded = false;
-        function loadAdsterraExtras() {
-          if (adsLoaded) return;
-          adsLoaded = true;
-
-          // Popunder
-          var pop = document.createElement("script");
-          pop.src = "//abjectjunctionlatest.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js";
-          document.body.appendChild(pop);
-
-          // Social bar
-          var bar = document.createElement("script");
-          bar.src = "//abjectjunctionlatest.com/cc/92/54/cc9254f2048c6e1c7e99ca7ca1e98477.js";
-          document.body.appendChild(bar);
-
-          trigger.removeEventListener("click", loadAdsterraExtras);
-          trigger.removeEventListener("touchstart", loadAdsterraExtras);
-        }
-
-        trigger.addEventListener("click", loadAdsterraExtras);
-        trigger.addEventListener("touchstart", loadAdsterraExtras);
-      });
-    })();
-  </script>
-
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
 </body>
