@@ -599,7 +599,7 @@
   <!-- Popunder – Adsterra -->
   <script type="text/javascript" src="//abjectjunctionlatest.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js"></script>
 
-  <!-- Status HUD -->
+    <!-- Status HUD -->
   <div id="hud" class="hud" hidden>
     <div class="hud__card" role="dialog" aria-modal="true" aria-labelledby="hud-title">
       <div class="hud__head">
@@ -622,10 +622,14 @@
         <li data-step="process"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Processing image</span></li>
       </ol>
 
+      <!-- NEW: queue line -->
+      <p id="hud-queue" class="hud__queue" aria-live="polite" hidden></p>
+
       <p class="hud__note">This can take ~30–90s if the GPU was asleep.</p>
       <span id="hud-live" class="sr-only" aria-live="polite"></span>
     </div>
   </div>
+
 
   <noscript>
     <div class="noscript">
