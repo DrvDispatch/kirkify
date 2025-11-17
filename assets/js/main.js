@@ -266,3 +266,23 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => download.classList.remove("is-ready"), 1800);
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const indicator = document.querySelector(".scroll-indicator");
+  const bar = document.querySelector(".scroll-progress-bar");
+  const adSection = document.getElementById("ad-section");
+
+  function updateProgress() {
+    const rect = adSection.getBoundingClientRect();
+    const totalHeight = adSection.offsetHeight;
+    const scrolled = Math.min(Math.max(0, -rect.top), totalHeight);
+
+    const pct = (scrolled / totalHeight) * 100;
+    bar.style.width = pct + "%";
+
+    // Optional auto-hide when done
+    // if (pct >= 100) indicator.style.opacity = "0";
+  }
+
+  window.addEventListener("scroll", updateProgress);
+  updateProgress();
+});

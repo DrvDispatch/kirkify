@@ -107,6 +107,15 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <!-- Scroll Down Indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-arrow">▼</div>
+    <p class="scroll-text">Scroll to continue</p>
+    <div class="scroll-progress">
+      <div class="scroll-progress-bar"></div>
+    </div>
+  </div>
+
   <!-- 1:4 Native banner at very top – Adsterra -->
   <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
     <div class="ad-inner">
@@ -624,7 +633,35 @@
     </div>
   </noscript>
 
+  <!-- Scroll indicator progress logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const indicator = document.querySelector(".scroll-indicator");
+      const bar = document.querySelector(".scroll-progress-bar");
+      const hero = document.getElementById("try-kirkify");
+
+      if (!indicator || !bar || !hero) return;
+
+      const adHeight = hero.offsetTop; // distance from top of page to start of main section
+
+      function updateProgress() {
+        const scrolled = Math.min(window.scrollY, adHeight);
+        const pct = (scrolled / adHeight) * 100;
+        bar.style.width = pct + "%";
+
+        // Optional: fade out indicator when user reaches the main section
+        if (pct >= 100) {
+          indicator.classList.add("scroll-indicator--done");
+        } else {
+          indicator.classList.remove("scroll-indicator--done");
+        }
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+    });
+  </script>
+
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
 </body>
-</html>

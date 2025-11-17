@@ -1019,3 +1019,53 @@ h3,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* Scroll Indicator Container */
+.scroll-indicator {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 10px 0 14px;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+/* Animated arrow */
+.scroll-arrow {
+  font-size: 22px;
+  color: white;
+  animation: bounce 1.3s infinite;
+  margin-bottom: 3px;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+  100% { transform: translateY(0); }
+}
+
+/* “Scroll to continue” text */
+.scroll-text {
+  color: #fff;
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* Progress bar container */
+.scroll-progress {
+  width: 90%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  margin: 8px auto 0;
+  overflow: hidden;
+}
+
+/* The progress bar itself */
+.scroll-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 0.1s linear;
+}
