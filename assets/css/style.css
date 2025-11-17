@@ -928,3 +928,51 @@ h3,
     transform: scale(0.95);
   }
 }
+/* Shared container for display ads */
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto 0;
+  padding: 10px 0;
+  max-width: 320px;
+}
+
+.ad-inner iframe {
+  max-width: 100%;
+}
+
+/* Smartlink text ad under "What can you do" */
+.ad-smartlink {
+  text-align: center;
+  margin: 14px 0 4px;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.ad-smartlink a {
+  color: #a5b4fc;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.ad-smartlink a:hover {
+  color: #e5e7eb;
+}
+
+/* Mobile tweaks for ads & layout */
+@media (max-width: 720px) {
+  .ad-container {
+    margin-top: 16px;
+    max-width: 100%;
+    padding: 6px 0 0;
+  }
+
+  .hero__tool {
+    gap: 12px;
+  }
+
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

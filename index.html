@@ -174,8 +174,7 @@
             </div>
           </div>
 
-          <!-- (Ad slot removed for Ezoic compliance during setup) -->
-
+          <!-- Right column: tool + hero banner -->
           <div class="hero__tool">
             <!-- Upload card -->
             <section class="tool-card" aria-label="Upload image to kirkify">
@@ -222,6 +221,24 @@
                 <span class="hint">Drag the circle to compare before/after</span>
               </p>
             </section>
+
+            <!-- Adsterra 300x250 banner (high-visibility, non-intrusive) -->
+            <div class="ad-container ad-container--hero" aria-label="Advertisement" role="complementary">
+              <div class="ad-inner">
+                <script type="text/javascript">
+                  atOptions = {
+                    'key'    : 'dca5551e0721f02be55715f302dc7440',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width'  : 300,
+                    'params' : {}
+                  };
+                </script>
+                <script type="text/javascript"
+                        src="//www.highperformanceformat.com/dca5551e0721f02be55715f302dc7440/invoke.js">
+                </script>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -261,6 +278,14 @@
           <h2>What can you do with Kirkify?</h2>
           <p>From memes to avatars – kirkify your photos in seconds.</p>
         </div>
+
+        <!-- Adsterra Smartlink, low-friction text ad -->
+        <p class="ad-smartlink">
+          <a href="https://www.effectivegatecpm.com/q38x8ggwk1?key=6a86b12822ab0a61d8ab0d6877082b39"
+             target="_blank" rel="nofollow sponsored">
+            Sponsored: Discover offers that help keep Kirkify 100% free
+          </a>
+        </p>
 
         <div class="use-cards">
           <article class="use-card">
@@ -317,7 +342,7 @@
         </dl>
       </section>
 
-      <!-- LEGAL NOTE (moved down so Google doesn't use it as the main snippet) -->
+      <!-- LEGAL NOTE -->
       <p class="tos">
         By uploading an image, you agree to our
         <a href="/terms.html" class="link">Terms of Service</a>.
@@ -372,6 +397,38 @@
       Kirkify needs JavaScript enabled to upload images and show the kirkified result.
     </div>
   </noscript>
+
+  <!-- Adsterra popunder + social bar (lazy-load after upload click/tap) -->
+  <script>
+    (function () {
+      document.addEventListener("DOMContentLoaded", function () {
+        var trigger = document.getElementById("upload-btn");
+        if (!trigger) return;
+
+        var adsLoaded = false;
+        function loadAdsterraExtras() {
+          if (adsLoaded) return;
+          adsLoaded = true;
+
+          // Popunder
+          var pop = document.createElement("script");
+          pop.src = "//pl28072081.effectivegatecpm.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js";
+          document.body.appendChild(pop);
+
+          // Social bar
+          var bar = document.createElement("script");
+          bar.src = "//pl28072089.effectivegatecpm.com/cc/92/54/cc9254f2048c6e1c7e99ca7ca1e98477.js";
+          document.body.appendChild(bar);
+
+          trigger.removeEventListener("click", loadAdsterraExtras);
+          trigger.removeEventListener("touchstart", loadAdsterraExtras);
+        }
+
+        trigger.addEventListener("click", loadAdsterraExtras);
+        trigger.addEventListener("touchstart", loadAdsterraExtras);
+      });
+    })();
+  </script>
 
   <script src="assets/js/main.js" defer></script>
 </body>
