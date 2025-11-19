@@ -596,10 +596,20 @@
     </footer>
   </div>
 
-  <!-- Popunder – Adsterra -->
-  <script type="text/javascript" src="//abjectjunctionlatest.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js"></script>
+  <!-- Popunder – Adsterra (delayed load: 20s after full page load) -->
+  <script>
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = '//abjectjunctionlatest.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js';
+        document.body.appendChild(s);
+      }, 20000); // 20 seconds
+    });
+  </script>
 
-    <!-- Status HUD -->
+  <!-- Status HUD -->
   <div id="hud" class="hud" hidden>
     <div class="hud__card" role="dialog" aria-modal="true" aria-labelledby="hud-title">
       <div class="hud__head">
@@ -629,7 +639,6 @@
       <span id="hud-live" class="sr-only" aria-live="polite"></span>
     </div>
   </div>
-
 
   <noscript>
     <div class="noscript">
@@ -669,3 +678,4 @@
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
 </body>
+</html>
