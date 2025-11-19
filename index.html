@@ -6,7 +6,6 @@
 
   <title>Kirkify – Free Online AI Face Swap Tool (Instant Upload + No Watermark)</title>
 
-  <!-- Primary SEO description -->
   <meta name="description"
         content="Use Kirkify, the free online AI face swap tool. Upload a photo, swap faces with Charlie instantly, compare before and after, and download with zero watermarks or signup." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -95,10 +94,9 @@
   }
   </script>
 
-  <!-- Performance: preconnect to fonts and ad host -->
+  <!-- Performance: preconnect to fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//abjectjunctionlatest.com">
 
   <!-- Fonts & styles -->
   <link
@@ -116,14 +114,6 @@
     </div>
   </div>
 
-  <!-- 1:4 Native banner at very top – Adsterra -->
-  <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
-    <div class="ad-inner">
-      <script async="async" data-cfasync="false" src="//abjectjunctionlatest.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
-      <div id="container-c39b81789847253b78115f68c971d8f7"></div>
-    </div>
-  </div>
-
   <div class="page-shell">
     <!-- Header -->
     <header class="site-header">
@@ -135,6 +125,7 @@
 
         <nav class="nav" aria-label="Primary">
           <a href="#try-kirkify" class="nav__link">Try Kirkify Free</a>
+          <a href="#my-jobs" class="nav__link">My Jobs</a>
           <a href="#how-it-works" class="nav__link">How it works</a>
           <a href="#why-kirkify" class="nav__link">Why use Kirkify?</a>
           <a href="#faq" class="nav__link">FAQ</a>
@@ -332,6 +323,23 @@
         </div>
       </section>
 
+      <!-- NEW: My Jobs -->
+      <section id="my-jobs" class="section section--jobs" aria-label="Your recent jobs">
+        <div class="section__header">
+          <h2>Your recent jobs</h2>
+          <p>Jobs are tied to this browser (cookie/ID). You can leave the site and return here later to see progress or download the result.</p>
+        </div>
+
+        <div class="jobs-toolbar">
+          <button id="refresh-jobs" type="button" class="btn-primary btn-primary--sm">Refresh</button>
+          <span id="jobs-hint" class="hint"></span>
+        </div>
+
+        <div id="jobs-list" class="jobs-grid">
+          <!-- populated by main.js -->
+        </div>
+      </section>
+
       <!-- HOW IT WORKS -->
       <section id="how-it-works" class="section section--split">
         <div class="section__header">
@@ -485,7 +493,7 @@
       <!-- FAQ -->
       <section id="faq" class="section section--faq" aria-label="Frequently asked questions">
         <div class="section__header">
-          <h2>Frequently Asked Questions</h2>
+          <h2>Frequently asked Questions</h2>
           <p>Quick answers about Kirkify, privacy, and how the AI face swap tool works.</p>
         </div>
 
@@ -596,19 +604,6 @@
     </footer>
   </div>
 
-  <!-- Popunder – Adsterra (delayed load: 20s after full page load) -->
-  <script>
-    window.addEventListener('load', function () {
-      setTimeout(function () {
-        var s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.async = true;
-        s.src = '//abjectjunctionlatest.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js';
-        document.body.appendChild(s);
-      }, 20000); // 20 seconds
-    });
-  </script>
-
   <!-- Status HUD -->
   <div id="hud" class="hud" hidden>
     <div class="hud__card" role="dialog" aria-modal="true" aria-labelledby="hud-title">
@@ -632,10 +627,13 @@
         <li data-step="process"><span class="hud__bullet" aria-hidden="true"></span><span class="hud__label">Processing image</span></li>
       </ol>
 
-      <!-- NEW: queue line -->
+      <!-- queue + ETA -->
       <p id="hud-queue" class="hud__queue" aria-live="polite" hidden></p>
+      <p id="hud-eta" class="hud__note" aria-live="polite" hidden></p>
+      <p id="hud-return" class="hud__note">
+        Tip: you can close this page — find your job later under <strong>“My Jobs”</strong>.
+      </p>
 
-      <p class="hud__note">This can take ~30–90s if the GPU was asleep.</p>
       <span id="hud-live" class="sr-only" aria-live="polite"></span>
     </div>
   </div>
@@ -655,19 +653,13 @@
 
       if (!indicator || !bar || !hero) return;
 
-      const adHeight = hero.offsetTop; // distance from top of page to start of main section
+      const adHeight = hero.offsetTop;
 
       function updateProgress() {
         const scrolled = Math.min(window.scrollY, adHeight);
         const pct = (scrolled / adHeight) * 100;
         bar.style.width = pct + "%";
-
-        // Optional: fade out indicator when user reaches the main section
-        if (pct >= 100) {
-          indicator.classList.add("scroll-indicator--done");
-        } else {
-          indicator.classList.remove("scroll-indicator--done");
-        }
+        indicator.classList.toggle("scroll-indicator--done", pct >= 100);
       }
 
       window.addEventListener("scroll", updateProgress, { passive: true });
