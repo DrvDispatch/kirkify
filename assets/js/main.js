@@ -139,13 +139,27 @@
       queueEl.hidden = false;
       queueEl.textContent = `Queue: you are #${position} (${ahead} ahead of you)…`;
     }
-    function setEta(sec) {
+    function setEta(sec, text) {
       if (!etaEl) return;
-      if (!sec || sec <= 0) { etaEl.textContent = ""; etaEl.hidden = true; return; }
+      if ((sec == null || sec <= 0) && !text) {
+        etaEl.textContent = "";
+        etaEl.hidden = true;
+        return;
+      }
       etaEl.hidden = false;
-      etaEl.textContent = `Estimated wait: ~${KirkApp.fmtDuration(sec)}.`;
+      if (text) {
+        etaEl.textContent = text;
+      } else {
+        etaEl.textContent = `Estimated wait: ~${KirkApp.fmtDuration(sec)}.`;
+      }
     }
-    return { show, hide, mark, setQueue, setEta };
+    function setJob(id) {
+      const el = document.getElementById("hud-job");
+      if (!el) return;
+      el.hidden = false;
+      el.textContent = `Job #${String(id).slice(0, 8)} created. You can close this page and return via “My Jobs”.`;
+    }
+    return { show, hide, mark, setQueue, setEta, setJob };
   })();
 
   // ====== GPU chip loop + ETA source ==========================================================
@@ -198,20 +212,33 @@
     }
     async function createJob(file) {
       const cid = ensureClientId();
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/jobs`, {
-        method: "POST",
-        body: form,
-        headers: { "X-Client-Id": cid },
-        mode: "cors",
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `${KirkApp.CONTROLLER_URL}/api/jobs`, true);
+        xhr.responseType = "json";
+        xhr.setRequestHeader("X-Client-Id", cid);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            // Reuse ETA area for upload progress text
+            HUD.setEta(0, `Uploading image… ${pct}%`);
+          }
+        };
+        xhr.onerror = () => reject(new Error("Network error uploading image."));
+        xhr.onload = () => {
+          const resp = xhr.response;
+          if (xhr.status >= 200 && xhr.status < 300 && resp) {
+            resolve({ job_id: resp.id, status: resp.status });
+          } else {
+            reject(new Error(`Upload failed: ${xhr.status} ${resp?.detail || ""}`));
+          }
+        };
+
+        const fd = new FormData();
+        fd.append("file", file);
+        xhr.send(fd);
       });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`Job create failed: ${res.status} ${text || ""}`);
-      }
-      const data = await res.json();
-      return { job_id: data.id, status: data.status };
     }
     async function myJobs(params = {}) {
       const cid = ensureClientId();
@@ -370,7 +397,12 @@
         HUD.show();
         HUD.mark("contact", "done");
         HUD.mark("start", "active");
+        HUD.setJob(latest.id);
+        EtaTicker.start();
+
         JobClient.on(latest.id, (ev) => {
+          if (ev.type === "completed" || ev.type === "error") EtaTicker.stop();
+
           const type = ev.type; const msg = ev.message; const extra = ev.data || {};
           const queuePos = extra.queue_position ?? extra.position;
           if (typeof queuePos === "number") HUD.setQueue(queuePos);
@@ -409,6 +441,25 @@
     }
   }
 
+  // ====== ETA Ticker (keeps ETA fresh while queued/processing) ================================
+  const EtaTicker = (() => {
+    let t = null;
+    return {
+      start() {
+        if (t) clearInterval(t);
+        t = setInterval(async () => {
+          try {
+            const wt = await waitTime();
+            if (wt?.estimated_sec) HUD.setEta(wt.estimated_sec);
+          } catch {}
+        }, 15000);
+      },
+      stop() {
+        if (t) { clearInterval(t); t = null; }
+      },
+    };
+  })();
+
   // ====== Uploader / UI glue ==================================================================
   function initUploader() {
     const drop = KirkApp.$("#drop");
@@ -435,6 +486,7 @@
     }
 
     function safeDone() {
+      EtaTicker.stop();
       inflight = false;
       HUD.hide();
       currentJob = null;
@@ -462,10 +514,14 @@
       try {
         const { job_id } = await JobClient.createJob(file);
         currentJob = job_id;
+        HUD.setJob(job_id);      // Show Job #
+        renderJobs();            // Show the new job immediately in My Jobs
+        EtaTicker.start();       // Keep ETA fresh while queued
+
         HUD.mark("contact", "done");
         HUD.mark("start", "active");
 
-        // show “come back later” + ETA
+        // show “come back later” + initial ETA
         try {
           const wt = await waitTime();
           if (wt?.estimated_sec) HUD.setEta(wt.estimated_sec);
@@ -495,6 +551,7 @@
             alert(ev.message || "Processing failed");
             safeDone();
           } else if (type === "completed") {
+            EtaTicker.stop();
             HUD.mark("process", "done");
             if (ev.output_url) {
               afterImg.src = ev.output_url;
