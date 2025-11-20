@@ -337,29 +337,53 @@ function jobCard(job) {
     } catch {}
   }
 
-el.innerHTML = `
-  <div class="job-head">
-    <div class="job-title">
-      <span class="chip chip--${job.status || "queued"}">${(job.status || "queued").toUpperCase()}</span>
-      <span class="job-id">#${job.id.slice(0, 8)}</span>
+  el.innerHTML = `
+    <div class="job-head">
+      <div class="job-title">
+        <span class="chip chip--${job.status || "queued"}">
+          ${(job.status || "queued").toUpperCase()}
+        </span>
+        <span class="job-id">#${job.id.slice(0, 8)}</span>
+      </div>
+      <div class="job-meta">
+        ${createdIso ? KirkApp.fmtTime(createdIso) : ""}
+      </div>
     </div>
-    <div class="job-meta">${createdIso ? KirkApp.fmtTime(createdIso) : ""}</div>
-  </div>
 
-  <div class="job-imgs">
-    <img class="job-img__input" alt="Input image for job ${job.id}" />
-    <img class="job-img__output" alt="Output image for job ${job.id}" />
-  </div>
+    <div class="job-grid">
+      <div class="job-img">
+        <div class="job-img__label">Original</div>
+        <img
+          class="job-img__el job-img__input"
+          alt="Original image for job ${job.id}"
+        />
+      </div>
 
-  <div class="job-actions">
-    <a class="btn-open is-disabled" target="_blank" aria-disabled="true">Open</a>
-    <a class="btn-dl is-disabled" download="kirkified.jpg" aria-disabled="true">Download</a>
-  </div>
-`;
+      <div class="job-img">
+        <div class="job-img__label">Kirkified</div>
+        <img
+          class="job-img__el job-img__output"
+          alt="Kirkified image for job ${job.id}"
+        />
+      </div>
+    </div>
+
+    <div class="job-actions">
+      <a class="btn-link btn-open is-disabled"
+         target="_blank"
+         aria-disabled="true">
+        Open full image
+      </a>
+      <a class="btn-link btn-dl is-disabled"
+         download="kirkified.jpg"
+         aria-disabled="true">
+        Download
+      </a>
+    </div>
+  `;
 
   return el;
 }
-
 
   async function loadJobPreviews(job) {
     const card = KirkApp.$(`[data-job="${job.id}"]`);
