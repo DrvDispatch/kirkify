@@ -197,68 +197,94 @@
   }
 
   // ====== Job client (SSE) + persistent resume ===============================================
-  const JobClient = (() => {
-    const events = {};
-    function on(jobId, handler) { events[jobId] = handler; }
-    function openEvents(jobId) {
-      const url = `${KirkApp.CONTROLLER_URL}/api/jobs/${jobId}/events`;
-      const es = new EventSource(url, { withCredentials: false });
-      es.onmessage = (ev) => {
-        try { const payload = JSON.parse(ev.data || "{}"); events[jobId]?.(payload); }
-        catch (e) { KirkApp.log("SSE parse error", e); }
+const JobClient = (() => {
+  // Map: jobId -> Set of handlers
+  const events = {};
+
+  function on(jobId, handler) {
+    if (!events[jobId]) events[jobId] = new Set();
+    events[jobId].add(handler);
+
+    // Optional: return unsubscribe function
+    return () => {
+      events[jobId].delete(handler);
+      if (events[jobId].size === 0) delete events[jobId];
+    };
+  }
+
+  function openEvents(jobId) {
+    const url = `${KirkApp.CONTROLLER_URL}/api/jobs/${jobId}/events`;
+    const es = new EventSource(url, { withCredentials: false });
+
+    es.onmessage = (ev) => {
+      try {
+        const payload = JSON.parse(ev.data || "{}");
+        const handlers = events[jobId];
+        if (handlers) {
+          for (const fn of handlers) {
+            try { fn(payload); } catch (e) { KirkApp.log("SSE handler error", e); }
+          }
+        }
+      } catch (e) {
+        KirkApp.log("SSE parse error", e);
+      }
+    };
+    es.onerror = () => { /* browser will retry */ };
+    return es;
+  }
+
+  async function createJob(file) {
+    const cid = ensureClientId();
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${KirkApp.CONTROLLER_URL}/api/jobs`, true);
+      xhr.responseType = "json";
+      xhr.setRequestHeader("X-Client-Id", cid);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const pct = Math.round((e.loaded / e.total) * 100);
+          HUD.setEta(0, `Uploading image… ${pct}%`);
+        }
       };
-      es.onerror = () => { /* browser will retry */ };
-      return es;
-    }
-    async function createJob(file) {
-      const cid = ensureClientId();
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", `${KirkApp.CONTROLLER_URL}/api/jobs`, true);
-        xhr.responseType = "json";
-        xhr.setRequestHeader("X-Client-Id", cid);
+      xhr.onerror = () => reject(new Error("Network error uploading image."));
+      xhr.onload = () => {
+        const resp = xhr.response;
+        if (xhr.status >= 200 && xhr.status < 300 && resp) {
+          resolve({ job_id: resp.id, status: resp.status });
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status} ${resp?.detail || ""}`));
+        }
+      };
 
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const pct = Math.round((e.loaded / e.total) * 100);
-            // Reuse ETA area for upload progress text
-            HUD.setEta(0, `Uploading image… ${pct}%`);
-          }
-        };
-        xhr.onerror = () => reject(new Error("Network error uploading image."));
-        xhr.onload = () => {
-          const resp = xhr.response;
-          if (xhr.status >= 200 && xhr.status < 300 && resp) {
-            resolve({ job_id: resp.id, status: resp.status });
-          } else {
-            reject(new Error(`Upload failed: ${xhr.status} ${resp?.detail || ""}`));
-          }
-        };
+      const fd = new FormData();
+      fd.append("file", file);
+      xhr.send(fd);
+    });
+  }
 
-        const fd = new FormData();
-        fd.append("file", file);
-        xhr.send(fd);
-      });
-    }
-    async function myJobs(params = {}) {
-      const cid = ensureClientId();
-      const qs = new URLSearchParams({ ...params, limit: String(params.limit || KirkApp.MAX_JOBS_IN_UI) });
-      const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/my/jobs?` + qs.toString(), {
-        headers: { "X-Client-Id": cid },
-        mode: "cors",
-      });
-      if (!res.ok) return { items: [] };
-      return res.json();
-    }
-    async function mySignedUrl(jobId, kind = "output") {
-      const cid = ensureClientId();
-      const qs = new URLSearchParams({ job_id: jobId, kind, client_id: cid });
-      const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/my/signed_url?` + qs.toString(), { mode: "cors" });
-      if (!res.ok) throw new Error("signed_url failed");
-      return res.json(); // {ok, url}
-    }
-    return { createJob, openEvents, on, myJobs, mySignedUrl };
-  })();
+  async function myJobs(params = {}) {
+    const cid = ensureClientId();
+    const qs = new URLSearchParams({ ...params, limit: String(params.limit || KirkApp.MAX_JOBS_IN_UI) });
+    const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/my/jobs?` + qs.toString(), {
+      headers: { "X-Client-Id": cid },
+      mode: "cors",
+    });
+    if (!res.ok) return { items: [] };
+    return res.json();
+  }
+
+  async function mySignedUrl(jobId, kind = "output") {
+    const cid = ensureClientId();
+    const qs = new URLSearchParams({ job_id: jobId, kind, client_id: cid });
+    const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/my/signed_url?` + qs.toString(), { mode: "cors" });
+    if (!res.ok) throw new Error("signed_url failed");
+    return res.json(); // {ok, url}
+  }
+
+  return { createJob, openEvents, on, myJobs, mySignedUrl };
+})();
+
 
   // ====== My Jobs UI ==========================================================================
   async function renderJobs() {
@@ -297,35 +323,33 @@
     }
   }
 
-  function jobCard(job) {
-    const el = document.createElement("article");
-    el.className = "job-card";
-    el.dataset.job = job.id;
-    el.innerHTML = `
-      <div class="job-head">
-        <div class="job-title">
-          <span class="chip chip--${job.status || "queued"}">${(job.status || "queued").toUpperCase()}</span>
-          <span class="job-id">#${job.id.slice(0, 8)}</span>
-        </div>
-        <div class="job-meta">${job.created_at ? KirkApp.fmtTime(job.created_at) : ""}</div>
-      </div>
-      <div class="job-grid">
-        <div class="job-img">
-          <div class="job-img__label">Input</div>
-          <img class="job-img__el job-img__input" alt="Input image" />
-        </div>
-        <div class="job-img">
-          <div class="job-img__label">Output</div>
-          <img class="job-img__el job-img__output" alt="Output image"/>
-        </div>
-      </div>
-      <div class="job-actions">
-        <a class="btn-link btn-open is-disabled" href="#" target="_blank" rel="noopener">Open result</a>
-        <a class="btn-link btn-dl is-disabled" href="#" download="kirkified.jpg" aria-disabled="true">Download</a>
-      </div>
-    `;
-    return el;
+function jobCard(job) {
+  const el = document.createElement("article");
+  el.className = "job-card";
+  el.dataset.job = job.id;
+
+  let createdIso = "";
+  if (job.created_at) {
+    createdIso = job.created_at;
+  } else if (job.created_at_ms) {
+    try {
+      createdIso = new Date(Number(job.created_at_ms)).toISOString();
+    } catch {}
   }
+
+  el.innerHTML = `
+    <div class="job-head">
+      <div class="job-title">
+        <span class="chip chip--${job.status || "queued"}">${(job.status || "queued").toUpperCase()}</span>
+        <span class="job-id">#${job.id.slice(0, 8)}</span>
+      </div>
+      <div class="job-meta">${createdIso ? KirkApp.fmtTime(createdIso) : ""}</div>
+    </div>
+    ...
+  `;
+  return el;
+}
+
 
   async function loadJobPreviews(job) {
     const card = KirkApp.$(`[data-job="${job.id}"]`);
@@ -602,5 +626,5 @@
     loopGpuChip();
     renderJobs();
   });
-  setInterval(loopGpuChip, 2000);
+  setInterval(loopGpuChip, 20000);
 })();
