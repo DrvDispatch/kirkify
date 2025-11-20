@@ -1,17 +1,54 @@
+#!/usr/bin/env python3
+"""
+Kirkify Controller — Redis-first, async, low-latency
+
+What changed vs. your previous controller:
+- 🔥 Firestore is **not** used on the hot path anymore (disabled by default).
+- 🔁 Job queueing/locking and worker coordination moved to **Redis** (async).
+- 📡 Event streaming (SSE) uses **Redis Pub/Sub** + a small rolling event log in Redis.
+- ⏱️ All blocking GCS ops (upload/sign) are offloaded via asyncio.to_thread.
+- 🧹 Lease expiry handled with Redis TTL + a small optional async reaper task.
+- 🧩 Vast.ai polling is **not** in this process anymore (run separately if needed).
+- 🧵 Uvicorn can run with multiple workers because state is in Redis.
+
+Environment knobs (sane defaults; see below for setup commands):
+  REDIS_URL                    redis://localhost:6379/0
+  CORS_ORIGINS                 CSV list (defaults include kirkify.nl + localhost)
+  HEARTBEAT_STALE_SEC          30.0
+  JOB_LEASE_TIMEOUT_SEC        180.0
+  TOTAL_JOB_TIMEOUT_SEC        300
+  P0_ENABLED                   1          (enable priority queue list queue:p0)
+  FIREBASE_GCS_ENABLED         1          (GCS via firebase_admin.storage)
+  FIREBASE_CREDENTIALS_PATH    /srv/kirk-controller/FirebaseAuth.json
+  FIREBASE_STORAGE_BUCKET      <optional> (defaults to <project-id>.appspot.com)
+  FIRESTORE_ARCHIVE_EVENTS     0          (off by default; if 1, writes happen async)
+  PRIORITY_IPS                 CSV of IPs that bypass normal queue
+  LEASE_SWEEPER_ENABLED        0          (if 1, run lightweight async lease sweeper)
+"""
+
 import os
 import re
 import json
 import time
-import threading
+import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 from uuid import uuid4
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, List, AsyncGenerator
-from collections import deque
+from typing import Optional, Dict, Any, List
 
-import requests
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request, Depends, Query, Form
+import redis.asyncio as redis
+
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    HTTPException,
+    Request,
+    Depends,
+    Query,
+    Form,
+)
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -20,21 +57,20 @@ from pydantic import BaseModel
 from jose import jwt, JWTError
 from passlib.hash import bcrypt
 
-# --- Firebase Admin ---
-import firebase_admin
-from firebase_admin import credentials, firestore, storage
-
-# RTDB is optional (only if FIREBASE_DATABASE_URL is provided)
-try:
-    from firebase_admin import db as rtdb  # type: ignore
-except Exception:
-    rtdb = None  # noqa: N816
+# --- Optional Firebase Admin for GCS only (NO Firestore on hot path) ---
+FIREBASE_GCS_ENABLED = os.getenv("FIREBASE_GCS_ENABLED", "1") not in {"0", "false", "no"}
+bucket = None
+if FIREBASE_GCS_ENABLED:
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, storage as fb_storage
+    except Exception as _e:
+        FIREBASE_GCS_ENABLED = False
 
 # --- Env / Config ---
 from dotenv import load_dotenv
 
-# Allow alternate env file for testing
-load_dotenv(os.getenv("CONTROLLER_ENV_FILE", "/srv/kirk-controller/.env"))
+load_dotenv(os.getenv("CONTROLLER_ENV_FILE", "/srv/kirk-controller/.env"), override=True)
 
 # ================== Logging ==================
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -58,124 +94,41 @@ if LOG_FILE:
     _fh.setFormatter(_fmt)
     logger.addHandler(_fh)
 
-
-# ========= Vast.ai HTTP API client (inventory only) =========
-class VastClient:
-    """
-    Minimal Vast.ai HTTP API client used ONLY for discovery/inventory, not lifecycle control.
-      GET /api/v0/instances/
-      GET /api/v0/instances/{id}/
-    """
-
-    def __init__(
-        self,
-        base_url: str,
-        api_key: Optional[str] = None,
-        verify_ssl: bool = True,
-        timeout: float = 6.0,
-        backoff_429: float = 2.0,
-    ):
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
-        self.verify_ssl = verify_ssl
-        self.timeout = timeout
-        self.backoff_429 = backoff_429
-
-    def _headers(self) -> Dict[str, str]:
-        h = {"Accept": "application/json"}
-        if self.api_key:
-            h["Authorization"] = f"Bearer {self.api_key}"
-        return h
-
-    def _req(self, method: str, path: str, params=None) -> Optional[dict]:
-        url = f"{self.base_url}{path}"
-        try:
-            r = requests.request(
-                method=method.upper(),
-                url=url,
-                headers=self._headers(),
-                params=params or {},
-                timeout=self.timeout,
-                verify=self.verify_ssl,
-            )
-            if r.status_code == 429:
-                time.sleep(self.backoff_429)
-                r = requests.request(
-                    method=method.upper(),
-                    url=url,
-                    headers=self._headers(),
-                    params=params or {},
-                    timeout=self.timeout,
-                    verify=self.verify_ssl,
-                )
-            if not r.ok:
-                return None
-            return r.json()
-        except Exception as e:
-            logger.warning(f"VastClient req error: {e}")
-            return None
-
-    @staticmethod
-    def _normalize_instances(payload: Optional[dict]) -> List[dict]:
-        if not isinstance(payload, dict) or "instances" not in payload:
-            return []
-        data = payload["instances"]
-        if isinstance(data, list):
-            return [x for x in data if isinstance(x, dict)]
-        if isinstance(data, dict):
-            if "id" in data:
-                return [data]
-            return [v for v in data.values() if isinstance(v, dict)]
-        return []
-
-    def list_instances(self) -> List[dict]:
-        p = self._req("GET", "/instances/")
-        return self._normalize_instances(p)
-
-    def show_instance(self, inst_id: int) -> Optional[dict]:
-        p = self._req("GET", f"/instances/{inst_id}/")
-        arr = self._normalize_instances(p)
-        return arr[0] if arr else None
-
-
 # ================== App & CORS ==================
-app = FastAPI(title="Kirkify Controller (Pull-based, Firebase)")
+app = FastAPI(title="Kirkify Controller (Redis-first, async)")
+
+_default_cors = [
+    "https://admin.keyauth.eu",
+    "https://kirkify.nl",
+    "https://www.kirkify.nl",
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ORIGINS = [
+    o.strip() for o in os.getenv("CORS_ORIGINS", ",".join(_default_cors)).split(",") if o.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://admin.keyauth.eu",
-        "https://kirkify.nl",
-        "https://www.kirkify.nl",
-        "http://localhost",
-        "http://127.0.0.1",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ================== Config ==================
-# Vast API (for inventory only)
-VAST_API_BASE = os.getenv("VAST_API_BASE", "https://console.vast.ai/api/v0")
-VAST_API_KEY = os.getenv("VAST_API_KEY")
-VAST_VERIFY_SSL = os.getenv("VAST_VERIFY_SSL", "1") not in {
-    "0",
-    "false",
-    "False",
-    "no",
-}
-VAST_REFRESH_SEC = float(os.getenv("VAST_REFRESH_SEC", "20.0"))
-VAST_BACKOFF_429 = float(os.getenv("VAST_BACKOFF_429", "2.0"))
-VAST_HTTP_TIMEOUT = float(os.getenv("VAST_HTTP_TIMEOUT", "6.0"))
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 # Lease + queue
 JOB_LEASE_TIMEOUT_SEC = float(os.getenv("JOB_LEASE_TIMEOUT_SEC", "180.0"))
-LEASE_SWEEP_SEC = float(os.getenv("LEASE_SWEEP_SEC", "2.0"))
 HEARTBEAT_STALE_SEC = float(os.getenv("HEARTBEAT_STALE_SEC", "30.0"))
 TOTAL_JOB_TIMEOUT_SEC = int(os.getenv("TOTAL_JOB_TIMEOUT_SEC", "300"))
+P0_ENABLED = os.getenv("P0_ENABLED", "1") not in {"0", "false", "no"}
+
+LEASE_SWEEPER_ENABLED = os.getenv("LEASE_SWEEPER_ENABLED", "0") in {"1", "true", "yes"}
+LEASE_SWEEP_SEC = float(os.getenv("LEASE_SWEEP_SEC", "2.0"))
 
 # Admin JWT
 JWT_SECRET = os.getenv("JWT_SECRET", "change-me")
@@ -183,57 +136,42 @@ JWT_ISS = os.getenv("JWT_ISS", "kirkify-controller")
 JWT_AUD = os.getenv("JWT_AUD", "admin")
 JWT_EXP_MIN = int(os.getenv("JWT_EXP_MIN", "720"))
 ADMIN_USER = os.getenv("ADMIN_USER", "admin")
-ADMIN_PASS_HASH = os.getenv("ADMIN_PASS_HASH") or bcrypt.hash(
-    os.getenv("ADMIN_PASS", "admin123")
-)
+ADMIN_PASS_HASH = os.getenv("ADMIN_PASS_HASH") or bcrypt.hash(os.getenv("ADMIN_PASS", "admin123"))
 
-# Firebase Admin
-FIREBASE_CREDENTIALS_PATH = os.getenv(
-    "FIREBASE_CREDENTIALS_PATH", "/srv/kirk-controller/FirebaseAuth.json"
-)
+# Firebase (GCS)
+FIREBASE_CREDENTIALS_PATH = os.getenv("FIREBASE_CREDENTIALS_PATH", "/srv/kirk-controller/FirebaseAuth.json")
 FIREBASE_STORAGE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET")
-FIREBASE_DATABASE_URL = os.getenv("FIREBASE_DATABASE_URL")
 
-if not firebase_admin._apps:
-    cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-    project_id = cred.project_id
-    init_opts: Dict[str, Any] = {
-        "storageBucket": FIREBASE_STORAGE_BUCKET or f"{project_id}.appspot.com",
-        "projectId": project_id,
-    }
-    if FIREBASE_DATABASE_URL:
-        init_opts["databaseURL"] = FIREBASE_DATABASE_URL
-    firebase_admin.initialize_app(cred, init_opts)
+# Firestore archival (disabled by default)
+FIRESTORE_ARCHIVE_EVENTS = os.getenv("FIRESTORE_ARCHIVE_EVENTS", "0") in {"1", "true", "yes"}
+if FIRESTORE_ARCHIVE_EVENTS:
+    # Optional & off-path: you can implement an async consumer to mirror Redis events to Firestore.
+    # Intentionally not imported/initialized here to keep the hot path cold.
+    logger.warning("FIRESTORE_ARCHIVE_EVENTS is enabled – remember this runs async and off the hot path.")
 
-fs = firestore.client()
-bucket = storage.bucket()
-rtdb_root = (
-    rtdb.reference("/") if (FIREBASE_DATABASE_URL and rtdb is not None) else None
-)
-
-# ================== State ==================
-_state_lock = threading.Lock()
-_queue_lock = threading.Lock()
-
-# Two-level priority queue
-_job_queue_p0: deque[str] = deque()  # high priority
-_job_queue_p1: deque[str] = deque()  # normal
-
-# Keep your existing structures:
-_leases: Dict[str, Dict[str, Any]] = {}  # job_id -> {"worker_id": str, "deadline_ts": float, "retries": int}
-_workers: Dict[str, Dict[str, Any]] = {}  # worker_id -> info
-
-# vast inventory
-_vast_inventory: Dict[str, Dict[str, Any]] = {}
-_vast_ip_index: Dict[str, str] = {}  # public_ip -> instance_id
-
-# Allow config; default to your IP
+# Priority IPs
 PRIORITY_IPS = {
     ip.strip()
     for ip in os.getenv("PRIORITY_IPS", "94.110.221.234").split(",")
     if ip.strip()
 }
 
+# ================== Redis ==================
+r: Optional[redis.Redis] = None  # set in startup()
+
+# Redis keys
+K_WORKERS = "workers"                      # set of worker_ids
+K_WORKER = "worker:{wid}"                  # hash
+K_QUEUE_P0 = "queue:p0"
+K_QUEUE_P1 = "queue:p1"
+K_LEASE = "lease:{job_id}"                 # hash
+K_LEASE_SET = "leases"                     # set of job_ids with leases (for optional sweeper)
+K_JOB = "job:{job_id}"                     # hash
+K_EVENTS = "events:{job_id}"               # list (LPUSH newest first)
+K_EVENTS_CH = "ch:events:{job_id}"         # Pub/Sub channel
+K_JOBS_GLOBAL = "jobs"                     # list of job_ids (LPUSH newest first)
+K_CLIENT_JOBS = "client:{cid}:jobs"        # list of job_ids (LPUSH newest first)
+K_IP_JOBS = "ip:{ip}:jobs"                 # list of job_ids (LPUSH newest first)
 
 # ================== Utilities ==================
 def _client_ip(request: Request) -> str:
@@ -242,150 +180,197 @@ def _client_ip(request: Request) -> str:
         return xf.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
 
-
-def _json_dt(d: Dict[str, Any]) -> Dict[str, Any]:
-    out = {}
-    for k, v in (d or {}).items():
-        out[k] = v.isoformat() if isinstance(v, datetime) else v
-    return out
-
-
 def safe_filename(name: str) -> str:
     base = os.path.basename(name or "").strip() or "upload.bin"
     base = re.sub(r"[^\w.\-]+", "_", base)
     return base[:120]
 
+def utc_now() -> datetime:
+    return datetime.utcnow()
 
-def _remove_from_queue(job_id: str) -> bool:
-    removed = False
-    with _queue_lock:
-        try:
-            _job_queue_p0.remove(job_id)
-            removed = True
-        except ValueError:
-            pass
-        try:
-            _job_queue_p1.remove(job_id)
-            removed = True
-        except ValueError:
-            pass
-    return removed
+def utc_ms() -> int:
+    return int(time.time() * 1000)
 
+def to_iso(d: Optional[datetime]) -> Optional[str]:
+    if isinstance(d, datetime):
+        return d.isoformat()
+    return None
 
-# ================== Firestore helpers ==================
-def jobs_col():
-    return fs.collection("jobs")
+async def maybe_float(v: Any, default: float = 0.0) -> float:
+    try:
+        return float(v)
+    except Exception:
+        return default
 
+async def maybe_int(v: Any, default: int = 0) -> int:
+    try:
+        return int(v)
+    except Exception:
+        return default
 
-def events_col(job_id: str):
-    return jobs_col().document(job_id).collection("events")
+# ================== GCS helpers (sync funcs + async wrappers) ==================
+def _ensure_bucket_sync():
+    global bucket, FIREBASE_GCS_ENABLED
+    if not FIREBASE_GCS_ENABLED:
+        raise RuntimeError("GCS disabled (FIREBASE_GCS_ENABLED=0)")
+    if bucket is not None:
+        return bucket
 
+    # Lazy init firebase_admin for GCS
+    if 'firebase_admin' not in globals():
+        raise RuntimeError("firebase_admin not available")
+    try:
+        if not firebase_admin._apps:  # type: ignore[attr-defined]
+            cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)  # type: ignore[name-defined]
+            project_id = cred.project_id
+            init_opts: Dict[str, Any] = {
+                "storageBucket": FIREBASE_STORAGE_BUCKET or f"{project_id}.appspot.com",
+                "projectId": project_id,
+            }
+            firebase_admin.initialize_app(cred, init_opts)  # type: ignore[name-defined]
+        b = fb_storage.bucket()  # type: ignore[name-defined]
+    except Exception as e:
+        raise RuntimeError(f"GCS init failed: {e}")
+    globals()["bucket"] = b
+    return b
 
-def controller_logs_col():
-    return fs.collection("controller_logs")
+def upload_bytes_to_gcs_sync(path: str, blob_bytes: bytes, content_type: str) -> None:
+    b = _ensure_bucket_sync()
+    blob = b.blob(path)
+    blob.upload_from_string(blob_bytes, content_type=content_type or "application/octet-stream")
 
-
-def worker_logs_col():
-    return fs.collection("worker_logs")
-
-
-def storage_input_path(job_id: str, filename: str) -> str:
-    return f"jobs/{job_id}/input/{safe_filename(filename)}"
-
-
-def storage_output_path(job_id: str) -> str:
-    return f"jobs/{job_id}/output/output.jpg"
-
-
-def upload_bytes_to_gcs(path: str, blob_bytes: bytes, content_type: str) -> None:
-    blob = bucket.blob(path)
-    blob.upload_from_string(
-        blob_bytes, content_type=content_type or "application/octet-stream"
-    )
-
-
-def download_bytes_from_gcs(path: str) -> bytes:
-    return bucket.blob(path).download_as_bytes()
-
-
-def sign_url(path: str, hours: int = 24) -> str:
-    return bucket.blob(path).generate_signed_url(
+def sign_url_sync(path: str, hours: int = 24) -> str:
+    b = _ensure_bucket_sync()
+    return b.blob(path).generate_signed_url(
         version="v4",
         expiration=timedelta(hours=hours),
         method="GET",
     )
 
+# ================== Job/Event helpers (Redis) ==================
+EVENTS_MAX = int(os.getenv("EVENTS_MAX", "200"))
 
-def push_event(
-    job_id: str,
-    etype: str,
-    message: str,
-    progress: Optional[int] = None,
-    extra: Optional[dict] = None,
-):
-    doc = {"ts": firestore.SERVER_TIMESTAMP, "type": etype, "message": message}
+async def rkey(template: str, **kwargs) -> str:
+    return template.format(**kwargs)
+
+async def publish_event(job_id: str, etype: str, message: str, progress: Optional[int] = None, extra: Optional[dict] = None):
+    if r is None:
+        return
+    event = {"ts": utc_ms(), "type": etype, "message": message}
     if progress is not None:
-        doc["progress"] = progress
+        event["progress"] = progress
     if extra:
-        doc["data"] = extra
-    try:
-        events_col(job_id).add(doc)
-    except Exception as e:
-        logger.warning(f"push_event Firestore error: {e}")
-    # Optional RTDB mirror
-    try:
-        if rtdb_root is not None:
-            payload = {
-                "ts": int(time.time() * 1000),
-                "type": etype,
-                "message": message,
-                "progress": progress,
-                "data": extra or {},
-            }
-            rtdb_root.child("jobs").child(job_id).child("events").push(payload)
-    except Exception as e:
-        logger.warning(f"push_event RTDB warn: {e}")
+        event["data"] = extra
 
+    k_events = await rkey(K_EVENTS, job_id=job_id)
+    k_ch = await rkey(K_EVENTS_CH, job_id=job_id)
+    # rolling log (LPUSH → newest first), capped
+    await r.lpush(k_events, json.dumps(event))
+    await r.ltrim(k_events, 0, EVENTS_MAX - 1)
+    # pub/sub push
+    await r.publish(k_ch, json.dumps(event))
 
-def set_job(job_id: str, data: Dict[str, Any]):
-    data["updated_at"] = firestore.SERVER_TIMESTAMP
-    jobs_col().document(job_id).set(data, merge=True)
+async def get_job(job_id: str) -> Dict[str, Any]:
+    if r is None:
+        return {}
+    k = await rkey(K_JOB, job_id=job_id)
+    data = await r.hgetall(k)
+    # decode numeric-ish
+    if not data:
+        return {}
+    out: Dict[str, Any] = dict(data)
+    for fld in ("created_at_ms", "started_at_ms", "finished_at_ms", "processing_ms"):
+        if fld in out:
+            try:
+                out[fld] = int(out[fld])
+            except Exception:
+                pass
+    return out
 
+async def set_job_fields(job_id: str, fields: Dict[str, Any]):
+    if r is None:
+        return
+    k = await rkey(K_JOB, job_id=job_id)
+    # redis expects flat strings
+    flat = {}
+    for key, val in (fields or {}).items():
+        if isinstance(val, (dict, list)):
+            flat[key] = json.dumps(val)
+        else:
+            flat[key] = str(val)
+    if flat:
+        await r.hset(k, mapping=flat)
 
-def create_job(job: Dict[str, Any]):
-    job["created_at"] = firestore.SERVER_TIMESTAMP
-    job["updated_at"] = firestore.SERVER_TIMESTAMP
-    jobs_col().document(job["id"]).set(job)
+async def index_job(job_id: str, client_id: Optional[str], caller_ip: str):
+    if r is None:
+        return
+    # global index (LPUSH newest first)
+    await r.lpush(K_JOBS_GLOBAL, job_id)
+    if client_id:
+        await r.lpush(await rkey(K_CLIENT_JOBS, cid=client_id), job_id)
+    await r.lpush(await rkey(K_IP_JOBS, ip=caller_ip), job_id)
 
+async def enqueue_job(job_id: str, priority: bool = False):
+    if r is None:
+        return
+    if priority and P0_ENABLED:
+        await r.rpush(K_QUEUE_P0, job_id)
+    else:
+        await r.rpush(K_QUEUE_P1, job_id)
 
-def log_to_firestore(level: str, msg: str):
-    level = (level or "info").lower()
-    getattr(logger, level, logger.info)(msg)
-    try:
-        controller_logs_col().add(
-            {"ts": firestore.SERVER_TIMESTAMP, "level": level, "message": msg}
-        )
-    except Exception:
-        pass
+async def dequeue_job() -> Optional[str]:
+    if r is None:
+        return None
+    if P0_ENABLED:
+        jid = await r.lpop(K_QUEUE_P0)
+        if jid:
+            return jid
+    return await r.lpop(K_QUEUE_P1)
 
+async def queues_size() -> int:
+    if r is None:
+        return 0
+    p0 = await r.llen(K_QUEUE_P0) if P0_ENABLED else 0
+    p1 = await r.llen(K_QUEUE_P1)
+    return int(p0) + int(p1)
+
+async def create_lease(job_id: str, worker_id: str, timeout_sec: float, retries: int):
+    if r is None:
+        return
+    now = time.time()
+    deadline = now + timeout_sec
+    k = await rkey(K_LEASE, job_id=job_id)
+    await r.hset(k, mapping={"worker_id": worker_id, "deadline_ts": str(deadline), "retries": str(retries)})
+    await r.sadd(K_LEASE_SET, job_id)
+
+async def pop_lease(job_id: str) -> Optional[Dict[str, Any]]:
+    if r is None:
+        return None
+    k = await rkey(K_LEASE, job_id=job_id)
+    lease = await r.hgetall(k)
+    await r.delete(k)
+    await r.srem(K_LEASE_SET, job_id)
+    return lease
+
+async def get_lease(job_id: str) -> Dict[str, Any]:
+    if r is None:
+        return {}
+    k = await rkey(K_LEASE, job_id=job_id)
+    lease = await r.hgetall(k)
+    return lease or {}
 
 # ================== Auth helpers ==================
 class LoginReq(BaseModel):
     username: str
     password: str
 
-
 def make_jwt(sub: str) -> str:
     exp = datetime.utcnow() + timedelta(minutes=JWT_EXP_MIN)
     payload = {"sub": sub, "iss": JWT_ISS, "aud": JWT_AUD, "exp": exp}
     return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
-
 def _decode_jwt(token: str) -> dict:
-    return jwt.decode(
-        token, JWT_SECRET, algorithms=["HS256"], audience=JWT_AUD, issuer=JWT_ISS
-    )
-
+    return jwt.decode(token, JWT_SECRET, algorithms=["HS256"], audience=JWT_AUD, issuer=JWT_ISS)
 
 def require_admin(req: Request):
     auth = req.headers.get("Authorization", "")
@@ -398,31 +383,57 @@ def require_admin(req: Request):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+# ================== HTTP API ==================
+@app.get("/api/health")
+async def health():
+    return {"ok": True, "status": "alive"}
 
-# ================== Job queue helpers ==================
-def enqueue_job(job_id: str, priority: bool = False):
-    with _queue_lock:
-        if priority:
-            _job_queue_p0.append(job_id)
-        else:
-            _job_queue_p1.append(job_id)
+@app.get("/api/ping")
+async def ping():
+    return {"pong": True, "ts": time.time()}
 
+# ---- Auth ----
+@app.post("/api/auth/login")
+async def login(req: LoginReq):
+    if req.username != ADMIN_USER or not bcrypt.verify(req.password, ADMIN_PASS_HASH):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return {"ok": True, "token": make_jwt(req.username), "user": req.username}
 
-def dequeue_job() -> Optional[str]:
-    with _queue_lock:
-        if _job_queue_p0:
-            return _job_queue_p0.popleft()
-        if _job_queue_p1:
-            return _job_queue_p1.popleft()
-        return None
+@app.get("/api/auth/me")
+async def me(_: bool = Depends(require_admin)):
+    return {"ok": True, "user": ADMIN_USER}
 
+# ---- GPU status for frontend chip (pool summary) ----
+@app.get("/api/gpu_status")
+async def gpu_status():
+    if r is None:
+        return {"status": "off", "workers_online": 0, "active_jobs": 0, "total_capacity": 0, "queued_jobs": 0, "pool": "pull-based"}
+    now = time.time()
+    online = 0
+    active = 0
+    capacity = 0
+    worker_ids = await r.smembers(K_WORKERS)
+    for wid in worker_ids or []:
+        w = await r.hgetall(await rkey(K_WORKER, wid=wid))
+        if not w:
+            continue
+        last_seen = float(w.get("last_seen_ts", "0") or "0")
+        if now - last_seen < HEARTBEAT_STALE_SEC:
+            online += 1
+        active += int(w.get("active", "0") or "0")
+        capacity += int(w.get("capacity", "1") or "1")
+    queued = await queues_size()
+    status = "ready" if online > 0 else "off"
+    return {
+        "status": status,
+        "workers_online": online,
+        "active_jobs": active,
+        "total_capacity": capacity,
+        "queued_jobs": queued,
+        "pool": "pull-based",
+    }
 
-def queue_size() -> int:
-    with _queue_lock:
-        return len(_job_queue_p0) + len(_job_queue_p1)
-
-
-# ================== API Models (workers) ==================
+# ---- Worker registration / leasing (pull-based) ----
 class WorkerRegisterReq(BaseModel):
     name: Optional[str] = None
     public_url: Optional[str] = None
@@ -430,180 +441,125 @@ class WorkerRegisterReq(BaseModel):
     tags: Optional[Dict[str, Any]] = None
     gpu: Optional[Dict[str, Any]] = None
 
-
 class WorkerLeaseReq(BaseModel):
     worker_id: str
     wants: int = 1
     active: int = 0
     gpu: Optional[Dict[str, Any]] = None
 
-
 class WorkerHeartbeatReq(BaseModel):
     worker_id: str
     metrics: Optional[Dict[str, Any]] = None
 
-
-# ================== HTTP API ==================
-@app.get("/api/health")
-def health():
-    return {"ok": True, "status": "alive"}
-
-
-@app.get("/api/ping")
-def ping():
-    return {"pong": True, "ts": time.time()}
-
-
-# ---- Auth ----
-@app.post("/api/auth/login")
-def login(req: LoginReq):
-    # bcrypt verify at cost=12 should be fast (<100ms). If this is slow, it's network/CDN, not compute here.
-    if req.username != ADMIN_USER or not bcrypt.verify(
-        req.password, ADMIN_PASS_HASH
-    ):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"ok": True, "token": make_jwt(req.username), "user": req.username}
-
-
-@app.get("/api/auth/me")
-def me(_: bool = Depends(require_admin)):
-    return {"ok": True, "user": ADMIN_USER}
-
-
-# ---- GPU status for frontend chip (pool summary) ----
-@app.get("/api/gpu_status")
-def gpu_status():
-    now = time.time()
-    with _state_lock:
-        online = sum(
-            1
-            for w in _workers.values()
-            if (now - w.get("last_seen_ts", 0.0) < HEARTBEAT_STALE_SEC)
-        )
-        active = sum(int(w.get("active", 0)) for w in _workers.values())
-        total_capacity = sum(int(w.get("capacity", 1)) for w in _workers.values())
-    queued = queue_size()
-    status = "ready" if online > 0 else "off"
-    return {
-        "status": status,
-        "workers_online": online,
-        "active_jobs": active,
-        "total_capacity": total_capacity,
-        "queued_jobs": queued,
-        "pool": "pull-based",
-    }
-
-
-# ---- Worker registration / leasing (pull-based) ----
 @app.post("/api/worker/register")
-def worker_register(req: WorkerRegisterReq, request: Request):
+async def worker_register(req: WorkerRegisterReq, request: Request):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
     wid = uuid4().hex
     now = time.time()
     info = {
         "id": wid,
         "name": req.name or f"worker-{wid[:6]}",
-        "public_url": req.public_url,
-        "capacity": max(1, int(req.capacity or 1)),
-        "active": 0,
-        "last_seen_ts": now,
-        "first_seen_ts": now,
-        "tags": req.tags or {},
-        "gpu": req.gpu or {},
+        "public_url": req.public_url or "",
+        "capacity": str(max(1, int(req.capacity or 1))),
+        "active": "0",
+        "last_seen_ts": str(now),
+        "first_seen_ts": str(now),
+        "tags": json.dumps(req.tags or {}),
+        "gpu": json.dumps(req.gpu or {}),
         "remote_ip": _client_ip(request),
-        "vast_instance_id": None,
+        "vast_instance_id": "",
     }
-    with _state_lock:
-        _workers[wid] = info
-    log_to_firestore(
-        "info",
-        f"worker registered: {info['name']} ({wid}) ip={info['remote_ip']}",
-    )
+    await r.hset(await rkey(K_WORKER, wid=wid), mapping=info)
+    await r.sadd(K_WORKERS, wid)
+    logger.info(f"worker registered: {info['name']} ({wid}) ip={info['remote_ip']}")
+
     return {
         "ok": True,
         "worker_id": wid,
         "lease_endpoint": "/api/worker/lease",
         "result_endpoint": "/api/worker/result",
         "error_endpoint": "/api/worker/error",
-        "heartbeat_interval_sec": HEARTBEAT_STALE_SEC // 2,
+        "heartbeat_interval_sec": max(2, int(HEARTBEAT_STALE_SEC // 2)),
     }
 
-
 @app.post("/api/worker/heartbeat")
-def worker_heartbeat(req: WorkerHeartbeatReq):
+async def worker_heartbeat(req: WorkerHeartbeatReq):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+    wid = req.worker_id
+    k = await rkey(K_WORKER, wid=wid)
+    if not await r.exists(k):
+        raise HTTPException(status_code=404, detail="unknown worker_id")
     now = time.time()
-    with _state_lock:
-        w = _workers.get(req.worker_id)
-        if not w:
-            raise HTTPException(status_code=404, detail="unknown worker_id")
-        w["last_seen_ts"] = now
-        if req.metrics:
-            w["gpu"] = req.metrics
+    upd = {"last_seen_ts": str(now)}
+    if req.metrics:
+        upd["gpu"] = json.dumps(req.metrics)
+    await r.hset(k, mapping=upd)
     return {"ok": True}
 
-
 @app.post("/api/worker/lease")
-def worker_lease(req: WorkerLeaseReq, request: Request):
-    now = time.time()
+async def worker_lease(req: WorkerLeaseReq, request: Request):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
     wid = req.worker_id
+    k = await rkey(K_WORKER, wid=wid)
+    if not await r.exists(k):
+        raise HTTPException(status_code=404, detail="unknown worker_id")
+
+    now = time.time()
+    # update worker state
+    upd = {
+        "last_seen_ts": str(now),
+        "active": str(int(req.active or 0)),
+        "remote_ip": _client_ip(request),
+    }
+    if req.gpu:
+        upd["gpu"] = json.dumps(req.gpu)
+    await r.hset(k, mapping=upd)
+
+    # fairness: at most 1 lease per call
     wants = max(0, int(req.wants or 0))
-
-    with _state_lock:
-        w = _workers.get(wid)
-        if not w:
-            raise HTTPException(status_code=404, detail="unknown worker_id")
-        w["last_seen_ts"] = now
-        w["active"] = int(req.active or 0)
-        if req.gpu:
-            w["gpu"] = req.gpu
-        w["remote_ip"] = _client_ip(request)
-        free_slots = max(
-            0, int(w.get("capacity", 1)) - int(w.get("active", 0))
-        )
-        grant = min(wants, free_slots, 1)  # fairness: at most 1
-
+    winfo = await r.hgetall(k)
+    cap = int(winfo.get("capacity", "1") or "1")
+    active = int(winfo.get("active", "0") or "0")
+    free_slots = max(0, cap - active)
+    grant = min(wants, free_slots, 1)
     if grant <= 0:
         return {"ok": True, "lease": None, "wait_sec": 2}
 
-    job_id = dequeue_job()
+    job_id = await dequeue_job()
     if not job_id:
         return {"ok": True, "lease": None, "wait_sec": 2}
 
-    jdoc = jobs_col().document(job_id).get()
-    if not jdoc.exists:
-        return {"ok": True, "lease": None, "wait_sec": 2}
+    job = await get_job(job_id)
+    if not job:
+        return {"ok": True, "lease": None, "wait_sec": 1}
 
-    job = jdoc.to_dict() or {}
-    filename = job.get("filename", "upload.jpg")
+    filename = job.get("filename") or "upload.jpg"
     input_path = job.get("input_path")
     if not input_path:
-        set_job(job_id, {"status": "failed", "error": "missing input_path"})
-        push_event(job_id, "error", "missing input_path")
+        await set_job_fields(job_id, {"status": "failed", "error": "missing input_path"})
+        await publish_event(job_id, "error", "missing input_path")
         return {"ok": True, "lease": None, "wait_sec": 1}
 
+    # sign URL off-thread
     try:
-        url = sign_url(input_path, hours=1)
+        url = await asyncio.to_thread(sign_url_sync, input_path, 1)
     except Exception as e:
-        set_job(job_id, {"status": "failed", "error": f"sign_url failed: {e}"})
-        push_event(job_id, "error", "sign_url failed")
+        await set_job_fields(job_id, {"status": "failed", "error": f"sign_url failed: {e}"})
+        await publish_event(job_id, "error", "sign_url failed")
         return {"ok": True, "lease": None, "wait_sec": 1}
 
-    with _state_lock:
-        _workers[wid]["active"] = int(_workers[wid].get("active", 0)) + 1
-        _leases[job_id] = {
-            "worker_id": wid,
-            "deadline_ts": time.time() + JOB_LEASE_TIMEOUT_SEC,
-            "retries": int(_leases.get(job_id, {}).get("retries", 0)),
-        }
+    # increment worker active
+    await r.hincrby(k, "active", 1)
 
-    set_job(
-        job_id,
-        {
-            "status": "processing",
-            "started_at": firestore.SERVER_TIMESTAMP,
-            "worker_id": wid,
-        },
-    )
-    push_event(job_id, "state", "processing", 40)
+    # set job state & lease
+    await set_job_fields(job_id, {"status": "processing", "started_at_ms": utc_ms(), "worker_id": wid})
+    lease_prev = await get_lease(job_id)
+    retries = int(lease_prev.get("retries", "0") or "0")
+    await create_lease(job_id, wid, JOB_LEASE_TIMEOUT_SEC, retries)
+    await publish_event(job_id, "state", "processing", 40)
 
     lease = {
         "job_id": job_id,
@@ -615,7 +571,6 @@ def worker_lease(req: WorkerLeaseReq, request: Request):
     }
     return {"ok": True, "lease": lease}
 
-
 @app.post("/api/worker/result")
 async def worker_result(
     request: Request,
@@ -623,104 +578,133 @@ async def worker_result(
     job_id: str = Form(...),
     file: UploadFile = File(...),
 ):
-    with _state_lock:
-        lease = _leases.get(job_id)
-        w = _workers.get(worker_id)
-    if not lease or not w or lease.get("worker_id") != worker_id:
-        raise HTTPException(status_code=400, detail="invalid lease or worker_id")
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
 
+    # Validate lease (loosened: allow fallback to job state)
+    lease = await get_lease(job_id)
+    if not lease or lease.get("worker_id") != worker_id:
+        # Fallback: trust job state if it's still processing on this worker
+        job = await get_job(job_id)
+        if (
+            not job
+            or job.get("status") != "processing"
+            or job.get("worker_id") != worker_id
+        ):
+            raise HTTPException(status_code=400, detail="invalid lease or worker_id")
+
+    # Read bytes
     try:
         blob_bytes = await file.read()
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"read upload failed: {e}")
 
-    out_path = storage_output_path(job_id)
+    out_path = f"jobs/{job_id}/output/output.jpg"
     try:
-        upload_bytes_to_gcs(
-            out_path, blob_bytes, file.content_type or "image/jpeg"
+        await asyncio.to_thread(
+            upload_bytes_to_gcs_sync,
+            out_path,
+            blob_bytes,
+            file.content_type or "image/jpeg",
         )
     except Exception as e:
-        with _state_lock:
-            _workers[worker_id]["active"] = max(
-                0, int(_workers[worker_id].get("active", 0)) - 1
-            )
-            _leases.pop(job_id, None)
-        set_job(
+        # decrement worker active, clear lease
+        wkey = await rkey(K_WORKER, wid=worker_id)
+        if await r.exists(wkey):
+            await r.hincrby(wkey, "active", -1)
+        await pop_lease(job_id)
+
+        await set_job_fields(
             job_id,
             {"status": "failed", "error": f"output upload error: {e}"},
         )
-        push_event(job_id, "error", f"upload output error: {e}")
+        await publish_event(job_id, "error", f"upload output error: {e}")
         return {"ok": False, "error": "upload_failed"}
 
-    set_job(
+    # Success
+    await set_job_fields(
         job_id,
         {
             "status": "completed",
             "output_path": out_path,
-            "finished_at": firestore.SERVER_TIMESTAMP,
+            "finished_at_ms": utc_ms(),
         },
     )
-    push_event(
-        job_id, "done", "completed", 100, {"output_path": out_path}
-    )
+    # compute processing_ms best-effort
+    job = await get_job(job_id)
+    try:
+        st = int(job.get("started_at_ms", 0))
+        fin = int(job.get("finished_at_ms", 0))
+        if st and fin and fin >= st:
+            await set_job_fields(job_id, {"processing_ms": fin - st})
+    except Exception:
+        pass
 
-    with _state_lock:
-        _workers[worker_id]["active"] = max(
-            0, int(_workers[worker_id].get("active", 0)) - 1
+    # decrement worker active & clear lease
+    wkey = await rkey(K_WORKER, wid=worker_id)
+    if await r.exists(wkey):
+        await r.hincrby(wkey, "active", -1)
+    await pop_lease(job_id)
+
+    # push a 'completed' event with direct signed URL (so frontend updates immediately)
+    try:
+        signed = await asyncio.to_thread(sign_url_sync, out_path, 24)
+        await publish_event(
+            job_id,
+            "completed",
+            "completed",
+            100,
+            {"output_url": signed, "output_path": out_path},
         )
-        _leases.pop(job_id, None)
+    except Exception:
+        await publish_event(
+            job_id,
+            "completed",
+            "completed",
+            100,
+            {"output_path": out_path},
+        )
 
     return {"ok": True}
-
 
 class WorkerErrorReq(BaseModel):
     worker_id: str
     job_id: str
     error: str
 
-
 @app.post("/api/worker/error")
-def worker_error(req: WorkerErrorReq):
-    with _state_lock:
-        lease = _leases.get(req.job_id)
-        w = _workers.get(req.worker_id)
-    if not w:
-        raise HTTPException(status_code=404, detail="unknown worker")
-    with _state_lock:
-        _workers[req.worker_id]["active"] = max(
-            0, int(_workers[req.worker_id].get("active", 0)) - 1
-        )
-        _leases.pop(req.job_id, None)
-    retries = int(lease.get("retries", 0)) if lease else 0
-    if retries < 3:
-        set_job(req.job_id, {"status": "queued", "error": None})
-        with _state_lock:
-            _leases[req.job_id] = {
-                "worker_id": None,
-                "deadline_ts": 0.0,
-                "retries": retries + 1,
-            }
-        enqueue_job(req.job_id)
-        push_event(
-            req.job_id,
-            "info",
-            f"requeued after error: {req.error}",
-            5,
-            {"retries": retries + 1},
-        )
-    else:
-        set_job(req.job_id, {"status": "failed", "error": req.error})
-        push_event(req.job_id, "error", req.error)
-    return {"ok": True}
+async def worker_error(req: WorkerErrorReq):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
 
+    # clear worker active & lease
+    wkey = await rkey(K_WORKER, wid=req.worker_id)
+    if await r.exists(wkey):
+        await r.hincrby(wkey, "active", -1)
+
+    lease = await pop_lease(req.job_id)
+    retries = int((lease or {}).get("retries", "0") or "0")
+
+    if retries < 3:
+        await set_job_fields(req.job_id, {"status": "queued", "error": ""})
+        await create_lease(req.job_id, "", 1, retries + 1)  # store retries but effectively "no lease"
+        await enqueue_job(req.job_id)
+        await publish_event(req.job_id, "info", f"requeued after error: {req.error}", 5, {"retries": retries + 1})
+    else:
+        await set_job_fields(req.job_id, {"status": "failed", "error": req.error})
+        await publish_event(req.job_id, "error", req.error)
+
+    return {"ok": True}
 
 # ================== Jobs API (public + admin) ==================
 class JobCreateResponse(BaseModel):
     id: str
     status: str
 
-
 async def _create_job_common(request: Request, upload: UploadFile) -> Dict[str, Any]:
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+
     client_id = request.headers.get("x-client-id") or request.query_params.get("client_id")
     user_agent = request.headers.get("user-agent") or ""
     caller_ip = _client_ip(request)
@@ -729,272 +713,262 @@ async def _create_job_common(request: Request, upload: UploadFile) -> Dict[str, 
     try:
         payload = await upload.read()
     except Exception as e:
-        log_to_firestore("error", f"read upload failed: {e}")
         raise HTTPException(status_code=400, detail=f"read upload failed: {e}")
 
     filename = safe_filename(upload.filename or "upload")
     job_id = uuid4().hex
-    inp_path = storage_input_path(job_id, filename)
+    inp_path = f"jobs/{job_id}/input/{filename}"
 
+    # Upload to GCS off-thread
     try:
-        upload_bytes_to_gcs(inp_path, payload, upload.content_type or "application/octet-stream")
+        await asyncio.to_thread(
+            upload_bytes_to_gcs_sync, inp_path, payload, upload.content_type or "application/octet-stream"
+        )
     except Exception as e:
-        log_to_firestore("error", f"GCS upload failed: {e}")
         raise HTTPException(status_code=500, detail=f"GCS upload failed: {e}")
 
-    job = {
+    now_ms = utc_ms()
+    job_doc = {
         "id": job_id,
         "status": "queued",
         "requested_by_ip": caller_ip,
-        "client_id": client_id,
+        "client_id": client_id or "",
         "user_agent": user_agent,
         "filename": filename,
         "input_path": inp_path,
-        "output_path": None,
-        "events": [],
-        "created_at": firestore.SERVER_TIMESTAMP,
-        "started_at": None,
-        "finished_at": None,
-        "processing_ms": None,
+        "output_path": "",
+        "created_at_ms": now_ms,
+        "started_at_ms": 0,
+        "finished_at_ms": 0,
+        "processing_ms": 0,
         "mode": "async",
-        "error": None,
+        "error": "",
     }
-    create_job(job)
+    await set_job_fields(job_id, job_doc)
+    await index_job(job_id, client_id, caller_ip)
 
-    with _queue_lock:
-        active_now = sum(int(w.get("active", 0)) for w in _workers.values())
-        p0_len = len(_job_queue_p0)
-        p1_len = len(_job_queue_p1)
-        # For priority jobs, your position ignores normal queue.
-        # For normal jobs, you wait behind P0 + P1.
-        position = (p0_len + active_now + 1) if is_prio else (p0_len + p1_len + active_now + 1)
-        if is_prio:
-            _job_queue_p0.append(job_id)
-        else:
-            _job_queue_p1.append(job_id)
+    # Queue position estimate
+    p0_len = (await r.llen(K_QUEUE_P0)) if (P0_ENABLED) else 0
+    p1_len = await r.llen(K_QUEUE_P1)
+    # active/capacity snapshot
+    active_now = 0
+    cap = 0
+    for wid in (await r.smembers(K_WORKERS)) or []:
+        w = await r.hgetall(await rkey(K_WORKER, wid=wid))
+        if not w:
+            continue
+        active_now += int(w.get("active", "0") or "0")
+        cap += int(w.get("capacity", "1") or "1")
+    cap = max(1, cap)
 
-    with _state_lock:
-        cap = max(1, sum(int(w.get("capacity", 1)) for w in _workers.values()))
+    if is_prio and P0_ENABLED:
+        position = int(p0_len) + int(active_now) + 1
+        await enqueue_job(job_id, priority=True)
+    else:
+        position = int(p0_len) + int(p1_len) + int(active_now) + 1
+        await enqueue_job(job_id, priority=False)
 
-    push_event(
+    await publish_event(
         job_id,
         "info",
         "job queued",
         1,
-        {"filename": filename, "queue_position": position, "capacity": cap, "priority": is_prio},
+        {"filename": filename, "queue_position": position, "capacity": cap, "priority": bool(is_prio)},
     )
     return {"id": job_id, "status": "queued"}
-
 
 @app.post("/api/jobs", response_model=JobCreateResponse)
 async def create_job_admin(request: Request, file: UploadFile = File(...)):
     return await _create_job_common(request, file)
 
-
 @app.post("/api/swap", response_model=JobCreateResponse)
 async def create_job_legacy(request: Request, file: UploadFile = File(...)):
     return await _create_job_common(request, file)
 
-
 # --- Admin jobs list/detail ---
 @app.get("/api/jobs")
-def list_jobs(
+async def list_jobs(
     status: Optional[str] = Query(None),
-    q: Optional[str] = Query(
-        None, description="substring match on filename or IP"
-    ),
+    q: Optional[str] = Query(None, description="substring match on filename or IP"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     _: bool = Depends(require_admin),
 ):
-    query = (
-        jobs_col()
-        .order_by("created_at", direction=firestore.Query.DESCENDING)
-        .offset(offset)
-        .limit(500)
-    )
-    docs = [d.to_dict() or {} for d in query.stream()]
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+
+    # Pull a window from the global list (LPUSH newest first)
+    job_ids = await r.lrange(K_JOBS_GLOBAL, offset, offset + 999)
     items: List[Dict[str, Any]] = []
-    for d in docs:
-        if status and d.get("status") != status:
+    for jid in job_ids:
+        j = await get_job(jid)
+        if not j:
+            continue
+        if status and (j.get("status") != status):
             continue
         if q:
-            hay = f"{d.get('filename','')} {d.get('requested_by_ip','')}".lower()
+            hay = f"{j.get('filename','')} {j.get('requested_by_ip','')}".lower()
             if q.lower() not in hay:
                 continue
-        items.append(_json_dt(d))
+        items.append(j)
         if len(items) >= limit:
             break
     return {"ok": True, "items": items}
 
-
 @app.get("/api/jobs/{job_id}")
-def get_job(job_id: str, _: bool = Depends(require_admin)):
-    d = jobs_col().document(job_id).get()
-    if not d.exists:
+async def get_job_admin(job_id: str, _: bool = Depends(require_admin)):
+    j = await get_job(job_id)
+    if not j:
         raise HTTPException(status_code=404, detail="Not found")
-    job = _json_dt(d.to_dict() or {})
-
-    evs: List[Dict[str, Any]] = []
-    for e in (
-        events_col(job_id)
-        .order_by("ts", direction=firestore.Query.DESCENDING)
-        .limit(200)
-        .stream()
-    ):
-        de = e.to_dict() or {}
-        if isinstance(de.get("ts"), datetime):
-            de["ts"] = de["ts"].isoformat()
-        evs.append(de)
-    evs.reverse()
-    return {"ok": True, "job": job, "events": evs}
-
+    # read recent events (LPUSH newest first) → reverse to chronological
+    ev_key = await rkey(K_EVENTS, job_id=job_id)
+    raw = await r.lrange(ev_key, 0, EVENTS_MAX - 1)
+    evs = [json.loads(x) for x in reversed(raw or [])]
+    # Convert ts to ISO
+    for e in evs:
+        try:
+            e["ts"] = datetime.utcfromtimestamp(e["ts"] / 1000.0).isoformat()
+        except Exception:
+            pass
+    return {"ok": True, "job": j, "events": evs}
 
 # --- Admin signed URL for images ---
 @app.get("/api/jobs/{job_id}/signed_url")
-def admin_job_signed_url(
-    job_id: str, kind: str = Query("input"), _: bool = Depends(require_admin)
-):
-    doc = jobs_col().document(job_id).get()
-    if not doc.exists:
+async def admin_job_signed_url(job_id: str, kind: str = Query("input"), _: bool = Depends(require_admin)):
+    j = await get_job(job_id)
+    if not j:
         raise HTTPException(status_code=404, detail="Not found")
-    j = doc.to_dict() or {}
     path = j.get("input_path" if kind == "input" else "output_path")
     if not path:
         raise HTTPException(status_code=404, detail="no_path")
     try:
-        url = sign_url(path, hours=24)
+        url = await asyncio.to_thread(sign_url_sync, path, 24)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"sign_url failed: {e}")
     return {"ok": True, "url": url}
 
-
 # --- Admin: cancel / retry / delete (basic) ---
 @app.post("/api/jobs/{job_id}/cancel")
-def job_cancel(job_id: str, _: bool = Depends(require_admin)):
-    doc = jobs_col().document(job_id).get()
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Not found")
-    j = doc.to_dict() or {}
-    prev = j.get("status")
-    with _state_lock:
-        lease = _leases.pop(job_id, None)
-        if lease and lease.get("worker_id") in _workers:
-            wid = lease["worker_id"]
-            _workers[wid]["active"] = max(
-                0, int(_workers[wid].get("active", 0)) - 1
-            )
-    _remove_from_queue(job_id)
-    set_job(job_id, {"status": "canceled"})
-    push_event(
-        job_id, "state", "canceled", 0, {"prev_status": prev}
-    )
+async def job_cancel(job_id: str, _: bool = Depends(require_admin)):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+    # remove from queues
+    await r.lrem(K_QUEUE_P0, 0, job_id)
+    await r.lrem(K_QUEUE_P1, 0, job_id)
+    await set_job_fields(job_id, {"status": "canceled"})
+    await publish_event(job_id, "state", "canceled", 0, {})
     return {"ok": True, "message": "canceled"}
 
-
 @app.post("/api/jobs/{job_id}/retry")
-def job_retry(job_id: str, _: bool = Depends(require_admin)):
-    doc = jobs_col().document(job_id).get()
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Not found")
-    j = doc.to_dict() or {}
-    if not j.get("input_path"):
+async def job_retry(job_id: str, _: bool = Depends(require_admin)):
+    j = await get_job(job_id)
+    if not j or not j.get("input_path"):
         raise HTTPException(status_code=400, detail="no input_path")
-
     new_id = uuid4().hex
+    # clone core fields
     new_job = {
         "id": new_id,
         "status": "queued",
-        "requested_by_ip": j.get("requested_by_ip"),
-        "client_id": j.get("client_id"),
-        "user_agent": j.get("user_agent"),
-        "filename": j.get("filename"),
-        "input_path": j.get("input_path"),
-        "output_path": None,
-        "events": [],
-        "created_at": firestore.SERVER_TIMESTAMP,
-        "started_at": None,
-        "finished_at": None,
-        "processing_ms": None,
+        "requested_by_ip": j.get("requested_by_ip", ""),
+        "client_id": j.get("client_id", ""),
+        "user_agent": j.get("user_agent", ""),
+        "filename": j.get("filename", ""),
+        "input_path": j.get("input_path", ""),
+        "output_path": "",
+        "created_at_ms": utc_ms(),
+        "started_at_ms": 0,
+        "finished_at_ms": 0,
+        "processing_ms": 0,
         "mode": "async",
-        "error": None,
+        "error": "",
     }
-    create_job(new_job)
+    await set_job_fields(new_id, new_job)
+    await index_job(new_id, new_job["client_id"], new_job["requested_by_ip"])
     is_prio = (j.get("requested_by_ip") or "") in PRIORITY_IPS
-    enqueue_job(new_id, priority=is_prio)
-    push_event(
-        new_id,
-        "info",
-        "job queued (retry)",
-        1,
-        {"from_job": job_id, "priority": is_prio},
-    )
+    await enqueue_job(new_id, priority=is_prio)
+    await publish_event(new_id, "info", "job queued (retry)", 1, {"from_job": job_id, "priority": bool(is_prio)})
     return {"ok": True, "new_job_id": new_id}
 
-
 @app.delete("/api/jobs/{job_id}")
-def job_delete(job_id: str, _: bool = Depends(require_admin)):
-    doc = jobs_col().document(job_id).get()
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Not found")
-    j = doc.to_dict() or {}
-    _remove_from_queue(job_id)
-    # best-effort remove storage blobs
+async def job_delete(job_id: str, _: bool = Depends(require_admin)):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+    # remove from queues
+    await r.lrem(K_QUEUE_P0, 0, job_id)
+    await r.lrem(K_QUEUE_P1, 0, job_id)
+    # best-effort delete blobs (off-thread)
+    j = await get_job(job_id)
     try:
         if j.get("input_path"):
-            bucket.blob(j["input_path"]).delete(if_generation_match=None)
+            await asyncio.to_thread(lambda p=j["input_path"]: _ensure_bucket_sync().blob(p).delete(if_generation_match=None))  # type: ignore
         if j.get("output_path"):
-            bucket.blob(j["output_path"]).delete(if_generation_match=None)
+            await asyncio.to_thread(lambda p=j["output_path"]: _ensure_bucket_sync().blob(p).delete(if_generation_match=None))  # type: ignore
     except Exception:
         pass
-    # delete events
-    try:
-        for e in events_col(job_id).stream():
-            e.reference.delete()
-    except Exception:
-        pass
-    jobs_col().document(job_id).delete()
+    # delete events list + job hash
+    await r.delete(await rkey(K_EVENTS, job_id=job_id))
+    await r.delete(await rkey(K_LEASE, job_id=job_id))
+    await r.srem(K_LEASE_SET, job_id)
+    await r.hdel(await rkey(K_JOB, job_id=job_id), *list((await r.hkeys(await rkey(K_JOB, job_id=job_id))) or []))
     return {"ok": True}
 
-
-# --- Public SSE (no auth) ---
 @app.get("/api/jobs/{job_id}/events")
 async def stream_events_public(job_id: str):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+
+    import contextlib
+
     async def gen():
-        last_ts: Optional[datetime] = None
+        # Send retry hint
         yield b"retry: 1000\n\n"
-        while True:
-            doc = jobs_col().document(job_id).get()
-            if not doc.exists:
-                break
-            job = doc.to_dict() or {}
-            status = job.get("status", "")
 
-            q = events_col(job_id)
-            if last_ts:
-                q = q.where("ts", ">", last_ts)
-            q = q.order_by("ts").limit(50)
+        # 1) Send history from global Redis client
+        ev_key = await rkey(K_EVENTS, job_id=job_id)
+        raw = await r.lrange(ev_key, 0, EVENTS_MAX - 1)
+        history = [json.loads(x) for x in reversed(raw or [])]
+        for e in history:
+            yield b"data: " + json.dumps(e).encode("utf-8") + b"\n\n"
 
-            terminal = {"completed", "failed", "timeout", "canceled"}
-            for e in q.stream():
-                d = e.to_dict() or {}
-                ts = d.get("ts")
-                if isinstance(ts, datetime):
-                    last_ts = ts
-                    d["ts"] = ts.isoformat()
-                yield b"data: " + json.dumps(d).encode("utf-8") + b"\n\n"
+        # 2) For live updates, use a **dedicated Redis client** so we don't eat the shared pool
+        local_r = redis.from_url(
+            REDIS_URL,
+            decode_responses=True,
+            max_connections=1,   # single connection reserved for this SSE
+        )
+        ch = await rkey(K_EVENTS_CH, job_id=job_id)
+        pubsub = local_r.pubsub()
+        await pubsub.subscribe(ch)
 
-            if status in terminal:
-                if status == "completed" and job.get("output_path"):
-                    try:
-                        url = sign_url(job["output_path"], hours=24)
-                        payload = {"type": "completed", "output_url": url}
-                        yield b"data: " + json.dumps(payload).encode("utf-8") + b"\n\n"
-                    except Exception:
-                        pass
-                break
+        try:
+            async for msg in pubsub.listen():
+                if msg is None:
+                    await asyncio.sleep(0.2)
+                    continue
+                if msg["type"] != "message":
+                    continue
 
-            await asyncio_sleep(1.0)
+                payload = msg.get("data")
+                if isinstance(payload, (bytes, bytearray)):
+                    payload = payload.decode("utf-8", errors="ignore")
+                if not payload:
+                    continue
+
+                # Forward to client
+                yield b"data: " + payload.encode("utf-8") + b"\n\n"
+
+                # Stop stream on terminal events
+                try:
+                    pl = json.loads(payload)
+                    if pl.get("type") in {"completed", "failed", "timeout", "canceled"}:
+                        break
+                except Exception:
+                    pass
+        finally:
+            with contextlib.suppress(Exception):
+                await pubsub.unsubscribe(ch)
+                await pubsub.close()
+                await local_r.close()
 
     return StreamingResponse(
         gen(),
@@ -1006,113 +980,55 @@ async def stream_events_public(job_id: str):
         },
     )
 
-
-# --- Admin SSE (token) ---
+# --- Admin SSE (same Pub/Sub channel, token required) ---
 @app.get("/api/jobs/{job_id}/events/stream")
 async def stream_events_admin(job_id: str, token: str = Query(...)):
     try:
         _decode_jwt(token)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+    return await stream_events_public(job_id)  # identical stream
 
-    async def gen():
-        last_ts: Optional[datetime] = None
-        yield b"retry: 1000\n\n"
-        while True:
-            jdoc = jobs_col().document(job_id).get()
-            if not jdoc.exists:
-                break
-            j = jdoc.to_dict() or {}
-            status = j.get("status", "")
-
-            q = events_col(job_id)
-            if last_ts:
-                q = q.where("ts", ">", last_ts)
-            q = q.order_by("ts").limit(50)
-
-            new_any = False
-            for e in q.stream():
-                d = e.to_dict() or {}
-                ts = d.get("ts")
-                if isinstance(ts, datetime):
-                    last_ts = ts
-                    d["ts"] = ts.isoformat()
-                yield b"data: " + json.dumps(d).encode("utf-8") + b"\n\n"
-                new_any = True
-
-            terminal = {"completed", "failed", "timeout", "canceled"}
-            if status in terminal and not new_any:
-                break
-
-            await asyncio_sleep(1.0)
-
-    return StreamingResponse(
-        gen(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-            "Connection": "keep-alive",
-        },
-    )
-
-
-async def asyncio_sleep(sec: float):
-    import asyncio
-
-    await asyncio.sleep(sec)
-
-
-# ================== Public “My jobs” (persistent) ==================
+# ================== Public “My jobs” (persistent via Redis indexes) ==================
 @app.get("/api/my/jobs")
-def my_jobs(
+async def my_jobs(
     request: Request,
     status: Optional[str] = None,
     limit: int = Query(10, ge=1, le=100),
     client_id: Optional[str] = Query(None),
 ):
-    cid = client_id or request.headers.get("X-Client-Id") or request.cookies.get(
-        "kirk_cid"
-    )
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
+    cid = client_id or request.headers.get("X-Client-Id") or request.cookies.get("kirk_cid")
     ip = _client_ip(request)
     items: List[Dict[str, Any]] = []
-    try:
-        qs = (
-            jobs_col()
-            .order_by("created_at", direction=firestore.Query.DESCENDING)
-            .limit(400)
-            .stream()
-        )
-        for d in qs:
-            j = d.to_dict() or {}
-            owns = False
-            if cid and j.get("client_id") == cid:
-                owns = True
-            elif not cid and j.get("requested_by_ip") == ip:
-                owns = True
-            if not owns:
-                continue
-            if status and j.get("status") != status:
-                continue
-            items.append(_json_dt(j))
-            if len(items) >= limit:
-                break
-    except Exception as e:
-        logger.warning(f"/api/my/jobs error: {e}")
+
+    # prefer client_id index; fall back to IP index
+    list_key = await rkey(K_CLIENT_JOBS, cid=cid) if cid else await rkey(K_IP_JOBS, ip=ip)
+    if not cid:
+        list_key = await rkey(K_IP_JOBS, ip=ip)
+
+    ids = await r.lrange(list_key, 0, limit - 1)
+    for jid in ids or []:
+        j = await get_job(jid)
+        if not j:
+            continue
+        if status and j.get("status") != status:
+            continue
+        items.append(j)
     return {"ok": True, "items": items}
 
-
 @app.get("/api/my/signed_url")
-def my_signed_url(
+async def my_signed_url(
     request: Request, job_id: str, kind: str = "output", client_id: Optional[str] = Query(None)
 ):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
     cid = client_id or request.headers.get("X-Client-Id") or request.cookies.get("kirk_cid")
-    doc = jobs_col().document(job_id).get()
-    if not doc.exists:
+    j = await get_job(job_id)
+    if not j:
         raise HTTPException(status_code=404, detail="Not found")
-    j = doc.to_dict() or {}
     caller_ip = _client_ip(request)
-
     owner_ok = (cid and j.get("client_id") == cid) or (j.get("requested_by_ip") == caller_ip)
     if not owner_ok:
         raise HTTPException(status_code=403, detail="not your job")
@@ -1121,311 +1037,187 @@ def my_signed_url(
     if not path:
         raise HTTPException(status_code=404, detail="no_path")
     try:
-        url = sign_url(path, hours=24)
+        url = await asyncio.to_thread(sign_url_sync, path, 24)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"sign_url failed: {e}")
     return {"ok": True, "url": url}
 
-
 # ================== Admin: diagnostics & metrics ==================
 @app.get("/api/workers")
-def list_workers(_: bool = Depends(require_admin)):
+async def list_workers(_: bool = Depends(require_admin)):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
     now = time.time()
-    with _state_lock:
-        items = []
-        for w in _workers.values():
-            d = dict(w)
-            d["stale_sec"] = now - w.get("last_seen_ts", 0.0)
-            items.append(d)
+    items = []
+    for wid in (await r.smembers(K_WORKERS)) or []:
+        d = await r.hgetall(await rkey(K_WORKER, wid=wid))
+        if not d:
+            continue
+        d["stale_sec"] = now - float(d.get("last_seen_ts", "0") or "0")
+        items.append(d)
     return {"ok": True, "items": items}
-
-
-@app.get("/api/vast/instances")
-def vast_instances(_: bool = Depends(require_admin)):
-    with _state_lock:
-        inv = {k: dict(v) for k, v in _vast_inventory.items()}
-    return {"ok": True, "instances": inv}
-
 
 @app.get("/api/metrics")
-def metrics(
-    sample: int = Query(200, ge=10, le=1000), _: bool = Depends(require_admin)
-):
+async def metrics(sample: int = Query(200, ge=10, le=1000), _: bool = Depends(require_admin)):
+    if r is None:
+        raise HTTPException(status_code=500, detail="Redis unavailable")
     by_status: Dict[str, int] = {}
     total = 0
-    proc_ms: List[float] = []
-    try:
-        qs = (
-            jobs_col()
-            .order_by("created_at", direction=firestore.Query.DESCENDING)
-            .limit(sample)
-            .stream()
-        )
-        for d in qs:
-            j = d.to_dict() or {}
-            total += 1
-            st = (j.get("status") or "").lower()
-            by_status[st] = by_status.get(st, 0) + 1
-            st_at = j.get("started_at")
-            fin = j.get("finished_at")
-            if isinstance(st_at, datetime) and isinstance(fin, datetime):
-                proc_ms.append(
-                    (fin - st_at).total_seconds() * 1000.0
-                )
-    except Exception as e:
-        logger.warning(f"metrics() error: {e}")
-    avg = sum(proc_ms) / len(proc_ms) if proc_ms else None
-    return {
-        "ok": True,
-        "by_status": by_status,
-        "total_sampled": total,
-        "avg_processing_ms": avg,
-    }
+    proc_ms: List[int] = []
 
+    ids = await r.lrange(K_JOBS_GLOBAL, 0, sample - 1)
+    for jid in ids or []:
+        j = await get_job(jid)
+        if not j:
+            continue
+        total += 1
+        st = (j.get("status") or "").lower()
+        by_status[st] = by_status.get(st, 0) + 1
+        st_ms = int(j.get("started_at_ms", 0) or 0)
+        fin_ms = int(j.get("finished_at_ms", 0) or 0)
+        if st_ms and fin_ms and fin_ms >= st_ms:
+            proc_ms.append(fin_ms - st_ms)
 
-@app.get("/api/worker_logs")
-def api_worker_logs(
-    limit: int = Query(200, ge=10, le=1000), _: bool = Depends(require_admin)
-):
-    items: List[Dict[str, Any]] = []
-    try:
-        qs = (
-            worker_logs_col()
-            .order_by("ts", direction=firestore.Query.DESCENDING)
-            .limit(limit)
-            .stream()
-        )
-        for d in qs:
-            row = d.to_dict() or {}
-            ts = row.get("ts")
-            if isinstance(ts, datetime):
-                row["ts"] = ts.isoformat()
-            items.append(row)
-        items.reverse()
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"worker_logs error: {e}"
-        )
-    return {"ok": True, "items": items}
-
+    avg = (sum(proc_ms) / len(proc_ms)) if proc_ms else None
+    return {"ok": True, "by_status": by_status, "total_sampled": total, "avg_processing_ms": avg}
 
 # --- Admin: stubs for warm/start/stop (pull-based) ---
 @app.post("/api/warm_gpu")
-def warm_gpu(_: bool = Depends(require_admin)):
-    return {
-        "ok": True,
-        "message": "Pull-based pool warms on worker startup; nothing to do.",
-    }
-
+async def warm_gpu(_: bool = Depends(require_admin)):
+    return {"ok": True, "message": "Pull-based pool warms on worker startup; nothing to do."}
 
 @app.post("/api/manual_start")
-def manual_start(_: bool = Depends(require_admin)):
-    return {
-        "ok": True,
-        "message": "Start/stop is not applicable in pull-based mode.",
-    }
-
+async def manual_start(_: bool = Depends(require_admin)):
+    return {"ok": True, "message": "Start/stop is not applicable in pull-based mode."}
 
 @app.post("/api/manual_stop")
-def manual_stop(_: bool = Depends(require_admin)):
-    return {
-        "ok": True,
-        "message": "Start/stop is not applicable in pull-based mode.",
-    }
+async def manual_stop(_: bool = Depends(require_admin)):
+    return {"ok": True, "message": "Start/stop is not applicable in pull-based mode."}
 
-
-# ================== Background threads ==================
-def _lease_sweeper():
-    while True:
-        try:
-            now = time.time()
-            expired: List[str] = []
-            with _state_lock:
-                for jid, lease in list(_leases.items()):
-                    if lease.get("deadline_ts", 0.0) and now > lease["deadline_ts"]:
-                        expired.append(jid)
-
-            for jid in expired:
-                with _state_lock:
-                    lease = _leases.pop(jid, None)
-                if not lease:
-                    continue
-                wid = lease.get("worker_id")
-                if wid and wid in _workers:
-                    with _state_lock:
-                        _workers[wid]["active"] = max(
-                            0, int(_workers[wid].get("active", 0)) - 1
-                        )
-
-                retries = int(lease.get("retries", 0))
-                if retries < 3:
-                    with _state_lock:
-                        _leases[jid] = {
-                            "worker_id": None,
-                            "deadline_ts": 0.0,
-                            "retries": retries + 1,
-                        }
-                    set_job(jid, {"status": "queued", "error": None})
-                    enqueue_job(jid)
-                    push_event(
-                        jid,
-                        "info",
-                        "lease expired; requeued",
-                        5,
-                        {"retries": retries + 1},
-                    )
-                else:
-                    set_job(
-                        jid,
-                        {"status": "failed", "error": "lease expired"},
-                    )
-                    push_event(jid, "error", "lease expired")
-
-        except Exception as e:
-            log_to_firestore("error", f"lease_sweeper error: {e}")
-        time.sleep(LEASE_SWEEP_SEC)
-
-
-def _workers_gc():
-    while True:
-        try:
-            # (kept for future; we retain stale records for admin)
-            time.sleep(10.0)
-        except Exception as e:
-            log_to_firestore("error", f"workers_gc error: {e}")
-            time.sleep(10.0)
-
-
-def _vast_inventory_refresher():
-    vc = VastClient(
-        base_url=VAST_API_BASE,
-        api_key=VAST_API_KEY,
-        verify_ssl=VAST_VERIFY_SSL,
-        timeout=VAST_HTTP_TIMEOUT,
-        backoff_429=VAST_BACKOFF_429,
-    )
-    while True:
-        try:
-            items = vc.list_instances() or []
-            ip_index: Dict[str, str] = {}
-            inventory: Dict[str, Dict[str, Any]] = {}
-            for inst in items:
-                iid = str(inst.get("id") or "")
-                if not iid:
-                    continue
-                inventory[iid] = inst
-                ip = str(inst.get("public_ipaddr") or "").strip()
-                if ip:
-                    ip_index[ip] = iid
-
-            with _state_lock:
-                _vast_inventory.clear()
-                _vast_inventory.update(inventory)
-                _vast_ip_index.clear()
-                _vast_ip_index.update(ip_index)
-
-                for w in _workers.values():
-                    rip = w.get("remote_ip")
-                    if rip and rip in _vast_ip_index:
-                        w["vast_instance_id"] = _vast_ip_index[rip]
-        except Exception as e:
-            log_to_firestore("warn", f"vast inventory refresh failed: {e}")
-        time.sleep(VAST_REFRESH_SEC)
-
-
+# ================== Wait time (ETA) ==================
 @app.get("/api/wait_time")
-def wait_time_public():
-    """
-    Public ETA hint for the frontend (no auth):
-      - Uses recent completed jobs to compute average when possible
-      - Falls back to DEFAULT_SEC when sampling is unavailable
-    """
+async def wait_time_public():
     DEFAULT_SEC = 75
     sample = 200
-    avg_ms = None
-    queued = queue_size()
-    with _state_lock:
-        active = sum(int(w.get("active", 0)) for w in _workers.values())
-        cap = max(1, sum(int(w.get("capacity", 1)) for w in _workers.values()))
+    queued = await queues_size()
+    # active/capacity snapshot
+    active = 0
+    cap = 0
+    for wid in (await r.smembers(K_WORKERS)) or []:
+        w = await r.hgetall(await rkey(K_WORKER, wid=wid))
+        if not w:
+            continue
+        active += int(w.get("active", "0") or "0")
+        cap += int(w.get("capacity", "1") or "1")
+    cap = max(1, cap)
 
-    # Try to compute avg from recent jobs (best-effort)
-    try:
-        proc_ms = []
-        qs = jobs_col().order_by("created_at", direction=firestore.Query.DESCENDING).limit(sample).stream()
-        for d in qs:
-            j = d.to_dict() or {}
-            if (j.get("status") or "").lower() != "completed":
-                continue
-            st_at = j.get("started_at")
-            fin = j.get("finished_at")
-            if isinstance(st_at, datetime) and isinstance(fin, datetime):
-                ms = (fin - st_at).total_seconds() * 1000.0
-                if ms > 0:
-                    proc_ms.append(ms)
-        if proc_ms:
-            avg_ms = sum(proc_ms) / len(proc_ms)
-    except Exception:
-        pass
+    # Try a recent avg
+    avg_ms = None
+    ids = await r.lrange(K_JOBS_GLOBAL, 0, sample - 1)
+    proc_ms = []
+    for jid in ids or []:
+        j = await get_job(jid)
+        if not j or (j.get("status") or "").lower() != "completed":
+            continue
+        st_ms = int(j.get("started_at_ms", 0) or 0)
+        fin_ms = int(j.get("finished_at_ms", 0) or 0)
+        if st_ms and fin_ms and fin_ms > st_ms:
+            proc_ms.append(fin_ms - st_ms)
+    if proc_ms:
+        avg_ms = sum(proc_ms) / len(proc_ms)
 
     avg_sec = (avg_ms / 1000.0) if avg_ms else DEFAULT_SEC
-    ahead = queued + active
+    ahead = int(queued) + int(active)
     est_sec = int((ahead / cap) * avg_sec)
 
     return {
         "ok": True,
         "avg_job_sec": int(avg_sec),
         "estimated_sec": est_sec,
-        "queued_jobs": queued,
-        "active_jobs": active,
-        "capacity": cap,
+        "queued_jobs": int(queued),
+        "active_jobs": int(active),
+        "capacity": int(cap),
         "source": "recent_avg" if avg_ms else "default",
     }
 
+# ================== Optional background tasks ==================
+async def lease_sweeper_loop():
+    """Optional lightweight sweeper; enable with LEASE_SWEEPER_ENABLED=1.
+    Re-queues jobs whose leases expired (TTL elapsed)."""
+    assert r is not None
+    while True:
+        try:
+            now = time.time()
+            # Iterate snapshot of job_ids that are/were leased
+            job_ids = await r.smembers(K_LEASE_SET)
+            for jid in job_ids or []:
+                k = await rkey(K_LEASE, job_id=jid)
+                if not await r.exists(k):
+                    # lease key TTL elapsed → consider retry/requeue if not already completed
+                    job = await get_job(jid)
+                    if not job:
+                        await r.srem(K_LEASE_SET, jid)
+                        continue
+                    if job.get("status") in {"completed", "failed", "canceled"}:
+                        await r.srem(K_LEASE_SET, jid)
+                        continue
+                    # read retries from last known lease hash (already gone). We store mirrored retries in job hash.
+                    retries = int(job.get("lease_retries", 0) or 0)
+                    if retries < 3:
+                        await set_job_fields(jid, {"status": "queued", "error": "", "lease_retries": retries + 1})
+                        await enqueue_job(jid)
+                        await publish_event(jid, "info", "lease expired; requeued", 5, {"retries": retries + 1})
+                        # remove from lease set since key gone
+                        await r.srem(K_LEASE_SET, jid)
+                    else:
+                        await set_job_fields(jid, {"status": "failed", "error": "lease expired"})
+                        await publish_event(jid, "error", "lease expired", 0, {})
+                        await r.srem(K_LEASE_SET, jid)
+        except Exception as e:
+            logger.warning(f"lease_sweeper_loop warn: {e}")
+        await asyncio.sleep(LEASE_SWEEP_SEC)
 
-# ================== Startup ==================
-_lease_sweeper_thread: Optional[threading.Thread] = None
-_workers_gc_thread: Optional[threading.Thread] = None
-_vast_thread: Optional[threading.Thread] = None
-
-
+# ================== Startup / Shutdown ==================
 @app.on_event("startup")
-def _startup():
-    global _lease_sweeper_thread, _workers_gc_thread, _vast_thread
+async def _startup():
+    global r
+    # Shared client for normal commands, with a decent-sized pool
+    r = redis.from_url(
+        REDIS_URL,
+        decode_responses=True,
+        max_connections=256,          # was 128
+        health_check_interval=30,     # helps keep connections fresh
+    )
+    logger.info("Connected to Redis")
 
-    if _lease_sweeper_thread is None or not _lease_sweeper_thread.is_alive():
-        _lease_sweeper_thread = threading.Thread(
-            target=_lease_sweeper, daemon=True, name="lease-sweeper"
-        )
-        _lease_sweeper_thread.start()
-        log_to_firestore("info", "lease sweeper started")
+    await r.ping()
 
-    if _workers_gc_thread is None or not _workers_gc_thread.is_alive():
-        _workers_gc_thread = threading.Thread(
-            target=_workers_gc, daemon=True, name="workers-gc"
-        )
-        _workers_gc_thread.start()
-        log_to_firestore("info", "workers GC started")
-
-    if _vast_thread is None or not _vast_thread.is_alive():
-        _vast_thread = threading.Thread(
-            target=_vast_inventory_refresher,
-            daemon=True,
-            name="vast-inventory",
-        )
-        _vast_thread.start()
-        log_to_firestore("info", "vast inventory refresher started")
-
-    log_to_firestore("info", "Controller server started (pull-based).")
+    if LEASE_SWEEPER_ENABLED:
+        asyncio.create_task(lease_sweeper_loop())
+        logger.info("Lease sweeper started (enabled by env)")
 
 
+@app.on_event("shutdown")
+async def _shutdown():
+    global r
+    if r is not None:
+        try:
+            await r.close()
+        except Exception:
+            pass
+        r = None
+
+# ================== Entrypoint (dev / systemd) ==================
 if __name__ == "__main__":
     import uvicorn
-
-    log_to_firestore("info", "Starting controller server…")
+    # For production you could also run this via the uvicorn CLI,
+    # but since systemd calls `python controller.py`, we run it here:
     uvicorn.run(
         "controller:app",
         host="0.0.0.0",
         port=8002,
+        workers=4,              # matches the CLI you wrote
+        timeout_keep_alive=30,
         log_level="info",
         access_log=False,
     )

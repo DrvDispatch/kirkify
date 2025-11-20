@@ -102,20 +102,54 @@
     const comeBackEl = KirkApp.$("#hud-return");
     const liFor = (step) => document.querySelector(`.hud__steps [data-step="${step}"]`);
 
+    let active = false;
+    let floating = false;
+    let completed = false;
+
     function show() {
       if (!hud) return;
-      hud.hidden = false; hud.classList.add("is-open");
+      active = true;
+      floating = false;
+      completed = false;
+      hud.hidden = false;
+      hud.classList.add("is-open");
+      hud.classList.remove("hud--floating", "hud--completed");
       if (pb) pb.setAttribute("aria-valuenow", "0");
       if (comeBackEl) comeBackEl.hidden = false;
     }
+
     function hide() {
       if (!hud) return;
-      hud.classList.remove("is-open");
+      active = false;
+      floating = false;
+      completed = false;
+      hud.classList.remove("is-open", "hud--floating", "hud--completed");
       hud.classList.add("is-closing");
-      setTimeout(() => { hud.hidden = true; hud.classList.remove("is-closing"); }, 220);
+      setTimeout(() => {
+        hud.hidden = true;
+        hud.classList.remove("is-closing");
+      }, 220);
       setQueue(null);
       setEta(null);
     }
+
+    function float() {
+      if (!hud || !active) return;
+      floating = true;
+      hud.classList.add("hud--floating");
+    }
+
+    function setCompleted() {
+      if (!hud) return;
+      completed = true;
+      floating = true;
+      hud.classList.add("hud--floating", "hud--completed");
+    }
+
+    function isActive() {
+      return active;
+    }
+
     function updateHudProgress() {
       if (!steps.length) return;
       const done = steps.filter((li) => li.classList.contains("is-done")).length;
@@ -125,6 +159,7 @@
       if (pb) pb.setAttribute("aria-valuenow", String(done));
       if (live) live.textContent = `Step ${Math.min(done + 1, total)} of ${total}`;
     }
+
     function mark(step, state) {
       const li = liFor(step); if (!li) return;
       li.classList.remove("is-done", "is-active");
@@ -132,6 +167,7 @@
       if (state === "done") li.classList.add("is-done");
       updateHudProgress();
     }
+
     function setQueue(position) {
       if (!queueEl) return;
       if (!position || position <= 1) { queueEl.textContent = ""; queueEl.hidden = true; return; }
@@ -139,6 +175,7 @@
       queueEl.hidden = false;
       queueEl.textContent = `Queue: you are #${position} (${ahead} ahead of you)…`;
     }
+
     function setEta(sec, text) {
       if (!etaEl) return;
       if ((sec == null || sec <= 0) && !text) {
@@ -153,14 +190,17 @@
         etaEl.textContent = `Estimated wait: ~${KirkApp.fmtDuration(sec)}.`;
       }
     }
+
     function setJob(id) {
       const el = document.getElementById("hud-job");
       if (!el) return;
       el.hidden = false;
-      el.textContent = `Job #${String(id).slice(0, 8)} created. You can close this page and return via “My Jobs”.`;
+      el.textContent = `Job #${String(id).slice(0, 8)} created. You can always find it later under “My Jobs”.`;
     }
-    return { show, hide, mark, setQueue, setEta, setJob };
+
+    return { show, hide, float, setCompleted, isActive, mark, setQueue, setEta, setJob };
   })();
+
 
   // ====== GPU chip loop + ETA source ==========================================================
   async function gpuStatus() {
@@ -455,6 +495,7 @@ function jobCard(job) {
         HUD.show();
         HUD.mark("contact", "done");
         HUD.mark("start", "active");
+
         HUD.setJob(latest.id);
         EtaTicker.start();
 
@@ -578,6 +619,11 @@ function jobCard(job) {
 
         HUD.mark("contact", "done");
         HUD.mark("start", "active");
+                        // After a brief moment, shrink HUD into floating corner card
+        setTimeout(() => {
+          HUD.float();
+        }, 1800);
+
 
         // show “come back later” + initial ETA
         try {
@@ -608,21 +654,27 @@ function jobCard(job) {
           } else if (type === "error") {
             alert(ev.message || "Processing failed");
             safeDone();
-          } else if (type === "completed") {
-            EtaTicker.stop();
-            HUD.mark("process", "done");
-            if (ev.output_url) {
-              afterImg.src = ev.output_url;
-              download.href = ev.output_url;
-            } else if (ev.inline_base64) {
-              afterImg.src = `data:image/jpeg;base64,${ev.inline_base64}`;
-              download.href = afterImg.src;
-            }
-            download.download = "kirkified.jpg";
-            download.classList.remove("is-disabled");
-            download.removeAttribute("aria-disabled");
-            setTimeout(() => safeDone(), 400);
-          }
+               } else if (type === "completed") {
+        EtaTicker.stop();
+        HUD.mark("process", "done");
+
+        if (ev.output_url) {
+          afterImg.src = ev.output_url;
+          download.href = ev.output_url;
+        } else if (ev.inline_base64) {
+          afterImg.src = `data:image/jpeg;base64,${ev.inline_base64}`;
+          download.href = afterImg.src;
+        }
+
+        download.download = "kirkified.jpg";
+        download.classList.remove("is-disabled");
+        download.removeAttribute("aria-disabled");
+
+        // Turn HUD into floating “done” chip with glow,
+        // then quietly hide it after a few seconds.
+        HUD.setCompleted();
+        setTimeout(() => safeDone(), 6000);
+      }
         });
 
         currentES = JobClient.openEvents(job_id);
@@ -656,13 +708,22 @@ if (AUTO_RESUME) {
 
   }
 
-  // ====== Boot ================================================================================
-  document.addEventListener("DOMContentLoaded", () => {
+   document.addEventListener("DOMContentLoaded", () => {
     ensureClientId();
     initAllBeforeAfter();
     initUploader();
     loopGpuChip();
     renderJobs();
+
+    // If a job is in progress and user scrolls down, auto-float the HUD
+    let floatedOnScroll = false;
+    window.addEventListener("scroll", () => {
+      if (!floatedOnScroll && HUD.isActive() && window.scrollY > 120) {
+        HUD.float();
+        floatedOnScroll = true;
+      }
+    }, { passive: true });
   });
+
   setInterval(loopGpuChip, 20000);
 })();
