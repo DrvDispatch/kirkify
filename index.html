@@ -150,14 +150,6 @@
       </div>
     </div>
 
-    <!-- Scroll Down Indicator -->
-    <div class="scroll-indicator">
-      <div class="scroll-arrow">▼</div>
-      <p class="scroll-text">Scroll to continue</p>
-      <div class="scroll-progress">
-        <div class="scroll-progress-bar"></div>
-      </div>
-    </div>
 
     <!-- Main -->
     <main id="main" class="main" aria-labelledby="hero-heading">
@@ -665,29 +657,6 @@
       Kirkify needs JavaScript enabled to upload images and show the kirkified result.
     </div>
   </noscript>
-
-  <!-- Scroll indicator progress logic -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const indicator = document.querySelector(".scroll-indicator");
-      const bar = document.querySelector(".scroll-progress-bar");
-      const hero = document.getElementById("try-kirkify");
-
-      if (!indicator || !bar || !hero) return;
-
-      const adHeight = hero.offsetTop;
-
-      function updateProgress() {
-        const scrolled = Math.min(window.scrollY, adHeight);
-        const pct = (scrolled / adHeight) * 100;
-        bar.style.width = pct + "%";
-        indicator.classList.toggle("scroll-indicator--done", pct >= 100);
-      }
-
-      window.addEventListener("scroll", updateProgress, { passive: true });
-      updateProgress();
-    });
-  </script>
 
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
