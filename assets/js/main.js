@@ -614,8 +614,12 @@ function jobCard(job) {
     // "My Jobs" refresh button
     if (refreshBtn) KirkApp.on(refreshBtn, "click", renderJobs);
 
-    // Try to resume previous job/result on load
-    tryResumeLast(beforeImg, afterImg, download);
+const AUTO_RESUME = false; // or read from env/config
+
+if (AUTO_RESUME) {
+  tryResumeLast(beforeImg, afterImg, download);
+}
+
   }
 
   // ====== Boot ================================================================================
