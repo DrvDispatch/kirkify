@@ -337,16 +337,26 @@ function jobCard(job) {
     } catch {}
   }
 
-  el.innerHTML = `
-    <div class="job-head">
-      <div class="job-title">
-        <span class="chip chip--${job.status || "queued"}">${(job.status || "queued").toUpperCase()}</span>
-        <span class="job-id">#${job.id.slice(0, 8)}</span>
-      </div>
-      <div class="job-meta">${createdIso ? KirkApp.fmtTime(createdIso) : ""}</div>
+el.innerHTML = `
+  <div class="job-head">
+    <div class="job-title">
+      <span class="chip chip--${job.status || "queued"}">${(job.status || "queued").toUpperCase()}</span>
+      <span class="job-id">#${job.id.slice(0, 8)}</span>
     </div>
-    ...
-  `;
+    <div class="job-meta">${createdIso ? KirkApp.fmtTime(createdIso) : ""}</div>
+  </div>
+
+  <div class="job-imgs">
+    <img class="job-img__input" alt="Input image for job ${job.id}" />
+    <img class="job-img__output" alt="Output image for job ${job.id}" />
+  </div>
+
+  <div class="job-actions">
+    <a class="btn-open is-disabled" target="_blank" aria-disabled="true">Open</a>
+    <a class="btn-dl is-disabled" download="kirkified.jpg" aria-disabled="true">Download</a>
+  </div>
+`;
+
   return el;
 }
 
