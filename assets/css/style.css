@@ -1263,3 +1263,44 @@ h3,
   font-size: 0.78rem;
   margin-top: 4px;
 }
+/* Attention hook inside HUD */
+.hud__note--hook {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.14), transparent 58%);
+  border: 1px solid rgba(250, 204, 21, 0.55);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #fef9c3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: "Space Grotesk", "Inter", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.hud__note-kicker {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.95;
+}
+
+.hud__note-main {
+  font-size: 0.9rem;
+}
+
+.hud__note-em {
+  font-weight: 700;
+  background: linear-gradient(to right, #facc15, #f97316);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Slightly tighter in floating mode so it doesn’t feel bulky */
+.hud.hud--floating .hud__note--hook {
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 0.86rem;
+}
