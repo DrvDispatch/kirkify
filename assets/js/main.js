@@ -814,6 +814,7 @@
     };
   })();
   // ====== Ad Monetization System (Floating Checklist) ========================================
+ // ====== Ad Monetization System (Floating Checklist + DEBUG LOGS) =========================
   const AdMonetization = (() => {
     const REQUIRED_CLICKS = 3;
     const MIN_TIME_ON_AD_MS = 5000; // 5 seconds
@@ -833,39 +834,75 @@
 
     // --- 1. Tracker Logic (Who is hovering what?) ---
     function initTracker() {
+      console.log("[AdGate] Initializing Tracker...");
+      
       // Find all ads by their container class
       const adContainers = document.querySelectorAll('.ad-container');
       
+      if (adContainers.length === 0) {
+        console.warn("[AdGate] WARNING: No .ad-container elements found in DOM!");
+      }
+
       adContainers.forEach(container => {
-        // Ensure every ad has a unique ID. If not in HTML, generate one on fly.
+        // Ensure every ad has a unique ID.
         if (!container.id) {
             container.id = 'ad-' + Math.random().toString(36).substr(2, 9);
+            console.log(`[AdGate] Generated ID for container: ${container.id}`);
+        } else {
+            console.log(`[AdGate] Tracking container: ${container.id}`);
         }
 
-        const onEnter = () => { hoverAdId = container.id; };
-        const onLeave = () => { if (hoverAdId === container.id) hoverAdId = null; };
+        const onEnter = () => { 
+            hoverAdId = container.id; 
+            console.log(`[AdGate] Mouse ENTER: ${hoverAdId}`);
+        };
+
+        const onLeave = () => { 
+            if (hoverAdId === container.id) {
+                console.log(`[AdGate] Mouse LEAVE: ${hoverAdId}`);
+                hoverAdId = null; 
+            }
+        };
 
         // Mouse and Touch listeners
         container.addEventListener('mouseenter', onEnter);
         container.addEventListener('mouseleave', onLeave);
-        container.addEventListener('touchstart', onEnter, {passive: true});
+        
+        // Mobile: Touch start is treated as "hovering"
+        container.addEventListener('touchstart', () => {
+            console.log(`[AdGate] Touch START: ${container.id}`);
+            hoverAdId = container.id;
+        }, {passive: true});
       });
 
       // BLUR: User clicks iframe or switches tab
       window.addEventListener('blur', () => {
+        console.log(`[AdGate] Window BLUR event fired.`);
+        console.log(`[AdGate] Current Hover ID: ${hoverAdId}, Gate Active: ${gateActive}`);
+
         if (hoverAdId && gateActive) {
           potentialAdClick = hoverAdId;
           leaveTime = Date.now();
+          console.log(`[AdGate] >>> POTENTIAL CLICK DETECTED on ${potentialAdClick}. Timer started.`);
           updateMessage("Ad opened... wait 5s...", "neutral");
+        } else if (!hoverAdId) {
+            console.log("[AdGate] Blur ignored (User not hovering an ad).");
         }
       });
 
       // FOCUS: User returns to site
       window.addEventListener('focus', () => {
+        console.log("[AdGate] Window FOCUS event fired (User returned).");
+        
         if (potentialAdClick && leaveTime > 0 && gateActive) {
           const duration = Date.now() - leaveTime;
+          console.log(`[AdGate] Return validated. Duration: ${duration}ms`);
           validateReturn(duration);
+        } else {
+            console.log("[AdGate] Focus ignored (No pending ad click).");
         }
+        
+        // Reset
         potentialAdClick = null;
         leaveTime = 0;
       });
@@ -875,23 +912,26 @@
     function validateReturn(duration) {
       // Check duration
       if (duration < MIN_TIME_ON_AD_MS) {
+        console.log("[AdGate] Fail: Duration too short.");
         updateMessage("Too fast! View ad for > 5s.", "error");
         return;
       }
 
       // Check duplicates
       if (clickedAds.has(potentialAdClick)) {
+        console.log(`[AdGate] Fail: Duplicate click on ${potentialAdClick}.`);
         updateMessage("Already clicked that one. Try another.", "error");
         return;
       }
 
       // Success
+      console.log(`[AdGate] Success! Valid click registered on ${potentialAdClick}.`);
       clickedAds.add(potentialAdClick);
       updateUI();
 
       if (clickedAds.size >= REQUIRED_CLICKS) {
+        console.log("[AdGate] All requirements met. Finishing.");
         updateMessage("Perfect! Starting Generation...", "success");
-        // Small delay so they see the success message
         setTimeout(() => {
             finish(true);
         }, 1000);
@@ -935,6 +975,7 @@
 
     // --- 4. Public Function to Start the "Quest" ---
     function requireAds() {
+      console.log("[AdGate] Opening Gate...");
       clickedAds.clear();
       updateUI();
       updateMessage("Please click 3 ads to support us.", "neutral");
@@ -947,8 +988,8 @@
 
       return new Promise((resolve) => {
         resolvePromise = resolve;
-        // If user manually clicks Cancel
         const onCancel = () => {
+            console.log("[AdGate] User cancelled.");
             cancelBtn.removeEventListener('click', onCancel);
             finish(false);
         };
