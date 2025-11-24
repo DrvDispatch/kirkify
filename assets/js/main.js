@@ -822,6 +822,8 @@
     const afterImg = KirkApp.$("#after-img");
     const download = KirkApp.$("#download-link");
     const refreshBtn = KirkApp.$("#refresh-jobs");
+    const scrollHint = KirkApp.$("#scroll-hint");
+
 
     if (!drop || !uploadBtn || !beforeImg || !afterImg || !download) {
       KirkApp.log("Uploader: missing node(s) – disabled");
@@ -855,6 +857,8 @@
 
     async function handleFile(file) {
       if (!file || inflight) return;
+      if (scrollHint) scrollHint.hidden = true;
+
       inflight = true;
       resetOutput();
 
@@ -883,7 +887,7 @@
         // After a brief moment, shrink HUD into floating corner card
         setTimeout(() => {
           HUD.float();
-        }, 1800);
+        }, 450);
 
         // show “come back later” + initial ETA
         try {
@@ -950,6 +954,8 @@
 
             // Turn HUD into floating “done” chip with glow,
             // then quietly hide it after a few seconds.
+            if (scrollHint) scrollHint.hidden = false;
+
             HUD.setCompleted();
             setTimeout(() => safeDone(), 6000);
           }
@@ -1036,25 +1042,31 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    ensureClientId();
-    initAllBeforeAfter();
-    initUploader();
-    loopGpuChip();
-    renderJobs();
+  ensureClientId();
+  initAllBeforeAfter();
+  initUploader();
+  loopGpuChip();
+  renderJobs();
 
-    // If a job is in progress and user scrolls down, auto-float the HUD
-    let floatedOnScroll = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (!floatedOnScroll && HUD.isActive() && window.scrollY > 120) {
-          HUD.float();
-          floatedOnScroll = true;
-        }
-      },
-      { passive: true }
-    );
-  });
+  const scrollHintEl = KirkApp.$("#scroll-hint");
+
+  // If a job is in progress and user scrolls down, auto-float the HUD
+  let floatedOnScroll = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!floatedOnScroll && HUD.isActive() && window.scrollY > 120) {
+        HUD.float();
+        floatedOnScroll = true;
+      }
+      if (scrollHintEl && !scrollHintEl.hidden && window.scrollY > 40) {
+        scrollHintEl.hidden = true;
+      }
+    },
+    { passive: true }
+  );
+ });
+
 
   setInterval(loopGpuChip, 20000);
 })();
