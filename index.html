@@ -117,8 +117,9 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- Share gate styles -->
+  <!-- Share gate + entry gate styles -->
   <style>
+    /* Share gate (upload share requirement) */
     .share-gate {
       position: fixed;
       inset: 0;
@@ -175,6 +176,62 @@
       font-size: 0.78rem;
       color: #9ca3af;
     }
+
+    /* Entry gate: blocks scroll for a few seconds on first view */
+    body.entry-locked {
+      overflow: hidden;
+      touch-action: none;
+    }
+    .entry-gate {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .entry-gate[hidden] {
+      display: none;
+    }
+    .entry-gate__card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 22px 24px;
+      max-width: 420px;
+      width: min(420px, 100% - 40px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      color: #e5e7eb;
+      text-align: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    }
+    .entry-gate__title {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+    .entry-gate__body {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .entry-gate__count {
+      font-weight: 600;
+      color: #a5b4fc;
+    }
+    .entry-gate__spinner {
+      margin: 14px auto 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 3px solid rgba(148, 163, 184, 0.5);
+      border-top-color: #6366f1;
+      animation: entry-gate-spin 0.8s linear infinite;
+    }
+    @keyframes entry-gate-spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 
   <!-- Popunder (1 per page) -->
@@ -210,35 +267,26 @@
       </div>
     </header>
 
-    <!-- 1:4 Native banner under header – Adsterra -->
-    <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
+    <!-- Highest CPM: Top leaderboard banner (728x90) – Adsterra -->
+    <div class="ad-container ad-container--top" aria-label="Advertisement" role="complementary">
       <div class="ad-inner">
-        <!-- Native banner #1 -->
-        <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
-        <div id="container-c39b81789847253b78115f68c971d8f7"></div>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : 'cebd7bbd526e6e9ccd6f1446fb777bca7',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="//abjectjunctionlatest.com/cebd7bbd5266e9ccd6f1446fb777bca7/invoke.js"></script>
       </div>
     </div>
 
     <!-- Main -->
     <main id="main" class="main" aria-labelledby="hero-heading">
 
-      <!-- Top leaderboard banner (728x90) – Adsterra -->
-      <div class="ad-container ad-container--top" aria-label="Advertisement" role="complementary">
-        <div class="ad-inner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : 'cebd7bbd526e6e9ccd6f1446fb777bca7',
-              'format' : 'iframe',
-              'height' : 90,
-              'width' : 728,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//abjectjunctionlatest.com/cebd7bbd5266e9ccd6f1446fb777bca7/invoke.js"></script>
-        </div>
-      </div>
-
-      <!-- HERO -->
+      <!-- HERO: includes 160x300 + 300x250 + 320x50 (high CPM block for mobile) -->
       <section id="try-kirkify" class="hero">
         <div class="hero__grid">
           <div class="hero__copy">
@@ -262,7 +310,7 @@
                 <li>Works like a simple online AI face swap tool in your browser</li>
               </ul>
 
-              <!-- MINI HERO BEFORE / AFTER -->
+              <!-- MINI HERO BEFORE / AFTER (example only) -->
               <div class="ba ba--mini" id="ba-hero" aria-label="Example kirkified before and after">
                 <img
                   src="assets/images/gallery/before.png"
@@ -300,7 +348,7 @@
               </div>
             </div>
 
-            <!-- Narrow 160x300 banner near top content – Adsterra -->
+            <!-- High-CPM narrow 160x300 banner near top content – Adsterra -->
             <div class="ad-container ad-container--narrow" aria-label="Advertisement" role="complementary">
               <div class="ad-inner">
                 <script type="text/javascript">
@@ -319,7 +367,7 @@
 
           <!-- Right column: tool + hero banners -->
           <div class="hero__tool">
-            <!-- Upload card with 300x250 banner above – Adsterra -->
+            <!-- High-CPM 300x250 banner above upload – Adsterra -->
             <section class="tool-card" aria-label="Upload image to use the Charlie Kirk face swap tool">
               <div class="ad-container ad-container--hero" aria-label="Advertisement" role="complementary">
                 <div class="ad-inner">
@@ -351,7 +399,7 @@
               </div>
             </section>
 
-            <!-- Preview card -->
+            <!-- Preview card (kept compact to leave room for ads) -->
             <section class="tool-card tool-card--preview" aria-label="Kirkified before and after preview">
               <div class="ba" id="ba-demo" aria-label="Before and after Charlie Kirk face swap comparison">
                 <img id="before-img"
@@ -382,7 +430,7 @@
               </p>
             </section>
 
-            <!-- Small horizontal 320x50 banner under preview – Adsterra -->
+            <!-- 320x50 banner directly under preview – Adsterra -->
             <div class="ad-container ad-container--below-preview" aria-label="Advertisement" role="complementary">
               <div class="ad-inner">
                 <script type="text/javascript">
@@ -401,22 +449,21 @@
         </div>
       </section>
 
-      <!-- NEW: My Jobs -->
-      <section id="my-jobs" class="section section--jobs" aria-label="Your recent jobs">
-        <div class="section__header">
-          <h2>Your recent kirkified jobs</h2>
-          <p>Jobs are tied to this browser (cookie/ID). You can leave the site and return here later to see progress or download your kirkified Charlie Kirk meme.</p>
+      <!-- Tall 160x600 banner just after main tool – Adsterra -->
+      <div class="ad-container ad-container--skyscraper" aria-label="Advertisement" role="complementary">
+        <div class="ad-inner">
+          <script type="text/javascript">
+            atOptions = {
+              'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
+              'format' : 'iframe',
+              'height' : 600,
+              'width' : 160,
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
         </div>
-
-        <div class="jobs-toolbar">
-          <button id="refresh-jobs" type="button" class="btn-primary btn-primary--sm">Refresh</button>
-          <span id="jobs-hint" class="hint"></span>
-        </div>
-
-        <div id="jobs-list" class="jobs-grid">
-          <!-- populated by main.js -->
-        </div>
-      </section>
+      </div>
 
       <!-- HOW IT WORKS -->
       <section id="how-it-works" class="section section--split">
@@ -460,22 +507,6 @@
           </article>
         </div>
       </section>
-
-      <!-- Tall 160x600 banner between sections – Adsterra -->
-      <div class="ad-container ad-container--skyscraper" aria-label="Advertisement" role="complementary">
-        <div class="ad-inner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
-              'format' : 'iframe',
-              'height' : 600,
-              'width' : 160,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
-        </div>
-      </div>
 
       <!-- WHY USE KIRKIFY / USE CASES -->
       <section id="why-kirkify" class="section section--cards">
@@ -630,6 +661,32 @@
         </p>
       </section>
 
+      <!-- Native banner moved lower (low CPM) – Adsterra -->
+      <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
+        <div class="ad-inner">
+          <!-- Native banner #1 -->
+          <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
+          <div id="container-c39b81789847253b78115f68c971d8f7"></div>
+        </div>
+      </div>
+
+      <!-- NEW: My Jobs moved further down for more ad impressions -->
+      <section id="my-jobs" class="section section--jobs" aria-label="Your recent jobs">
+        <div class="section__header">
+          <h2>Your recent kirkified jobs</h2>
+          <p>Jobs are tied to this browser (cookie/ID). You can leave the site and return here later to see progress or download your kirkified Charlie Kirk meme.</p>
+        </div>
+
+        <div class="jobs-toolbar">
+          <button id="refresh-jobs" type="button" class="btn-primary btn-primary--sm">Refresh</button>
+          <span id="jobs-hint" class="hint"></span>
+        </div>
+
+        <div id="jobs-list" class="jobs-grid">
+          <!-- populated by main.js -->
+        </div>
+      </section>
+
       <!-- LEGAL NOTE -->
       <p class="tos">
         By uploading an image, you agree to our
@@ -639,7 +696,7 @@
         Please only upload images you have the right to use and do not use kirkified results to impersonate or mislead others.
       </p>
 
-      <!-- Inline 468x60 banner above footer – Adsterra -->
+      <!-- Inline 468x60 banner above footer – Adsterra (lowest CPM) -->
       <div class="ad-container ad-container--inline" aria-label="Advertisement" role="complementary">
         <div class="ad-inner">
           <script type="text/javascript">
@@ -684,7 +741,19 @@
     </footer>
   </div>
 
-  <!-- Share gate modal -->
+  <!-- Entry gate modal: blocks scroll for ~5 seconds on page load -->
+  <div id="entry-gate" class="entry-gate" role="dialog" aria-modal="true" aria-labelledby="entry-gate-title">
+    <div class="entry-gate__card">
+      <h2 id="entry-gate-title" class="entry-gate__title">Preparing Kirkify…</h2>
+      <p class="entry-gate__body">
+        Warming up your session and loading the ads that keep Kirkify <strong>100% free</strong>.<br>
+        You can start in <span id="entry-gate-countdown" class="entry-gate__count">5</span> seconds.
+      </p>
+      <div class="entry-gate__spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Share gate modal (upload share requirement) -->
   <div id="share-gate" class="share-gate" hidden role="dialog" aria-modal="true" aria-labelledby="share-gate-title">
     <div class="share-gate__card">
       <h2 id="share-gate-title" class="share-gate__title">Share Kirkify to unlock uploads</h2>
@@ -752,5 +821,38 @@
 
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
+
+  <!-- Entry gate logic: lock scroll for a few seconds on first load -->
+  <script>
+    (function () {
+      var gate = document.getElementById('entry-gate');
+      if (!gate) return;
+
+      var countdownEl = document.getElementById('entry-gate-countdown');
+      var DURATION = 5;
+      var remaining = DURATION;
+
+      document.body.classList.add('entry-locked');
+      if (countdownEl) countdownEl.textContent = String(remaining);
+
+      var timer = setInterval(function () {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(timer);
+        }
+        if (countdownEl && remaining >= 0) {
+          countdownEl.textContent = String(Math.max(0, remaining));
+        }
+      }, 1000);
+
+      function unlock() {
+        document.body.classList.remove('entry-locked');
+        gate.hidden = true;
+      }
+
+      // Hard cap unlock after duration + small buffer
+      setTimeout(unlock, (DURATION + 0.3) * 1000);
+    })();
+  </script>
 </body>
 </html>
