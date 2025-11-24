@@ -995,6 +995,8 @@ const AdMonetization = (() => {
   // ---------------------------------------------------------
   function finish(v) {
     gateActive = false;
+    console.log("[AdGate] FINISH called. gateActive = false");
+
     stopProgressTimer();
     hideGate();
     hoverAdId = null;
