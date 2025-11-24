@@ -765,17 +765,6 @@
     </footer>
   </div>
 
-  <!-- Entry gate modal: blocks scroll for ~5 seconds on page load -->
-  <div id="entry-gate" class="entry-gate" role="dialog" aria-modal="true" aria-labelledby="entry-gate-title">
-    <div class="entry-gate__card">
-      <h2 id="entry-gate-title" class="entry-gate__title">Preparing Kirkify…</h2>
-      <p class="entry-gate__body">
-        Warming up your session and loading the ads that keep Kirkify <strong>100% free</strong>.<br>
-        You can start in <span id="entry-gate-countdown" class="entry-gate__count">5</span> seconds.
-      </p>
-      <div class="entry-gate__spinner" aria-hidden="true"></div>
-    </div>
-  </div>
 
   <!-- Share gate modal (upload share requirement) -->
   <div id="share-gate" class="share-gate" hidden role="dialog" aria-modal="true" aria-labelledby="share-gate-title">
@@ -884,37 +873,6 @@
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
 
-  <!-- Entry gate logic: lock scroll for a few seconds on first load -->
-  <script>
-    (function () {
-      var gate = document.getElementById('entry-gate');
-      if (!gate) return;
-
-      var countdownEl = document.getElementById('entry-gate-countdown');
-      var DURATION = 5;
-      var remaining = DURATION;
-
-      document.body.classList.add('entry-locked');
-      if (countdownEl) countdownEl.textContent = String(remaining);
-
-      var timer = setInterval(function () {
-        remaining -= 1;
-        if (remaining <= 0) {
-          clearInterval(timer);
-        }
-        if (countdownEl && remaining >= 0) {
-          countdownEl.textContent = String(Math.max(0, remaining));
-        }
-      }, 1000);
-
-      function unlock() {
-        document.body.classList.remove('entry-locked');
-        gate.hidden = true;
-      }
-
-      // Hard cap unlock after duration + small buffer
-      setTimeout(unlock, (DURATION + 0.3) * 1000);
-    })();
-  </script>
+  
 </body>
 </html>
