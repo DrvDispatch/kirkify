@@ -117,7 +117,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- Share gate + entry gate styles -->
+  <!-- Share gate + entry gate + scroll hint styles -->
   <style>
     /* Share gate (upload share requirement) */
     .share-gate {
@@ -232,6 +232,40 @@
     @keyframes entry-gate-spin {
       to { transform: rotate(360deg); }
     }
+
+    /* Scroll-down hint that appears when a job completes */
+    .scroll-hint {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.96);
+      color: #e5e7eb;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.55);
+      z-index: 9000;
+    }
+    .scroll-hint[hidden] {
+      display: none;
+    }
+    .scroll-hint__icon {
+      font-size: 1rem;
+      animation: scroll-hint-bounce 1.4s infinite;
+    }
+    @keyframes scroll-hint-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+    @media (min-width: 768px) {
+      .scroll-hint {
+        bottom: 24px;
+      }
+    }
   </style>
 
   <!-- Popunder (1 per page) -->
@@ -283,10 +317,26 @@
       </div>
     </div>
 
+    <!-- Mobile-friendly top 320x50 banner (one instance only) – Adsterra -->
+    <div class="ad-container ad-container--top-mobile" aria-label="Advertisement" role="complementary">
+      <div class="ad-inner">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : 'b9cb29084d0500298167450ad06eb9b7',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="//abjectjunctionlatest.com/b9cb29084d0500298167450ad06eb9b7/invoke.js"></script>
+      </div>
+    </div>
+
     <!-- Main -->
     <main id="main" class="main" aria-labelledby="hero-heading">
 
-      <!-- HERO: includes 160x300 + 300x250 + 320x50 (high CPM block for mobile) -->
+      <!-- HERO: includes 160x300 + 300x250 (high CPM block for mobile) -->
       <section id="try-kirkify" class="hero">
         <div class="hero__grid">
           <div class="hero__copy">
@@ -365,9 +415,9 @@
             </div>
           </div>
 
-          <!-- Right column: tool + hero banners -->
+          <!-- Right column: tool + ads -->
           <div class="hero__tool">
-            <!-- High-CPM 300x250 banner above upload – Adsterra -->
+            <!-- High-CPM 300x250 banner above upload – Adsterra (single instance) -->
             <section class="tool-card" aria-label="Upload image to use the Charlie Kirk face swap tool">
               <div class="ad-container ad-container--hero" aria-label="Advertisement" role="complementary">
                 <div class="ad-inner">
@@ -399,71 +449,50 @@
               </div>
             </section>
 
-            <!-- Preview card (kept compact to leave room for ads) -->
-            <section class="tool-card tool-card--preview" aria-label="Kirkified before and after preview">
-              <div class="ba" id="ba-demo" aria-label="Before and after Charlie Kirk face swap comparison">
+            <!-- Result preview without before/after slider (frees space for ads) -->
+            <section class="tool-card tool-card--preview" aria-label="Kirkified result preview">
+              <div class="result-preview" id="result-preview">
+                <!-- keep a hidden before image only for JS logic -->
                 <img id="before-img"
                      alt="Original photo before using the free Charlie Kirk face swap tool"
-                     class="ba__img ba__img--before" />
+                     class="result-preview__img result-preview__img--before"
+                     hidden />
                 <img id="after-img"
                      alt="Photo after kirkification with Charlie Kirk using the AI meme generator"
-                     class="ba__img ba__img--after" />
-                <input class="ba__range"
-                       type="range"
-                       min="0"
-                       max="100"
-                       value="50"
-                       aria-label="Drag to compare the face swap before and after">
-                <div class="ba__divider"></div>
-                <div class="ba__knob" aria-hidden="true"></div>
+                     class="result-preview__img result-preview__img--after" />
+                <p class="actions">
+                  <a id="download-link"
+                     class="link link--download is-disabled"
+                     href="#"
+                     download="kirkified.jpg"
+                     aria-disabled="true">
+                    Download kirkified image
+                  </a>
+                  <span class="hint">
+                    Once it’s ready, scroll down to <strong>Your recent jobs</strong> to see the full-size result.
+                  </span>
+                </p>
               </div>
-
-              <p class="actions">
-                <a id="download-link"
-                   class="link link--download is-disabled"
-                   href="#"
-                   download="kirkified.jpg"
-                   aria-disabled="true">
-                  Download kirkified image
-                </a>
-                <span class="hint">Drag the circle to compare before and after the Charlie Kirk AI face swap.</span>
-              </p>
             </section>
 
-            <!-- 320x50 banner directly under preview – Adsterra -->
-            <div class="ad-container ad-container--below-preview" aria-label="Advertisement" role="complementary">
+            <!-- Tall 160x600 banner inside main tool column – Adsterra (single instance) -->
+            <div class="ad-container ad-container--skyscraper" aria-label="Advertisement" role="complementary">
               <div class="ad-inner">
                 <script type="text/javascript">
                   atOptions = {
-                    'key' : 'b9cb29084d0500298167450ad06eb9b7',
+                    'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
                     'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
+                    'height' : 600,
+                    'width' : 160,
                     'params' : {}
                   };
                 </script>
-                <script type="text/javascript" src="//abjectjunctionlatest.com/b9cb29084d0500298167450ad06eb9b7/invoke.js"></script>
+                <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <!-- Tall 160x600 banner just after main tool – Adsterra -->
-      <div class="ad-container ad-container--skyscraper" aria-label="Advertisement" role="complementary">
-        <div class="ad-inner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
-              'format' : 'iframe',
-              'height' : 600,
-              'width' : 160,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
-        </div>
-      </div>
 
       <!-- HOW IT WORKS -->
       <section id="how-it-works" class="section section--split">
@@ -649,7 +678,7 @@
           <h2>Try Kirkify Charlie Kirk Face Swap for Free</h2>
           <p>
             Ready to see your own kirkified meme? Upload a photo, wait a few seconds for the GPU to process it,
-            and compare your before-and-after result directly in your browser.
+            and compare your result directly in your browser.
           </p>
         </div>
         <p>
@@ -661,16 +690,23 @@
         </p>
       </section>
 
-      <!-- Native banner moved lower (low CPM) – Adsterra -->
+      <!-- Native banner moved lower (low CPM, single instance) – Adsterra -->
       <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
         <div class="ad-inner">
-          <!-- Native banner #1 -->
           <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
           <div id="container-c39b81789847253b78115f68c971d8f7"></div>
         </div>
       </div>
 
-      <!-- NEW: My Jobs moved further down for more ad impressions -->
+      <!-- Scroll-down hint shown after job completes -->
+      <div id="scroll-hint" class="scroll-hint" hidden>
+        <span class="scroll-hint__icon" aria-hidden="true">⬇</span>
+        <span class="scroll-hint__text">
+          Scroll down to <strong>Your recent jobs</strong> to see your kirkified result.
+        </span>
+      </div>
+
+      <!-- My Jobs pushed further down for more ad impressions -->
       <section id="my-jobs" class="section section--jobs" aria-label="Your recent jobs">
         <div class="section__header">
           <h2>Your recent kirkified jobs</h2>
@@ -696,7 +732,7 @@
         Please only upload images you have the right to use and do not use kirkified results to impersonate or mislead others.
       </p>
 
-      <!-- Inline 468x60 banner above footer – Adsterra (lowest CPM) -->
+      <!-- Inline 468x60 banner above footer – Adsterra (lowest CPM, single instance) -->
       <div class="ad-container ad-container--inline" aria-label="Advertisement" role="complementary">
         <div class="ad-inner">
           <script type="text/javascript">
@@ -712,21 +748,7 @@
         </div>
       </div>
 
-      <!-- Secondary 300x250 banner near footer – Adsterra -->
-      <div class="ad-container ad-container--footer" aria-label="Advertisement" role="complementary">
-        <div class="ad-inner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : 'dca5551e0721f02be55715f302dc7440',
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//abjectjunctionlatest.com/dca5551e0721f02be55715f302dc7440/invoke.js"></script>
-        </div>
-      </div>
+      <!-- Note: 300x250 is used once above upload; no secondary footer box anymore -->
     </main>
 
     <!-- Footer -->
