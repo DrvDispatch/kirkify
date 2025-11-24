@@ -857,13 +857,17 @@ function stopProgressTimer() {
   const msgEl = document.getElementById("ad-gate-msg");
   const cancelBtn = document.getElementById("ad-gate-cancel");
 
-  // --- 0. Helpers for UI state (full vs floating) ---
-  function showFull() {
-    if (!gate) return;
-    gate.hidden = false;
-    gate.classList.add("is-open");
-    gate.classList.remove("ad-gate--floating");
-  }
+function showFull() {
+  if (!gate) return;
+  gate.hidden = false;
+
+  // FIX #1: make sure display:flex actually happens
+  gate.style.display = "flex";
+
+  gate.classList.add("is-open");
+  gate.classList.remove("ad-gate--floating");
+}
+
 
   function floatToCorner() {
     if (!gate) return;
@@ -871,11 +875,13 @@ function stopProgressTimer() {
     gate.classList.add("ad-gate--floating");
   }
 
-  function hideGate() {
-    if (!gate) return;
-    gate.classList.remove("is-open", "ad-gate--floating");
-    gate.hidden = true;
-  }
+function hideGate() {
+  if (!gate) return;
+  gate.style.display = "none";  // FIX #2
+  gate.classList.remove("is-open", "ad-gate--floating");
+  gate.hidden = true;
+}
+
 
   // --- 1. Tracker Logic (Who is hovering what?) ---
   function initTracker() {
@@ -973,7 +979,7 @@ startProgressTimer();
     // Check duration
     if (duration < MIN_TIME_ON_AD_MS) {
       console.log("[AdGate] Fail: Duration too short.");
-      updateMessage("Too fast! View the ad for at least 5 seconds.", "error");
+      updateMessage("Too fast! View the ad for at least 3 seconds.", "error");
       return;
     }
 
@@ -1081,15 +1087,32 @@ startProgressTimer();
 
   // Start tracking when ads appear
   function initTrackerWhenReady() {
-    const observer = new MutationObserver(() => {
-      const ads = document.querySelectorAll(".ad-container");
+const observer = new MutationObserver(() => {
+  // ads exist outside iframe
+  const ads = document.querySelectorAll(".ad-container");
 
-      if (ads.length > 0) {
+  if (ads.length === 0) return;
+
+  // FIX #3: trackers MUST bind after iframes finish loading
+  let ready = 0;
+
+  ads.forEach(ad => {
+    const iframe = ad.querySelector("iframe");
+
+    if (!iframe) {
+      ready++;
+      return;
+    }
+
+    iframe.addEventListener("load", () => {
+      ready++;
+      if (ready === ads.length) {
         observer.disconnect();
-        console.log("[AdGate] Ads detected:", ads.length);
-        initTracker(); // now safe
+        initTracker();
       }
     });
+  });
+});
 
     observer.observe(document.body, { childList: true, subtree: true });
   }
