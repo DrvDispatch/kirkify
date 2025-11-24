@@ -940,45 +940,30 @@ h3,
   height: 100% !important;
   border: 0;
 }
-
-/* === Size-specific wrappers (desktop) === */
-
-/* 728x90 — top leaderboard */
-.ad-container--top .ad-inner {
-  max-width: 728px;
-  aspect-ratio: 728 / 90;
+/* FIXED: Let ads define their own height */
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  padding: 10px 0;
+  max-width: 100%;
 }
 
-/* 300x250 — hero and footer boxes */
-.ad-container--hero .ad-inner,
-.ad-container--footer .ad-inner {
-  max-width: 300px;
-  aspect-ratio: 300 / 250;
+.ad-inner {
+  width: 100%;
+  height: auto;
+  position: relative;
 }
 
-/* 160x300 — small vertical block */
-.ad-container--narrow .ad-inner {
-  max-width: 160px;
-  aspect-ratio: 160 / 300;
+/* Never force ad height or aspect ratio */
+.ad-inner iframe {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  border: 0;
 }
 
-/* 160x600 — skyscraper */
-.ad-container--skyscraper .ad-inner {
-  max-width: 160px;
-  aspect-ratio: 160 / 600;
-}
-
-/* 320x50 — under preview */
-.ad-container--below-preview .ad-inner {
-  max-width: 320px;
-  aspect-ratio: 320 / 50;
-}
-
-/* 468x60 — inline near footer */
-.ad-container--inline .ad-inner {
-  max-width: 468px;
-  aspect-ratio: 468 / 60;
-}
 
 /* Smartlink text ad under "What can you do" (unchanged) */
 .ad-smartlink {
