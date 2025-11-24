@@ -1543,3 +1543,12 @@ h3,
   box-shadow: 0 18px 40px rgba(0,0,0,0.6);
   font-size: 0.9rem;
 }
+/* Fix first ad cropping */
+#ad-leaderboard.ad-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  min-height: 90px; /* exact ad height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
