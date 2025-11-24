@@ -1528,3 +1528,45 @@ h3,
   box-shadow: 0 18px 40px rgba(0,0,0,0.6);
   font-size: 0.9rem;
 }
+/* === CLEAN AD BLOCK — USE ONLY THIS === */
+
+.ad-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ad wrapper does NOT enforce any size */
+.ad-inner {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+  overflow: visible;
+}
+
+/* The Adsterra iframe is allowed to keep its natural size */
+.ad-inner iframe {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100%;
+  border: 0;
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+  .ad-container {
+    margin: 12px auto;
+    padding: 0;
+  }
+
+  .ad-inner iframe {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
