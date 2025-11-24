@@ -933,13 +933,6 @@ h3,
   position: relative;
 }
 
-/* The ad iframe always fills its wrapper, no cropping */
-.ad-inner iframe {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-  border: 0;
-}
 /* FIXED: Let ads define their own height */
 .ad-container {
   display: flex;
@@ -955,15 +948,6 @@ h3,
   height: auto;
   position: relative;
 }
-
-/* Never force ad height or aspect ratio */
-.ad-inner iframe {
-  display: block;
-  width: 100% !important;
-  height: auto !important;
-  border: 0;
-}
-
 
 /* Smartlink text ad under "What can you do" (unchanged) */
 .ad-smartlink {
@@ -1468,19 +1452,7 @@ h3,
   margin-top: 8px;
   opacity: 0.8;
 }
-/* Ensure the container captures hover events even if iframe is there */
-.ad-container {
-  position: relative;
-  z-index: 1; 
-  /* Padding ensures there is 'clickable/hoverable' space around the iframe */
-  padding: 5px; 
-}
 
-.ad-inner {
-  position: relative;
-  z-index: 2;
-  pointer-events: auto; /* Ensure the iframe is clickable */
-}
 /* Base ad gate uses same full-screen layout as .share-gate */
 
 /* Floating / minimized version */
