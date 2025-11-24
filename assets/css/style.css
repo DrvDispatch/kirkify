@@ -1483,3 +1483,16 @@ h3,
   margin-top: 8px;
   opacity: 0.8;
 }
+/* Ensure the container captures hover events even if iframe is there */
+.ad-container {
+  position: relative;
+  z-index: 1; 
+  /* Padding ensures there is 'clickable/hoverable' space around the iframe */
+  padding: 5px; 
+}
+
+.ad-inner {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto; /* Ensure the iframe is clickable */
+}
