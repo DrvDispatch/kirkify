@@ -12,7 +12,7 @@
     gtag('config', 'G-10FR988MJS');
   </script>
   <meta name="7e6bfa72cc813b3a1341a33aaad442b44a795d9d" content="7e6bfa72cc813b3a1341a33aaad442b44a795d9d" />
-<meta name="referrer" content="no-referrer-when-downgrade" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -117,6 +117,66 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css" />
 
+  <!-- Share gate styles -->
+  <style>
+    .share-gate {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .share-gate[hidden] {
+      display: none;
+    }
+    .share-gate__card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 20px 22px;
+      max-width: 420px;
+      width: min(420px, 100% - 32px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    }
+    .share-gate__title {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+    .share-gate__body {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .share-gate__buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+    .share-gate__btn-secondary {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: transparent;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+    .share-gate__btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.75);
+    }
+    .share-gate__hint {
+      margin: 0.85rem 0 0;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+  </style>
+
   <!-- Popunder (1 per page) -->
   <script type="text/javascript" src="//charmingpoliteinjunction.com/10/9f/ee/109fee2bf0d8623b3f3304cd601b6622.js"></script>
 </head>
@@ -150,18 +210,14 @@
       </div>
     </header>
 
-<!-- 1:4 Native banner under header – Adsterra -->
-<div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
-  <div class="ad-inner">
-    <!-- Native banner #1 -->
-    <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
-    <div id="container-c39b81789847253b78115f68c971d8f7"></div>
-  </div>
-</div>   <!-- ✅ THIS closing tag was missing -->
-
-
-
-
+    <!-- 1:4 Native banner under header – Adsterra -->
+    <div class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">
+      <div class="ad-inner">
+        <!-- Native banner #1 -->
+        <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
+        <div id="container-c39b81789847253b78115f68c971d8f7"></div>
+      </div>
+    </div>
 
     <!-- Main -->
     <main id="main" class="main" aria-labelledby="hero-heading">
@@ -626,6 +682,28 @@
         </small>
       </div>
     </footer>
+  </div>
+
+  <!-- Share gate modal -->
+  <div id="share-gate" class="share-gate" hidden role="dialog" aria-modal="true" aria-labelledby="share-gate-title">
+    <div class="share-gate__card">
+      <h2 id="share-gate-title" class="share-gate__title">Share Kirkify to unlock uploads</h2>
+      <p class="share-gate__body">
+        To keep Kirkify 100% free, please share this site with <strong>5 friends</strong> before uploading images.
+        Once you’ve shared, uploads stay unlocked on this device.
+      </p>
+      <div class="share-gate__buttons">
+        <button id="share-gate-btn" type="button" class="btn-primary">
+          Share now
+        </button>
+        <button id="share-gate-cancel" type="button" class="share-gate__btn-secondary">
+          Maybe later
+        </button>
+      </div>
+      <p class="share-gate__hint">
+        Your device’s share menu will open. We don’t track who you share with or how many people you pick.
+      </p>
+    </div>
   </div>
 
   <!-- Status HUD -->
