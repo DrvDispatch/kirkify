@@ -813,151 +813,153 @@
       },
     };
   })();
-  // ====== Ad Monetization System (Gate) ======================================================
+  // ====== Ad Monetization System (Floating Checklist) ========================================
   const AdMonetization = (() => {
-    // Configuration
     const REQUIRED_CLICKS = 3;
     const MIN_TIME_ON_AD_MS = 5000; // 5 seconds
-    
-    // State
-    let clickedAds = new Set(); // Stores IDs of ads clicked this session
-    let hoverAdId = null;       // Currently hovered ad ID
-    let leaveTime = 0;          // When user left the tab
-    let potentialAdClick = null; // ID of ad potentially clicked
-    let gateActive = false;     // Is the gate modal open?
 
-    // Elements
+    // State
+    let clickedAds = new Set();
+    let hoverAdId = null;
+    let leaveTime = 0;
+    let potentialAdClick = null;
+    let gateActive = false;
+    let resolvePromise = null;
+
+    // DOM Elements
     const gate = document.getElementById("ad-gate");
     const msgEl = document.getElementById("ad-gate-msg");
     const cancelBtn = document.getElementById("ad-gate-cancel");
 
-    // --- 1. Detection Logic ---
-
-    // Track which ad container the mouse/touch is over
+    // --- 1. Tracker Logic (Who is hovering what?) ---
     function initTracker() {
+      // Find all ads by their container class
       const adContainers = document.querySelectorAll('.ad-container');
       
       adContainers.forEach(container => {
-        // Ensure it has an ID
-        if (!container.id) return;
+        // Ensure every ad has a unique ID. If not in HTML, generate one on fly.
+        if (!container.id) {
+            container.id = 'ad-' + Math.random().toString(36).substr(2, 9);
+        }
 
         const onEnter = () => { hoverAdId = container.id; };
         const onLeave = () => { if (hoverAdId === container.id) hoverAdId = null; };
 
+        // Mouse and Touch listeners
         container.addEventListener('mouseenter', onEnter);
         container.addEventListener('mouseleave', onLeave);
         container.addEventListener('touchstart', onEnter, {passive: true});
-        // Note: touch end logic is tricky on mobile as click happens immediately, 
-        // usually we don't clear hover immediately on touch for this exact reason.
       });
 
-      // Window Blur: User switched tab or clicked iframe
+      // BLUR: User clicks iframe or switches tab
       window.addEventListener('blur', () => {
-        if (hoverAdId) {
-          // High probability of ad click because we were hovering an ad when focus lost
+        if (hoverAdId && gateActive) {
           potentialAdClick = hoverAdId;
           leaveTime = Date.now();
-          if (gateActive) updateMessage("Ad opened. Please wait 5 seconds...", "neutral");
+          updateMessage("Ad opened... wait 5s...", "neutral");
         }
       });
 
-      // Window Focus: User came back
+      // FOCUS: User returns to site
       window.addEventListener('focus', () => {
-        if (potentialAdClick && leaveTime > 0) {
+        if (potentialAdClick && leaveTime > 0 && gateActive) {
           const duration = Date.now() - leaveTime;
           validateReturn(duration);
         }
-        // Reset
         potentialAdClick = null;
         leaveTime = 0;
       });
     }
 
-    // --- 2. Validation Logic ---
+    // --- 2. Logic to Validate the Click ---
     function validateReturn(duration) {
-      if (!gateActive) return;
-
+      // Check duration
       if (duration < MIN_TIME_ON_AD_MS) {
-        updateMessage(`Too fast! You only spent ${(duration/1000).toFixed(1)}s. Stay at least 5s.`, "error");
+        updateMessage("Too fast! View ad for > 5s.", "error");
         return;
       }
 
+      // Check duplicates
       if (clickedAds.has(potentialAdClick)) {
-        updateMessage("You already clicked that ad. Please click a different one.", "error");
+        updateMessage("Already clicked that one. Try another.", "error");
         return;
       }
 
-      // Valid Click
+      // Success
       clickedAds.add(potentialAdClick);
       updateUI();
-      
+
       if (clickedAds.size >= REQUIRED_CLICKS) {
-        updateMessage("Success! Access granted.", "success");
-        setTimeout(closeGateAndResolve, 1500);
+        updateMessage("Perfect! Starting Generation...", "success");
+        // Small delay so they see the success message
+        setTimeout(() => {
+            finish(true);
+        }, 1000);
       } else {
-        const remaining = REQUIRED_CLICKS - clickedAds.size;
-        updateMessage(`Good! ${remaining} more different ad${remaining > 1 ? 's' : ''} to go.`, "success");
+        const left = REQUIRED_CLICKS - clickedAds.size;
+        updateMessage(`Good! ${left} more to go.`, "success");
       }
     }
 
-    // --- 3. UI Logic ---
+    // --- 3. UI Updates ---
     function updateUI() {
-      // Update steps
       const count = clickedAds.size;
       for (let i = 1; i <= 3; i++) {
-        const step = document.getElementById(`step-ad-${i}`);
-        if (step) {
-          if (i <= count) step.classList.add('is-completed');
-          else step.classList.remove('is-completed');
+        const el = document.getElementById(`step-ad-${i}`);
+        const icon = el ? el.querySelector('.ad-step__icon') : null;
+        
+        if (el) {
+          if (i <= count) {
+            el.classList.add('is-completed');
+            if(icon) icon.innerHTML = "✓"; 
+          } else {
+            el.classList.remove('is-completed');
+            if(icon) icon.innerHTML = i;
+          }
         }
       }
     }
 
     function updateMessage(text, type) {
-      if (!msgEl) return;
-      msgEl.textContent = text;
-      msgEl.className = 'ad-gate-msg ' + type;
+      if (msgEl) {
+        msgEl.textContent = text;
+        msgEl.className = `ad-gate-msg ${type}`;
+      }
     }
 
-    let resolvePromise = null;
+    function finish(result) {
+      gateActive = false;
+      if (gate) gate.hidden = true;
+      if (resolvePromise) resolvePromise(result);
+    }
 
-    function openGate() {
-      // Reset for new generation? 
-      // Requirement says: "Every Generation".
-      // So we clear the set every time openGate is called.
-      clickedAds.clear(); 
+    // --- 4. Public Function to Start the "Quest" ---
+    function requireAds() {
+      clickedAds.clear();
       updateUI();
-      updateMessage("Waiting for interaction...", "neutral");
+      updateMessage("Please click 3 ads to support us.", "neutral");
 
       gateActive = true;
-      gate.hidden = false;
-      gate.classList.add("is-open"); // Re-using share-gate css class for animation
+      if (gate) {
+          gate.hidden = false;
+          gate.classList.add("is-open");
+      }
 
       return new Promise((resolve) => {
         resolvePromise = resolve;
-        
+        // If user manually clicks Cancel
         const onCancel = () => {
-          gate.hidden = true;
-          gateActive = false;
-          resolve(false);
-          cancelBtn.removeEventListener('click', onCancel);
+            cancelBtn.removeEventListener('click', onCancel);
+            finish(false);
         };
         cancelBtn.addEventListener('click', onCancel);
       });
     }
 
-    function closeGateAndResolve() {
-      gate.hidden = true;
-      gateActive = false;
-      if (resolvePromise) resolvePromise(true);
-    }
-
-    // Initialize detection immediately
+    // Start tracking immediately
     initTracker();
 
-    return {
-      requireAds: openGate
-    };
+    return { requireAds };
   })();
 
   // ====== Uploader / UI glue ==================================================================
