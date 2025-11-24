@@ -938,7 +938,7 @@ function hideGate() {
       );
 
       // We ONLY care about clicks while the ad gate is active
-      if (hoverAdId && gateActive) {
+if (gateActive && hoverAdId) {
         potentialAdClick = hoverAdId;
         leaveTime = Date.now();
         console.log(
@@ -1053,6 +1053,8 @@ startProgressTimer();
   // --- 4. Public Function to Start the "Quest" ---
   function requireAds() {
     console.log("[AdGate] Opening Gate…");
+    gateActive = true;  // FIX #4 — sometimes overwritten incorrectly
+
     clickedAds.clear();
     updateUI();
     updateMessage(
