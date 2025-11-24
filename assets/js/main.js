@@ -817,51 +817,69 @@
 const AdMonetization = (() => {
   const REQUIRED_CLICKS = 3;
   const MIN_TIME_ON_AD_MS = 3000; // 3 seconds
+
+  // Timer state
   let progressInterval = null;
   let progressSeconds = 0;
 
-  // State
-  let clickCount = 0;
-  let hoverAdId = null;
-  let leaveTime = 0;
-  let potentialAdClick = null;
+  // Click session state
+  let clickCount = 0;        // # of validated clicks this gate run (same ad allowed)
+  let hoverAdId = null;      // last ad container under cursor / touch
+  let currentClickId = null; // ad id for the *ongoing* click
+  let leaveTime = 0;         // timestamp when blur/click started
+  let clickInProgress = false;
+  let clickValidated = false;
+
+  // Gate state
   let gateActive = false;
   let resolvePromise = null;
 
-// DOM Elements
-const gate = document.getElementById("ad-gate");
-const msgEl = document.getElementById("ad-gate-msg");
-const cancelBtn = document.getElementById("ad-gate-cancel");
+  // DOM
+  const gate = document.getElementById("ad-gate");
+  const msgEl = document.getElementById("ad-gate-msg");
+  const cancelBtn = document.getElementById("ad-gate-cancel");
 
-// Hide gate by default so it only appears when requireAds() runs
-if (gate) {
-  gate.hidden = true;
-  gate.style.display = "none";
-}
+  // Hide gate by default so it only appears when requireAds() runs
+  if (gate) {
+    gate.hidden = true;
+    gate.style.display = "none";
+  }
 
+  const log = (...args) => console.log("[AdGate]", ...args);
 
+  // ---------------- TIMER ----------------
 
-  // ---------------------------------------------------------
-  // TIMER (with mobile auto-validation fallback)
-  // ---------------------------------------------------------
   function startProgressTimer() {
     stopProgressTimer();
     progressSeconds = 0;
+    log("startProgressTimer");
 
     progressInterval = setInterval(() => {
       progressSeconds++;
       updateMessage(`Viewing ad… ${progressSeconds}/3 seconds`, "neutral");
 
-      // After 3 seconds, count automatically (MOBILE FIX)
-      if (progressSeconds >= MIN_TIME_ON_AD_MS / 1000) {
+      if (progressSeconds * 1000 >= MIN_TIME_ON_AD_MS) {
+        log(
+          "Timer reached 3s. gateActive=",
+          gateActive,
+          "clickInProgress=",
+          clickInProgress,
+          "clickValidated=",
+          clickValidated
+        );
+
+        // Guard against double-fires
+        if (!gateActive || !clickInProgress || clickValidated) {
+          stopProgressTimer();
+          return;
+        }
+
+        clickValidated = true;
+        clickInProgress = false;
         stopProgressTimer();
 
-        // Desktop: validate via focus if possible.
-        // Mobile/iOS: focus often NEVER fires → count now.
-        if (gateActive) {
-          console.log("[AdGate] Mobile/timeout auto-validation.");
-          validateReturn(MIN_TIME_ON_AD_MS);
-        }
+        // Auto-validate based on elapsed time (mobile/new-window friendly)
+        validateReturn(MIN_TIME_ON_AD_MS);
       }
     }, 1000);
   }
@@ -873,10 +891,11 @@ if (gate) {
     }
   }
 
-  // ---------------------------------------------------------
-  // UI Controls
-  // ---------------------------------------------------------
+  // ---------------- GATE VISIBILITY ----------------
+
   function showFull() {
+    if (!gate) return;
+    log("showFull()");
     gate.hidden = false;
     gate.style.display = "flex";
     gate.classList.add("is-open");
@@ -884,104 +903,217 @@ if (gate) {
   }
 
   function floatToCorner() {
+    if (!gate) return;
+    log("floatToCorner()");
     gate.classList.add("ad-gate--floating");
   }
 
   function hideGate() {
+    if (!gate) return;
+    log("hideGate()");
     gate.style.display = "none";
     gate.classList.remove("is-open", "ad-gate--floating");
     gate.hidden = true;
   }
 
-  // ---------------------------------------------------------
-  // TRACKER INIT
-  // ---------------------------------------------------------
+  // ---------------- TRACKER LOGIC ----------------
+
+  function startClickSession(source) {
+    if (!hoverAdId) {
+      hoverAdId = "mobile-" + Math.random().toString(36).slice(2);
+      log("Using synthetic hoverAdId:", hoverAdId);
+    }
+
+    currentClickId = hoverAdId;
+    leaveTime = Date.now();
+    clickInProgress = true;
+    clickValidated = false;
+
+    log(">>> POTENTIAL CLICK from", source, "on", currentClickId, "at", leaveTime);
+
+    updateMessage("Ad opened… viewing required", "neutral");
+    startProgressTimer();
+  }
+
   function initTracker() {
+    log("Initializing Tracker…");
+
     const adContainers = document.querySelectorAll(".ad-container");
+    if (adContainers.length === 0) {
+      log("WARNING: No .ad-container elements found in DOM!");
+    }
+
     adContainers.forEach((container) => {
-      if (!container.id)
+      if (!container.id) {
         container.id = "ad-" + Math.random().toString(36).slice(2);
+        log("Generated ID for container:", container.id);
+      } else {
+        log("Tracking container:", container.id);
+      }
 
       container.addEventListener("mouseenter", () => {
         hoverAdId = container.id;
+        log("Mouse ENTER:", hoverAdId);
       });
+
       container.addEventListener("mouseleave", () => {
-        if (hoverAdId === container.id) hoverAdId = null;
+        if (hoverAdId === container.id) {
+          log("Mouse LEAVE:", hoverAdId);
+          hoverAdId = null;
+        }
       });
 
-      container.addEventListener("touchstart", () => {
+      container.addEventListener(
+        "touchstart",
+        () => {
+          hoverAdId = container.id;
+          log("Touch START:", hoverAdId);
+        },
+        { passive: true }
+      );
+
+      // CLICK FALLBACK: if blur doesn't fire (some mobile / overlay ads)
+      container.addEventListener("click", () => {
+        if (!gateActive) return;
+        log("CLICK fallback on", container.id);
         hoverAdId = container.id;
-      }, { passive: true });
+        startClickSession("click");
+      });
     });
 
-    // -----------------------------------------------------
-    // BLUR EVENT → user clicked the ad
-    // -----------------------------------------------------
+    // BLUR: user clicks iframe / new tab / switches tab
     window.addEventListener("blur", () => {
+      log("Window BLUR fired. gateActive=", gateActive, "hoverAdId=", hoverAdId);
       if (!gateActive) return;
-
-      if (!hoverAdId) {
-        hoverAdId = "mobile-" + Math.random().toString(36).slice(2);
-      }
-
-      potentialAdClick = hoverAdId;
-      leaveTime = Date.now();
-
-      updateMessage("Ad opened… viewing required", "neutral");
-      startProgressTimer();
+      startClickSession("blur");
     });
 
-    // -----------------------------------------------------
-    // FOCUS EVENT → desktop validation path
-    // -----------------------------------------------------
+    // FOCUS: user returns
     window.addEventListener("focus", () => {
-      if (potentialAdClick && leaveTime > 0 && gateActive) {
-        const dur = Date.now() - leaveTime;
-        stopProgressTimer();
-        validateReturn(dur);
+      log(
+        "Window FOCUS fired. gateActive=",
+        gateActive,
+        "currentClickId=",
+        currentClickId,
+        "leaveTime=",
+        leaveTime
+      );
+
+      if (!gateActive || !currentClickId || !leaveTime) {
+        log("Focus ignored (no active click)");
+        return;
       }
 
-      potentialAdClick = null;
+      const duration = Date.now() - leaveTime;
+      log("User back after", duration, "ms");
+
+      // If timer hasn't already validated, we can validate by actual duration
+      if (!clickValidated) {
+        validateReturn(duration);
+      }
+
+      // Per-click cleanup (timer will be stopped by validateReturn/handleSuccessfulClick)
+      clickInProgress = false;
+      currentClickId = null;
       leaveTime = 0;
-      hoverAdId = null;
     });
   }
 
-  // ---------------------------------------------------------
-  // SUCCESS CLICK HANDLER (same ad allowed)
-  // ---------------------------------------------------------
+  // Robust: initialize as soon as .ad-container exists (no iframe load waiting)
+  function initTrackerWhenReady() {
+    const initIfReady = (reason) => {
+      const ads = document.querySelectorAll(".ad-container");
+      if (ads.length > 0) {
+        log(`initTrackerWhenReady: ads present (${reason}), initializing tracker.`);
+        initTracker();
+        return true;
+      }
+      return false;
+    };
+
+    // Try immediately
+    if (initIfReady("immediate")) return;
+
+    // Fallback: observe DOM until ads appear
+    const obs = new MutationObserver(() => {
+      if (initIfReady("mutation")) {
+        obs.disconnect();
+      }
+    });
+
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // ---------------- VALIDATION LOGIC ----------------
+
   function handleSuccessfulClick() {
-    clickCount++;
+    clickCount += 1;
+    log(`Click #${clickCount} validated.`);
+
+    // Reset per-click state
+    clickInProgress = false;
+    clickValidated = true;
+    currentClickId = null;
+    hoverAdId = null;
+    leaveTime = 0;
+    stopProgressTimer();
+
     updateUI();
 
-    if (clickCount >= REQUIRED_CLICKS) {
+    const left = REQUIRED_CLICKS - clickCount;
+    if (left <= 0) {
+      log("All required clicks completed.");
       updateMessage("Perfect! Starting your kirkification…", "success");
-      finish(true);
+      setTimeout(() => finish(true), 800);
     } else {
-      updateMessage(`Nice! ${REQUIRED_CLICKS - clickCount} more to go.`, "success");
+      updateMessage(`Nice! ${left} more to go.`, "success");
     }
   }
 
-  // ---------------------------------------------------------
-  // VALIDATION
-  // ---------------------------------------------------------
-  function validateReturn(duration) {
-    if (duration < MIN_TIME_ON_AD_MS) {
-      updateMessage("Too fast! View the ad for at least 3 seconds.", "error");
+  function validateReturn(durationMs) {
+    log("validateReturn called with", durationMs, "ms (gateActive=", gateActive, ")");
+    if (!gateActive) {
+      log("Gate inactive; ignoring validateReturn.");
+      return;
+    }
+    if (!currentClickId && !clickValidated) {
+      log("No currentClickId and not pre-validated; ignoring.");
       return;
     }
 
-    // SAME AD ALLOWED — always count
+    if (durationMs < MIN_TIME_ON_AD_MS) {
+      log(
+        "Short view:",
+        durationMs,
+        "<",
+        MIN_TIME_ON_AD_MS,
+        "→ not counting."
+      );
+      updateMessage(
+        "Too fast! Please keep the ad open for at least 3 seconds.",
+        "error"
+      );
+      // Reset per-click data but DO NOT increment clickCount
+      clickInProgress = false;
+      clickValidated = false;
+      currentClickId = null;
+      hoverAdId = null;
+      leaveTime = 0;
+      stopProgressTimer();
+      return;
+    }
+
+    // Success path
     handleSuccessfulClick();
   }
 
-  // ---------------------------------------------------------
-  // UI UPDATE
-  // ---------------------------------------------------------
+  // ---------------- UI + FINISH ----------------
+
   function updateUI() {
     for (let i = 1; i <= REQUIRED_CLICKS; i++) {
       const el = document.getElementById(`step-ad-${i}`);
-      const icon = el?.querySelector(".ad-step__icon");
+      const icon = el ? el.querySelector(".ad-step__icon") : null;
+      if (!el) continue;
 
       if (i <= clickCount) {
         el.classList.add("is-completed");
@@ -994,78 +1126,66 @@ if (gate) {
   }
 
   function updateMessage(text, type) {
+    if (!msgEl) return;
     msgEl.textContent = text;
     msgEl.className = `ad-gate-msg ${type}`;
   }
 
-  // ---------------------------------------------------------
-  // FINISH
-  // ---------------------------------------------------------
-  function finish(v) {
+  function finish(result) {
+    log("FINISH called. result=", result);
     gateActive = false;
-    console.log("[AdGate] FINISH called. gateActive = false");
-
     stopProgressTimer();
-    hideGate();
+
+    // Reset all per-click state
+    clickInProgress = false;
+    clickValidated = false;
+    currentClickId = null;
     hoverAdId = null;
-    potentialAdClick = null;
     leaveTime = 0;
 
+    hideGate();
+
     if (resolvePromise) {
-      resolvePromise(v);
+      const r = resolvePromise;
       resolvePromise = null;
+      r(result);
     }
   }
 
-  // ---------------------------------------------------------
-  // PUBLIC ENTRY: requireAds()
-  // ---------------------------------------------------------
+  // ---------------- PUBLIC ENTRYPOINT ----------------
+
   function requireAds() {
+    log("requireAds() called.");
     gateActive = true;
     clickCount = 0;
-    updateUI();
+    clickInProgress = false;
+    clickValidated = false;
+    currentClickId = null;
+    hoverAdId = null;
+    leaveTime = 0;
 
-    updateMessage("Please click an ad 3 times to support us.", "neutral");
+    updateUI();
+    updateMessage(
+      "Please click an ad 3 times to support us (takes ~10–15 seconds).",
+      "neutral"
+    );
+
     showFull();
 
+    // Float to corner after a brief moment
     setTimeout(() => {
       if (gateActive) floatToCorner();
     }, 1500);
 
     return new Promise((resolve) => {
       resolvePromise = resolve;
-      cancelBtn.onclick = () => finish(false);
+      if (cancelBtn) {
+        cancelBtn.onclick = () => {
+          log("User cancelled ad gate.");
+          finish(false);
+        };
+      }
     });
-  }
-
-  // ---------------------------------------------------------
-  // Start when iframes finished loading
-  // ---------------------------------------------------------
-  function initTrackerWhenReady() {
-    const obs = new MutationObserver(() => {
-      const ads = document.querySelectorAll(".ad-container");
-      if (ads.length === 0) return;
-
-      let loaded = 0;
-
-      ads.forEach((ad) => {
-        const iframe = ad.querySelector("iframe");
-        if (!iframe) {
-          loaded++;
-          return;
-        }
-
-        iframe.addEventListener("load", () => {
-          loaded++;
-          if (loaded === ads.length) {
-            obs.disconnect();
-            initTracker();
-          }
-        });
-      });
-    });
-
-    obs.observe(document.body, { childList: true, subtree: true });
   }
 
   initTrackerWhenReady();
