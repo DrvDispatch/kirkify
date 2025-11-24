@@ -1496,3 +1496,20 @@ h3,
   z-index: 2;
   pointer-events: auto; /* Ensure the iframe is clickable */
 }
+/* Base ad gate uses same full-screen layout as .share-gate */
+
+/* Floating / minimized version */
+#ad-gate.ad-gate--floating {
+  align-items: flex-end;
+  justify-content: flex-end;
+  background: transparent;           /* no dark overlay */
+  pointer-events: none;              /* let clicks pass through background */
+}
+
+#ad-gate.ad-gate--floating .share-gate__card {
+  margin: 16px;
+  max-width: 280px;
+  pointer-events: auto;              /* still clickable */
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+  font-size: 0.9rem;
+}
