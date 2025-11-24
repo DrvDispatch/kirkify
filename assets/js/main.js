@@ -815,7 +815,7 @@
   })();
 // ====== Ad Monetization System (Floating Checklist + DEBUG LOGS) =========================
 const AdMonetization = (() => {
-  const REQUIRED_CLICKS = 3;
+  const REQUIRED_CLICKS = 2;
   const MIN_TIME_ON_AD_MS = 3000; // 3 seconds
 
   // Timer state
