@@ -823,17 +823,32 @@ function startProgressTimer() {
   stopProgressTimer();
 
   progressSeconds = 0;
+
   progressInterval = setInterval(() => {
     progressSeconds++;
 
-    // Update message in realtime
+    // Live message update
     updateMessage(`Viewing ad… ${progressSeconds}/3 seconds`, "neutral");
 
+    // When timer reaches required duration
     if (progressSeconds >= MIN_TIME_ON_AD_MS / 1000) {
       stopProgressTimer();
+
+      // Real-time completion highlight
+      if (gateActive && potentialAdClick && !clickedAds.has(potentialAdClick)) {
+        clickedAds.add(potentialAdClick);
+        updateUI(); // turn step bubble green instantly
+      }
+
+      // MOBILE FIX — auto validate without requiring focus/blur
+      if (gateActive && potentialAdClick) {
+        console.log("[AdGate] Auto validating ad on mobile timeout.");
+        validateReturn(MIN_TIME_ON_AD_MS); // pretend user viewed for required time
+      }
     }
   }, 1000);
 }
+
 
 function stopProgressTimer() {
   if (progressInterval) {
@@ -930,28 +945,33 @@ function hideGate() {
       );
     });
 
-    // BLUR: User clicks iframe or switches tab
-    window.addEventListener("blur", () => {
-      console.log(`[AdGate] Window BLUR event fired.`);
-      console.log(
-        `[AdGate] Current Hover ID: ${hoverAdId}, Gate Active: ${gateActive}`
-      );
+// BLUR: User clicks iframe or switches tab
+window.addEventListener("blur", () => {
+  console.log(`[AdGate] Window BLUR event fired.`);
+  console.log(`[AdGate] Hover: ${hoverAdId}, GateActive: ${gateActive}`);
 
-      // We ONLY care about clicks while the ad gate is active
-if (gateActive && hoverAdId) {
-        potentialAdClick = hoverAdId;
-        leaveTime = Date.now();
-        console.log(
-          `[AdGate] >>> POTENTIAL CLICK DETECTED on ${potentialAdClick}. Timer started.`
-        );
-updateMessage("Ad opened… viewing required", "neutral");
-startProgressTimer();
-      } else if (!hoverAdId) {
-        console.log("[AdGate] Blur ignored (User not hovering an ad).");
-      } else if (!gateActive) {
-        console.log("[AdGate] Blur ignored (Gate not active).");
-      }
-    });
+  // Always treat BLUR as ad click if gate is active
+  if (gateActive) {
+
+    // MOBILE FIX — if no hoverAdId detected (touch devices)
+    if (!hoverAdId) {
+      console.log("[AdGate] Mobile fallback: using synthetic ad ID");
+      hoverAdId = "mobile-fallback-" + Math.random().toString(36).slice(2);
+    }
+
+    potentialAdClick = hoverAdId;
+    leaveTime = Date.now();
+
+    console.log(`[AdGate] >>> POTENTIAL CLICK DETECTED on ${potentialAdClick}`);
+    updateMessage("Ad opened… viewing required", "neutral");
+
+    startProgressTimer();
+
+  } else {
+    console.log("[AdGate] Blur ignored (Gate not active).");
+  }
+});
+
 
     // FOCUS: User returns to site
     window.addEventListener("focus", () => {
