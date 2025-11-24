@@ -816,70 +816,51 @@
 
 const AdMonetization = (() => {
   const REQUIRED_CLICKS = 2;
-  const MIN_TIME_ON_AD_MS = 3000; 
+  const MIN_TIME_ON_AD_MS = 3000; // 3s required view time
 
-  
-  let progressInterval = null;
-  let progressSeconds = 0;
-
-  
-  let clickCount = 0;        
-  let hoverAdId = null;      
-  let currentClickId = null; 
-  let leaveTime = 0;         
+  let clickCount = 0;
+  let hoverAdId = null;
+  let currentClickId = null;
+  let leaveTime = 0;
   let clickInProgress = false;
   let clickValidated = false;
-
-  
   let gateActive = false;
   let resolvePromise = null;
 
-  
+  let progressInterval = null;
+  let progressSeconds = 0;
+
   const gate = document.getElementById("ad-gate");
   const msgEl = document.getElementById("ad-gate-msg");
   const cancelBtn = document.getElementById("ad-gate-cancel");
 
-  
+  const log = (...a) => console.log("[AdGate]", ...a);
+
+  // Hide modal initially
   if (gate) {
     gate.hidden = true;
     gate.style.display = "none";
   }
 
-  const log = (...args) => console.log("[AdGate]", ...args);
-
-  
-
+  // --------------------------------------------------------------------
+  // TIMER (desktop + mobile auto-validate fallback)
+  // --------------------------------------------------------------------
   function startProgressTimer() {
     stopProgressTimer();
     progressSeconds = 0;
-    log("startProgressTimer");
 
     progressInterval = setInterval(() => {
       progressSeconds++;
       updateMessage(`Viewing ad… ${progressSeconds}/3 seconds`, "neutral");
 
       if (progressSeconds * 1000 >= MIN_TIME_ON_AD_MS) {
-        log(
-          "Timer reached 3s. gateActive=",
-          gateActive,
-          "clickInProgress=",
-          clickInProgress,
-          "clickValidated=",
-          clickValidated
-        );
-
-        
-        if (!gateActive || !clickInProgress || clickValidated) {
-          stopProgressTimer();
-          return;
-        }
-
-        clickValidated = true;
-        clickInProgress = false;
         stopProgressTimer();
 
-        
-        validateReturn(MIN_TIME_ON_AD_MS);
+        if (gateActive && clickInProgress && !clickValidated) {
+          log("Auto-validation fallback triggered (mobile).");
+          clickValidated = true;
+          validateReturn(MIN_TIME_ON_AD_MS);
+        }
       }
     }, 1000);
   }
@@ -891,11 +872,10 @@ const AdMonetization = (() => {
     }
   }
 
-  
-
+  // --------------------------------------------------------------------
+  // UI helpers
+  // --------------------------------------------------------------------
   function showFull() {
-    if (!gate) return;
-    log("showFull()");
     gate.hidden = false;
     gate.style.display = "flex";
     gate.classList.add("is-open");
@@ -903,289 +883,179 @@ const AdMonetization = (() => {
   }
 
   function floatToCorner() {
-    if (!gate) return;
-    log("floatToCorner()");
     gate.classList.add("ad-gate--floating");
   }
 
   function hideGate() {
-    if (!gate) return;
-    log("hideGate()");
     gate.style.display = "none";
-    gate.classList.remove("is-open", "ad-gate--floating");
     gate.hidden = true;
+    gate.classList.remove("is-open", "ad-gate--floating");
   }
 
-  
-
-  function startClickSession(source) {
+  // --------------------------------------------------------------------
+  // Click tracking
+  // --------------------------------------------------------------------
+  function startClickSession(reason) {
     if (!hoverAdId) {
       hoverAdId = "mobile-" + Math.random().toString(36).slice(2);
-      log("Using synthetic hoverAdId:", hoverAdId);
     }
 
     currentClickId = hoverAdId;
-    leaveTime = Date.now();
     clickInProgress = true;
+    leaveTime = Date.now();
     clickValidated = false;
 
-    log(">>> POTENTIAL CLICK from", source, "on", currentClickId, "at", leaveTime);
+    log(`Click started via ${reason} on ${currentClickId}`);
 
     updateMessage("Ad opened… viewing required", "neutral");
     startProgressTimer();
   }
 
-  function initTracker() {
-    log("Initializing Tracker…");
+  function validateReturn(duration) {
+    log("validateReturn()", duration);
 
-    const adContainers = document.querySelectorAll(".ad-container");
-    if (adContainers.length === 0) {
-      log("WARNING: No .ad-container elements found in DOM!");
+    clickInProgress = false;
+
+    if (duration < MIN_TIME_ON_AD_MS) {
+      updateMessage("Too fast! Keep the ad open for at least 3 seconds.", "error");
+      clickValidated = false;
+      return;
     }
 
-    adContainers.forEach((container) => {
-      if (!container.id) {
-        container.id = "ad-" + Math.random().toString(36).slice(2);
-        log("Generated ID for container:", container.id);
-      } else {
-        log("Tracking container:", container.id);
-      }
-
-      container.addEventListener("mouseenter", () => {
-        hoverAdId = container.id;
-        log("Mouse ENTER:", hoverAdId);
-      });
-
-      container.addEventListener("mouseleave", () => {
-        if (hoverAdId === container.id) {
-          log("Mouse LEAVE:", hoverAdId);
-          hoverAdId = null;
-        }
-      });
-
-      container.addEventListener(
-        "touchstart",
-        () => {
-          hoverAdId = container.id;
-          log("Touch START:", hoverAdId);
-        },
-        { passive: true }
-      );
-
-      
-      container.addEventListener("click", () => {
-        if (!gateActive) return;
-        log("CLICK fallback on", container.id);
-        hoverAdId = container.id;
-        startClickSession("click");
-      });
-    });
-
-    
-    window.addEventListener("blur", () => {
-      log("Window BLUR fired. gateActive=", gateActive, "hoverAdId=", hoverAdId);
-      if (!gateActive) return;
-      startClickSession("blur");
-    });
-
-    
-    window.addEventListener("focus", () => {
-      log(
-        "Window FOCUS fired. gateActive=",
-        gateActive,
-        "currentClickId=",
-        currentClickId,
-        "leaveTime=",
-        leaveTime
-      );
-
-      if (!gateActive || !currentClickId || !leaveTime) {
-        log("Focus ignored (no active click)");
-        return;
-      }
-
-      const duration = Date.now() - leaveTime;
-      log("User back after", duration, "ms");
-
-      
-      if (!clickValidated) {
-        validateReturn(duration);
-      }
-
-      
-      clickInProgress = false;
-      currentClickId = null;
-      leaveTime = 0;
-    });
+    clickValidated = true;
+    handleSuccessfulClick();
   }
-
-  
-  function initTrackerWhenReady() {
-    const initIfReady = (reason) => {
-      const ads = document.querySelectorAll(".ad-container");
-      if (ads.length > 0) {
-        log(`initTrackerWhenReady: ads present (${reason}), initializing tracker.`);
-        initTracker();
-        return true;
-      }
-      return false;
-    };
-
-    
-    if (initIfReady("immediate")) return;
-
-    
-    const obs = new MutationObserver(() => {
-      if (initIfReady("mutation")) {
-        obs.disconnect();
-      }
-    });
-
-    obs.observe(document.body, { childList: true, subtree: true });
-  }
-
-  
 
   function handleSuccessfulClick() {
-    clickCount += 1;
-    log(`Click #${clickCount} validated.`);
-
-    
-    clickInProgress = false;
-    clickValidated = true;
-    currentClickId = null;
-    hoverAdId = null;
-    leaveTime = 0;
-    stopProgressTimer();
+    clickCount++;
+    log(`VALID click #${clickCount}`);
 
     updateUI();
 
     const left = REQUIRED_CLICKS - clickCount;
+
     if (left <= 0) {
-      log("All required clicks completed.");
       updateMessage("Perfect! Starting your kirkification…", "success");
-      setTimeout(() => finish(true), 800);
+      setTimeout(() => finish(true), 700);
     } else {
       updateMessage(`Nice! ${left} more to go.`, "success");
     }
+
+    resetClickState();
   }
 
-  function validateReturn(durationMs) {
-    log("validateReturn called with", durationMs, "ms (gateActive=", gateActive, ")");
-    if (!gateActive) {
-      log("Gate inactive; ignoring validateReturn.");
-      return;
-    }
-    if (!currentClickId && !clickValidated) {
-      log("No currentClickId and not pre-validated; ignoring.");
-      return;
-    }
-
-    if (durationMs < MIN_TIME_ON_AD_MS) {
-      log(
-        "Short view:",
-        durationMs,
-        "<",
-        MIN_TIME_ON_AD_MS,
-        "→ not counting."
-      );
-      updateMessage(
-        "Too fast! Please keep the ad open for at least 3 seconds.",
-        "error"
-      );
-      
-      clickInProgress = false;
-      clickValidated = false;
-      currentClickId = null;
-      hoverAdId = null;
-      leaveTime = 0;
-      stopProgressTimer();
-      return;
-    }
-
-    
-    handleSuccessfulClick();
+  function resetClickState() {
+    clickInProgress = false;
+    clickValidated = false;
+    currentClickId = null;
+    hoverAdId = null;
+    leaveTime = 0;
+    stopProgressTimer();
   }
 
-  
-
+  // --------------------------------------------------------------------
+  // UI update
+  // --------------------------------------------------------------------
   function updateUI() {
     for (let i = 1; i <= REQUIRED_CLICKS; i++) {
-      const el = document.getElementById(`step-ad-${i}`);
-      const icon = el ? el.querySelector(".ad-step__icon") : null;
-      if (!el) continue;
-
+      const step = document.getElementById(`step-ad-${i}`);
+      if (!step) continue;
+      const icon = step.querySelector(".ad-step__icon");
       if (i <= clickCount) {
-        el.classList.add("is-completed");
-        if (icon) icon.innerHTML = "✓";
+        step.classList.add("is-completed");
+        if (icon) icon.textContent = "✓";
       } else {
-        el.classList.remove("is-completed");
-        if (icon) icon.innerHTML = i;
+        step.classList.remove("is-completed");
+        if (icon) icon.textContent = i;
       }
     }
   }
 
-  function updateMessage(text, type) {
+  function updateMessage(t, type) {
     if (!msgEl) return;
-    msgEl.textContent = text;
+    msgEl.textContent = t;
     msgEl.className = `ad-gate-msg ${type}`;
   }
 
+  // --------------------------------------------------------------------
+  // Finish + resolver
+  // --------------------------------------------------------------------
   function finish(result) {
-    log("FINISH called. result=", result);
+    log("FINISH", result);
     gateActive = false;
-    stopProgressTimer();
-
-    
-    clickInProgress = false;
-    clickValidated = false;
-    currentClickId = null;
-    hoverAdId = null;
-    leaveTime = 0;
-
     hideGate();
+    stopProgressTimer();
+    resetClickState();
 
     if (resolvePromise) {
-      const r = resolvePromise;
+      resolvePromise(result);
       resolvePromise = null;
-      r(result);
     }
   }
 
-  
-
+  // --------------------------------------------------------------------
+  // Entry point
+  // --------------------------------------------------------------------
   function requireAds() {
-    log("requireAds() called.");
+    log("requireAds()");
     gateActive = true;
     clickCount = 0;
-    clickInProgress = false;
-    clickValidated = false;
-    currentClickId = null;
-    hoverAdId = null;
-    leaveTime = 0;
-
     updateUI();
-    updateMessage(
-      "Please click an ad 3 times to support us (takes ~10–15 seconds).",
-      "neutral"
-    );
+
+    updateMessage("Please click an ad 2 times to support us.", "neutral");
 
     showFull();
-
-    
-    setTimeout(() => {
-      if (gateActive) floatToCorner();
-    }, 1500);
+    setTimeout(() => gateActive && floatToCorner(), 1500);
 
     return new Promise((resolve) => {
       resolvePromise = resolve;
       if (cancelBtn) {
-        cancelBtn.onclick = () => {
-          log("User cancelled ad gate.");
-          finish(false);
-        };
+        cancelBtn.onclick = () => finish(false);
       }
     });
+  }
+
+  // --------------------------------------------------------------------
+  // Ad hover/click tracking
+  // --------------------------------------------------------------------
+  function initTracker() {
+    log("Tracker init");
+
+    document.querySelectorAll(".ad-container").forEach((ad) => {
+      if (!ad.id) ad.id = "ad-" + Math.random().toString(36).slice(2);
+
+      ad.addEventListener("mouseenter", () => (hoverAdId = ad.id));
+      ad.addEventListener("mouseleave", () => (hoverAdId = null));
+      ad.addEventListener("touchstart", () => (hoverAdId = ad.id), { passive: true });
+
+      ad.addEventListener("click", () => {
+        if (gateActive) startClickSession("click");
+      });
+    });
+
+    window.addEventListener("blur", () => {
+      if (gateActive) startClickSession("blur");
+    });
+
+    window.addEventListener("focus", () => {
+      if (!gateActive || !leaveTime) return;
+      validateReturn(Date.now() - leaveTime);
+    });
+  }
+
+  // Wait for ads
+  function initTrackerWhenReady() {
+    if (document.querySelector(".ad-container")) {
+      initTracker();
+      return;
+    }
+    const obs = new MutationObserver(() => {
+      if (document.querySelector(".ad-container")) {
+        obs.disconnect();
+        initTracker();
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
   }
 
   initTrackerWhenReady();
@@ -1193,7 +1063,6 @@ const AdMonetization = (() => {
   return { requireAds };
 })();
 
-  
   function initUploader() {
     const drop = KirkApp.$("#drop");
     const uploadBtn = KirkApp.$("#upload-btn");
