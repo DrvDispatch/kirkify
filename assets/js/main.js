@@ -1,9 +1,9 @@
-/* assets/js/main.js */
+
 (() => {
   "use strict";
 
-  // ====== KirkApp small utilities ============================================================
-  const KirkApp = {
+  
+ const KirkApp = {
     CONTROLLER_URL: "https://api.keyauth.eu",
     AVG_JOB_SEC_FALLBACK: 75, // used if controller cannot compute a recent average
     MAX_JOBS_IN_UI: 12,
@@ -38,7 +38,7 @@
     },
   };
 
-  // ====== persistent client id (localStorage + cookie) =======================================
+  
   const CLIENT_ID_KEY = "kirk_cid";
   const SHARE_COOKIE_KEY = "kirk_shared";
 
@@ -66,14 +66,14 @@
       localStorage.setItem(CLIENT_ID_KEY, cid);
       setCookie(CLIENT_ID_KEY, cid, 365);
     } else {
-      // keep cookie fresh even if only LS had it
+      
       setCookie(CLIENT_ID_KEY, cid, 365);
       localStorage.setItem(CLIENT_ID_KEY, cid);
     }
     return cid;
   }
 
-  // ====== Share gate (Web Share API) =========================================================
+  
   function hasShared() {
     return getCookie(SHARE_COOKIE_KEY) === "1";
   }
@@ -93,10 +93,10 @@
    *   (we do NOT validate recipients) and unlock uploads permanently on this device.
    */
   async function ensureShareGate() {
-    // Already unlocked on this device
+    
     if (hasShared()) return true;
 
-    // If Web Share API isn't available, fall back to a simple "copy link" style gate
+    
     if (!canUseWebShare()) {
       const ok = window.confirm(
         "To keep Kirkify 100% free, please share this site with 5 friends. " +
@@ -109,7 +109,7 @@
           await navigator.clipboard.writeText(window.location.href);
         }
       } catch {
-        // Ignore copy failures – we still let them through after confirming
+        
       }
 
       markShared();
@@ -120,7 +120,7 @@
     const shareBtn = KirkApp.$("#share-gate-btn");
     const cancelBtn = KirkApp.$("#share-gate-cancel");
 
-    // If gate UI is missing, just call navigator.share directly
+    
     if (!gate || !shareBtn) {
       try {
         await navigator.share({
@@ -128,7 +128,7 @@
           text: "Free Charlie Kirk face swap meme generator. Try it in your browser:",
           url: window.location.href,
         });
-        // We don't validate recipients – any successful share counts as "5 people"
+        
         markShared();
         return true;
       } catch (err) {
@@ -156,15 +156,15 @@
             url: window.location.href,
           })
           .then(() => {
-            // As soon as the share sheet completes successfully, we treat it
-            // as if they shared with 5 people and unlock uploads permanently
+            
+            
             markShared();
             cleanup();
             resolve(true);
           })
           .catch((err) => {
             console.error("Share canceled or failed", err);
-            // Keep the gate open; user can try again or cancel
+            
           });
       };
 
@@ -178,7 +178,7 @@
     });
   }
 
-  // ====== Before/After slider ================================================================
+  
   function initBeforeAfter(root) {
     if (!root) return;
     const range = root.querySelector(".ba__range");
@@ -233,7 +233,7 @@
     KirkApp.$$(".ba").forEach(initBeforeAfter);
   }
 
-  // ====== HUD / Steps progress ================================================================
+  
   const HUD = (() => {
     const hud = KirkApp.$("#hud");
     const bar = KirkApp.$(".hud__bar");
@@ -366,7 +366,7 @@
     };
   })();
 
-  // ====== GPU chip loop + ETA source ==========================================================
+  
   async function gpuStatus() {
     try {
       const res = await fetch(`${KirkApp.CONTROLLER_URL}/api/gpu_status`, {
@@ -386,9 +386,9 @@
       });
       if (res.ok) return await res.json();
     } catch {
-      // ignore
+      
     }
-    // fallback to chip math
+    
     const s = await gpuStatus();
     const cap = Math.max(1, Number(s.total_capacity || 1));
     const ahead = Number(s.queued_jobs || 0) + Number(s.active_jobs || 0);
@@ -413,16 +413,16 @@
     }
   }
 
-  // ====== Job client (SSE) + persistent resume ===============================================
+  
   const JobClient = (() => {
-    // Map: jobId -> Set of handlers
+    
     const events = {};
 
     function on(jobId, handler) {
       if (!events[jobId]) events[jobId] = new Set();
       events[jobId].add(handler);
 
-      // Optional: return unsubscribe function
+      
       return () => {
         events[jobId].delete(handler);
         if (events[jobId].size === 0) delete events[jobId];
@@ -451,7 +451,7 @@
         }
       };
       es.onerror = () => {
-        // browser will retry
+        
       };
       return es;
     }
@@ -519,13 +519,13 @@
         { mode: "cors" }
       );
       if (!res.ok) throw new Error("signed_url failed");
-      return res.json(); // {ok, url}
+      return res.json(); 
     }
 
     return { createJob, openEvents, on, myJobs, mySignedUrl };
   })();
 
-  // ====== My Jobs UI ==========================================================================
+  
 
   async function renderJobs() {
     const wrap = KirkApp.$("#jobs-list");
@@ -549,7 +549,7 @@
       for (const job of items) {
         wrap.appendChild(jobCard(job));
       }
-      // Begin lazy load previews + live watchers
+      
       for (const job of items) {
         loadJobPreviews(job).catch(() => {});
         if (job.status === "queued" || job.status === "processing") {
@@ -559,7 +559,7 @@
             if (!card) return;
             updateJobCardState(card, ev);
           });
-          // close eventsource after a while to avoid many open conns
+          
           setTimeout(() => es.close(), 15 * 60 * 1000);
         }
       }
@@ -581,7 +581,7 @@
       try {
         createdIso = new Date(Number(job.created_at_ms)).toISOString();
       } catch {
-        // ignore
+        
       }
     }
 
@@ -645,7 +645,7 @@
       const { url } = await JobClient.mySignedUrl(job.id, "input");
       if (inEl) inEl.src = url;
     } catch {
-      // ignore
+      
     }
 
     if (job.status === "completed" && job.output_path) {
@@ -662,13 +662,13 @@
           dlBtn.removeAttribute("aria-disabled");
         }
       } catch {
-        // ignore
+        
       }
     }
   }
 
   function updateJobCardState(card, ev) {
-    // Update chip + show output on "completed"
+    
     const chip = card.querySelector(".chip");
     const outEl = card.querySelector(".job-img__output");
     const openBtn = card.querySelector(".btn-open");
@@ -706,12 +706,12 @@
       if (!items || !items.length) return;
 
       const latest = items[0];
-      // Preload input
+      
       try {
         const { url } = await JobClient.mySignedUrl(latest.id, "input");
         beforeImg.src = url;
       } catch {
-        // ignore
+        
       }
 
       if (latest.status === "completed" && latest.output_path) {
@@ -773,22 +773,22 @@
           }
         });
         JobClient.openEvents(latest.id);
-        // Also fetch an ETA
+        
         try {
           const wt = await waitTime();
           if (wt && wt.estimated_sec) {
             HUD.setEta(wt.estimated_sec);
           }
         } catch {
-          // ignore
+          
         }
       }
     } catch (e) {
-      // silent resume failure is OK
+      
     }
   }
 
-  // ====== ETA Ticker (keeps ETA fresh while queued/processing) ================================
+  
   const EtaTicker = (() => {
     let t = null;
     return {
@@ -801,7 +801,7 @@
               HUD.setEta(wt.estimated_sec);
             }
           } catch {
-            // ignore
+            
           }
         }, 15000);
       },
@@ -813,33 +813,33 @@
       },
     };
   })();
-// ====== Ad Monetization System (Floating Checklist + DEBUG LOGS) =========================
+
 const AdMonetization = (() => {
   const REQUIRED_CLICKS = 2;
-  const MIN_TIME_ON_AD_MS = 3000; // 3 seconds
+  const MIN_TIME_ON_AD_MS = 3000; 
 
-  // Timer state
+  
   let progressInterval = null;
   let progressSeconds = 0;
 
-  // Click session state
-  let clickCount = 0;        // # of validated clicks this gate run (same ad allowed)
-  let hoverAdId = null;      // last ad container under cursor / touch
-  let currentClickId = null; // ad id for the *ongoing* click
-  let leaveTime = 0;         // timestamp when blur/click started
+  
+  let clickCount = 0;        
+  let hoverAdId = null;      
+  let currentClickId = null; 
+  let leaveTime = 0;         
   let clickInProgress = false;
   let clickValidated = false;
 
-  // Gate state
+  
   let gateActive = false;
   let resolvePromise = null;
 
-  // DOM
+  
   const gate = document.getElementById("ad-gate");
   const msgEl = document.getElementById("ad-gate-msg");
   const cancelBtn = document.getElementById("ad-gate-cancel");
 
-  // Hide gate by default so it only appears when requireAds() runs
+  
   if (gate) {
     gate.hidden = true;
     gate.style.display = "none";
@@ -847,7 +847,7 @@ const AdMonetization = (() => {
 
   const log = (...args) => console.log("[AdGate]", ...args);
 
-  // ---------------- TIMER ----------------
+  
 
   function startProgressTimer() {
     stopProgressTimer();
@@ -868,7 +868,7 @@ const AdMonetization = (() => {
           clickValidated
         );
 
-        // Guard against double-fires
+        
         if (!gateActive || !clickInProgress || clickValidated) {
           stopProgressTimer();
           return;
@@ -878,7 +878,7 @@ const AdMonetization = (() => {
         clickInProgress = false;
         stopProgressTimer();
 
-        // Auto-validate based on elapsed time (mobile/new-window friendly)
+        
         validateReturn(MIN_TIME_ON_AD_MS);
       }
     }, 1000);
@@ -891,7 +891,7 @@ const AdMonetization = (() => {
     }
   }
 
-  // ---------------- GATE VISIBILITY ----------------
+  
 
   function showFull() {
     if (!gate) return;
@@ -916,7 +916,7 @@ const AdMonetization = (() => {
     gate.hidden = true;
   }
 
-  // ---------------- TRACKER LOGIC ----------------
+  
 
   function startClickSession(source) {
     if (!hoverAdId) {
@@ -972,7 +972,7 @@ const AdMonetization = (() => {
         { passive: true }
       );
 
-      // CLICK FALLBACK: if blur doesn't fire (some mobile / overlay ads)
+      
       container.addEventListener("click", () => {
         if (!gateActive) return;
         log("CLICK fallback on", container.id);
@@ -981,14 +981,14 @@ const AdMonetization = (() => {
       });
     });
 
-    // BLUR: user clicks iframe / new tab / switches tab
+    
     window.addEventListener("blur", () => {
       log("Window BLUR fired. gateActive=", gateActive, "hoverAdId=", hoverAdId);
       if (!gateActive) return;
       startClickSession("blur");
     });
 
-    // FOCUS: user returns
+    
     window.addEventListener("focus", () => {
       log(
         "Window FOCUS fired. gateActive=",
@@ -1007,19 +1007,19 @@ const AdMonetization = (() => {
       const duration = Date.now() - leaveTime;
       log("User back after", duration, "ms");
 
-      // If timer hasn't already validated, we can validate by actual duration
+      
       if (!clickValidated) {
         validateReturn(duration);
       }
 
-      // Per-click cleanup (timer will be stopped by validateReturn/handleSuccessfulClick)
+      
       clickInProgress = false;
       currentClickId = null;
       leaveTime = 0;
     });
   }
 
-  // Robust: initialize as soon as .ad-container exists (no iframe load waiting)
+  
   function initTrackerWhenReady() {
     const initIfReady = (reason) => {
       const ads = document.querySelectorAll(".ad-container");
@@ -1031,10 +1031,10 @@ const AdMonetization = (() => {
       return false;
     };
 
-    // Try immediately
+    
     if (initIfReady("immediate")) return;
 
-    // Fallback: observe DOM until ads appear
+    
     const obs = new MutationObserver(() => {
       if (initIfReady("mutation")) {
         obs.disconnect();
@@ -1044,13 +1044,13 @@ const AdMonetization = (() => {
     obs.observe(document.body, { childList: true, subtree: true });
   }
 
-  // ---------------- VALIDATION LOGIC ----------------
+  
 
   function handleSuccessfulClick() {
     clickCount += 1;
     log(`Click #${clickCount} validated.`);
 
-    // Reset per-click state
+    
     clickInProgress = false;
     clickValidated = true;
     currentClickId = null;
@@ -1093,7 +1093,7 @@ const AdMonetization = (() => {
         "Too fast! Please keep the ad open for at least 3 seconds.",
         "error"
       );
-      // Reset per-click data but DO NOT increment clickCount
+      
       clickInProgress = false;
       clickValidated = false;
       currentClickId = null;
@@ -1103,11 +1103,11 @@ const AdMonetization = (() => {
       return;
     }
 
-    // Success path
+    
     handleSuccessfulClick();
   }
 
-  // ---------------- UI + FINISH ----------------
+  
 
   function updateUI() {
     for (let i = 1; i <= REQUIRED_CLICKS; i++) {
@@ -1136,7 +1136,7 @@ const AdMonetization = (() => {
     gateActive = false;
     stopProgressTimer();
 
-    // Reset all per-click state
+    
     clickInProgress = false;
     clickValidated = false;
     currentClickId = null;
@@ -1152,7 +1152,7 @@ const AdMonetization = (() => {
     }
   }
 
-  // ---------------- PUBLIC ENTRYPOINT ----------------
+  
 
   function requireAds() {
     log("requireAds() called.");
@@ -1172,7 +1172,7 @@ const AdMonetization = (() => {
 
     showFull();
 
-    // Float to corner after a brief moment
+    
     setTimeout(() => {
       if (gateActive) floatToCorner();
     }, 1500);
@@ -1193,7 +1193,7 @@ const AdMonetization = (() => {
   return { requireAds };
 })();
 
-  // ====== Uploader / UI glue ==================================================================
+  
   function initUploader() {
     const drop = KirkApp.$("#drop");
     const uploadBtn = KirkApp.$("#upload-btn");
@@ -1230,7 +1230,7 @@ const AdMonetization = (() => {
         currentES.close();
         currentES = null;
       }
-      // refresh "My Jobs" so it shows the new job immediately
+      
       renderJobs();
     }
 
@@ -1241,10 +1241,10 @@ const AdMonetization = (() => {
       inflight = true;
       resetOutput();
 
-      // show input immediately to BA slider
+      
       beforeImg.src = URL.createObjectURL(file);
 
-      // reset HUD
+      
       KirkApp.$$(".hud__steps li").forEach((li) => {
         li.classList.remove("is-active", "is-done");
       });
@@ -1256,27 +1256,27 @@ const AdMonetization = (() => {
       try {
         const { job_id } = await JobClient.createJob(file);
         currentJob = job_id;
-        HUD.setJob(job_id); // Show Job #
-        renderJobs(); // Show the new job immediately in My Jobs
-        EtaTicker.start(); // Keep ETA fresh while queued
+        HUD.setJob(job_id); 
+        renderJobs(); 
+        EtaTicker.start(); 
 
         HUD.mark("contact", "done");
         HUD.mark("start", "active");
 
-        // After a brief moment, shrink HUD into floating corner card
+        
         setTimeout(() => {
           HUD.float();
         }, 450);
 
-        // show “come back later” + initial ETA
+        
         try {
           const wt = await waitTime();
           if (wt && wt.estimated_sec) HUD.setEta(wt.estimated_sec);
         } catch {
-          // ignore
+          
         }
 
-        // Listen to job events
+        
         JobClient.on(job_id, (ev) => {
           const type = ev.type;
           const msg = ev.message;
@@ -1290,13 +1290,13 @@ const AdMonetization = (() => {
 
           if (typeof queuePos === "number") {
             HUD.setQueue(queuePos);
-            // refine ETA: estimate by position if we have it
+            
             const cap = Math.max(
               1,
               Number(
                 typeof extra.capacity === "number" ? extra.capacity : 1
               )
-            ); // optional if we ever include it
+            ); 
             const ahead = Math.max(0, queuePos - 1);
             const est = Math.ceil(
               (ahead / cap) * KirkApp.AVG_JOB_SEC_FALLBACK
@@ -1331,8 +1331,8 @@ const AdMonetization = (() => {
             download.classList.remove("is-disabled");
             download.removeAttribute("aria-disabled");
 
-            // Turn HUD into floating “done” chip with glow,
-            // then quietly hide it after a few seconds.
+            
+            
             if (scrollHint) scrollHint.hidden = false;
 
             HUD.setCompleted();
@@ -1351,31 +1351,31 @@ const AdMonetization = (() => {
       }
     }
 
-// --- INSIDE initUploader function ---
 
-    // 1. Helper to run checks
+
+    
     async function runMonetizationChecks() {
-      // Rule 5.1: One-Time Share
+      
       const shared = await ensureShareGate();
       if (!shared) {
         alert("You need to share Kirkify first before uploading.");
         return false;
       }
 
-      // Rule 5.2: Recurring Ad Clicks
-      // We open the ad gate. User must complete it to return true.
+      
+      
       const adsClicked = await AdMonetization.requireAds();
       if (!adsClicked) {
-        // User cancelled the ad gate
+        
         return false;
       }
 
       return true;
     }
 
-// 2. Upload Button Click Handler (fixed for mobile/desktop)
+
 KirkApp.on(uploadBtn, "click", () => {
-  // 1) Open file picker immediately (within user gesture)
+  
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
@@ -1385,14 +1385,14 @@ KirkApp.on(uploadBtn, "click", () => {
       input.files && input.files.length ? input.files[0] : null;
     if (!file) return;
 
-    // 2) After user picked a file, run monetization checks
+    
     const allowed = await runMonetizationChecks();
     if (!allowed) {
-      // user cancelled share/ad, don't upload
+      
       return;
     }
 
-    // 3) All checks passed – actually process the file
+    
     processFile(file);
   };
 
@@ -1400,7 +1400,7 @@ KirkApp.on(uploadBtn, "click", () => {
 });
 
 
-    // 3. Update Drag and Drop Handler
+    
     KirkApp.on(drop, "drop", async (e) => {
       e.preventDefault();
       drop.classList.remove("is-hover");
@@ -1413,7 +1413,7 @@ KirkApp.on(uploadBtn, "click", () => {
       processFile(file);
     });
 
-    // 4. Update Paste Handler
+    
     KirkApp.on(window, "paste", async (e) => {
       const files = e.clipboardData && e.clipboardData.files ? Array.from(e.clipboardData.files) : [];
       const file = files[0];
@@ -1425,16 +1425,16 @@ KirkApp.on(uploadBtn, "click", () => {
       processFile(file);
     });
 
-    // Refactored actual upload logic into processFile to avoid code duplication
+    
     function processFile(file) {
       if (inflight) return;
-      handleFile(file); // Call the original handleFile logic
+      handleFile(file); 
     }
 
-    // "My Jobs" refresh button
+    
     if (refreshBtn) KirkApp.on(refreshBtn, "click", renderJobs);
 
-    const AUTO_RESUME = false; // or read from env/config
+    const AUTO_RESUME = false; 
     if (AUTO_RESUME) {
       tryResumeLast(beforeImg, afterImg, download);
     }
@@ -1449,7 +1449,7 @@ KirkApp.on(uploadBtn, "click", () => {
 
   const scrollHintEl = KirkApp.$("#scroll-hint");
 
-  // If a job is in progress and user scrolls down, auto-float the HUD
+  
   let floatedOnScroll = false;
   window.addEventListener(
     "scroll",
