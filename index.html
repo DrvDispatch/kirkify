@@ -47,24 +47,6 @@
         content="Make kirkified Charlie Kirk memes in your browser. Upload, face swap with AI, and download with no signup or watermark." />
   <meta name="twitter:image" content="https://kirkify.nl/assets/img/kirkify-og.jpg" />
 
-  <!-- WebApplication JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Kirkify",
-    "url": "https://kirkify.nl/",
-    "applicationCategory": "MultimediaApplication",
-    "operatingSystem": "Web",
-    "description": "Kirkify is a free online Charlie Kirk face swap meme generator that kirkifies your photos by swapping faces with Charlie Kirk and showing an instant before/after comparison.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "EUR"
-    }
-  }
-  </script>
-
   <!-- FAQPage JSON-LD for rich results -->
   <script type="application/ld+json">
   {
@@ -117,7 +99,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- Share gate + entry gate + scroll hint styles -->
+  <!-- Share gate + entry gate + scroll hint styles + ad layout tweaks -->
   <style>
     /* Share gate (upload share requirement) */
     .share-gate {
@@ -176,7 +158,6 @@
       font-size: 0.78rem;
       color: #9ca3af;
     }
-    
 
     /* Entry gate: blocks scroll for a few seconds on first view */
     body.entry-locked {
@@ -267,6 +248,53 @@
         bottom: 24px;
       }
     }
+
+    /* Ad layout density: top cluster and mid-page ads */
+    .top-ads {
+      max-width: 1200px;
+      margin: 8px auto 12px;
+      padding: 0 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .top-ads .ad-container {
+      margin: 0;
+    }
+
+    .hero__top-ads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .mid-ads {
+      max-width: 960px;
+      margin: 16px auto 8px;
+      padding: 0 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .mid-ads .ad-container {
+      margin: 0;
+    }
+
+    /* Slightly tighten generic ad vertical spacing without fully removing breathing room */
+    .ad-container--top,
+    .ad-container--top-mobile,
+    .ad-container--hero,
+    .ad-container--narrow,
+    .ad-container--skyscraper,
+    .ad-container--native-top,
+    .ad-container--inline {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
   </style>
 
   <!-- Popunder (1 per page) -->
@@ -302,42 +330,45 @@
       </div>
     </header>
 
-    <!-- Highest CPM: Top leaderboard banner (728x90) – Adsterra -->
-<!-- Highest CPM: Top leaderboard banner (728x90) – Adsterra -->
-<div id="ad-leaderboard" class="ad-container ad-container--top" aria-label="Advertisement" role="complementary">      <div class="ad-inner">
-        <script type="text/javascript">
-          atOptions = {
-            'key' : 'cebd7bbd526e6e9ccd6f1446fb777bca7',
-            'format' : 'iframe',
-            'height' : 90,
-            'width' : 728,
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" src="//abjectjunctionlatest.com/cebd7bbd5266e9ccd6f1446fb777bca7/invoke.js"></script>
+    <!-- High-CPM top ad row just under navigation -->
+    <div class="top-ads" aria-label="Top advertisements" role="complementary">
+      <!-- Highest CPM: Top leaderboard banner (728x90) – Adsterra -->
+      <div id="ad-leaderboard" class="ad-container ad-container--top">
+        <div class="ad-inner">
+          <script type="text/javascript">
+            atOptions = {
+              'key' : 'cebd7bbd526e6e9ccd6f1446fb777bca7',
+              'format' : 'iframe',
+              'height' : 90,
+              'width' : 728,
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="//abjectjunctionlatest.com/cebd7bbd5266e9ccd6f1446fb777bca7/invoke.js"></script>
+        </div>
       </div>
-    </div>
 
-    <!-- Mobile-friendly top 320x50 banner (one instance only) – Adsterra -->
-<!-- Mobile-friendly top 320x50 banner (one instance only) – Adsterra -->
-<div id="ad-mobile-top" class="ad-container ad-container--top-mobile" aria-label="Advertisement" role="complementary">      <div class="ad-inner">
-        <script type="text/javascript">
-          atOptions = {
-            'key' : 'b9cb29084d0500298167450ad06eb9b7',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" src="//abjectjunctionlatest.com/b9cb29084d0500298167450ad06eb9b7/invoke.js"></script>
+      <!-- Mobile-friendly top 320x50 banner (one instance only) – Adsterra -->
+      <div id="ad-mobile-top" class="ad-container ad-container--top-mobile">
+        <div class="ad-inner">
+          <script type="text/javascript">
+            atOptions = {
+              'key' : 'b9cb29084d0500298167450ad06eb9b7',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="//abjectjunctionlatest.com/b9cb29084d0500298167450ad06eb9b7/invoke.js"></script>
+        </div>
       </div>
     </div>
 
     <!-- Main -->
     <main id="main" class="main" aria-labelledby="hero-heading">
 
-      <!-- HERO: includes 160x300 + 300x250 (high CPM block for mobile) -->
+      <!-- HERO: includes high-CPM right-column ads above upload -->
       <section id="try-kirkify" class="hero">
         <div class="hero__grid">
           <div class="hero__copy">
@@ -400,8 +431,8 @@
             </div>
 
             <!-- High-CPM narrow 160x300 banner near top content – Adsterra -->
-<!-- High-CPM narrow 160x300 banner near top content – Adsterra -->
-<div id="ad-sidebar-left" class="ad-container ad-container--narrow" aria-label="Advertisement" role="complementary">              <div class="ad-inner">
+            <div id="ad-sidebar-left" class="ad-container ad-container--narrow" aria-label="Advertisement" role="complementary">
+              <div class="ad-inner">
                 <script type="text/javascript">
                   atOptions = {
                     'key' : '315902b1393421f89fd77186d4750d10',
@@ -418,10 +449,10 @@
 
           <!-- Right column: tool + ads -->
           <div class="hero__tool">
-            <!-- High-CPM 300x250 banner above upload – Adsterra (single instance) -->
-           <!-- High-CPM 300x250 banner above upload – Adsterra (single instance) -->
-<section class="tool-card" aria-label="Upload image to use the Charlie Kirk face swap tool">
-  <div id="ad-upload-box" class="ad-container ad-container--hero" aria-label="Advertisement" role="complementary">
+            <!-- High-CPM right-column ads kept dense above the upload -->
+            <div class="hero__top-ads" aria-label="Right column advertisements" role="complementary">
+              <!-- High-CPM 300x250 banner – Adsterra (single instance) -->
+              <div id="ad-upload-box" class="ad-container ad-container--hero">
                 <div class="ad-inner">
                   <script type="text/javascript">
                     atOptions = {
@@ -438,6 +469,25 @@
                 </div>
               </div>
 
+              <!-- Tall 160x600 banner inside main tool column – Adsterra (single instance) -->
+              <div id="ad-skyscraper" class="ad-container ad-container--skyscraper">
+                <div class="ad-inner">
+                  <script type="text/javascript">
+                    atOptions = {
+                      'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
+                      'format' : 'iframe',
+                      'height' : 600,
+                      'width' : 160,
+                      'params' : {}
+                    };
+                  </script>
+                  <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upload image box appears after 5 high-impression ads -->
+            <section class="tool-card" aria-label="Upload image to use the Charlie Kirk face swap tool">
               <div id="drop" class="upload" tabindex="0">
                 <button id="upload-btn" type="button" class="btn-primary">
                   Upload image
@@ -476,22 +526,6 @@
                 </p>
               </div>
             </section>
-
-            <!-- Tall 160x600 banner inside main tool column – Adsterra (single instance) -->
-<!-- Tall 160x600 banner inside main tool column – Adsterra (single instance) -->
-<div id="ad-skyscraper" class="ad-container ad-container--skyscraper" aria-label="Advertisement" role="complementary">              <div class="ad-inner">
-                <script type="text/javascript">
-                  atOptions = {
-                    'key' : '88a0946b32eb7cdec929ee9c91bb2e09',
-                    'format' : 'iframe',
-                    'height' : 600,
-                    'width' : 160,
-                    'params' : {}
-                  };
-                </script>
-                <script type="text/javascript" src="//abjectjunctionlatest.com/88a0946b32eb7cdec929ee9c91bb2e09/invoke.js"></script>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -692,11 +726,30 @@
         </p>
       </section>
 
-      <!-- Native banner moved lower (low CPM, single instance) – Adsterra -->
-<!-- Native banner moved lower (low CPM, single instance) – Adsterra -->
-<div id="ad-native-mid" class="ad-container ad-container--native-top" aria-label="Advertisement" role="complementary">        <div class="ad-inner">
-          <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
-          <div id="container-c39b81789847253b78115f68c971d8f7"></div>
+      <!-- Mid-page ads clustered before jobs (low CPM) -->
+      <div class="mid-ads" aria-label="Mid-page advertisements" role="complementary">
+        <!-- Native banner moved lower (low CPM, single instance) – Adsterra -->
+        <div id="ad-native-mid" class="ad-container ad-container--native-top">
+          <div class="ad-inner">
+            <script async="async" data-cfasync="false" src="//charmingpoliteinjunction.com/c39b81789847253b78115f68c971d8f7/invoke.js"></script>
+            <div id="container-c39b81789847253b78115f68c971d8f7"></div>
+          </div>
+        </div>
+
+        <!-- Inline 468x60 banner – Adsterra (lowest CPM, single instance) -->
+        <div id="ad-footer-banner" class="ad-container ad-container--inline">
+          <div class="ad-inner">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '59635110c025905c91887dcc0c7d754d',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="//abjectjunctionlatest.com/59635110c025905c91887dcc0c7d754d/invoke.js"></script>
+          </div>
         </div>
       </div>
 
@@ -734,22 +787,6 @@
         Please only upload images you have the right to use and do not use kirkified results to impersonate or mislead others.
       </p>
 
-      <!-- Inline 468x60 banner above footer – Adsterra (lowest CPM, single instance) -->
-<!-- Inline 468x60 banner above footer – Adsterra (lowest CPM, single instance) -->
-<div id="ad-footer-banner" class="ad-container ad-container--inline" aria-label="Advertisement" role="complementary">        <div class="ad-inner">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '59635110c025905c91887dcc0c7d754d',
-              'format' : 'iframe',
-              'height' : 60,
-              'width' : 468,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//abjectjunctionlatest.com/59635110c025905c91887dcc0c7d754d/invoke.js"></script>
-        </div>
-      </div>
-
       <!-- Note: 300x250 is used once above upload; no secondary footer box anymore -->
     </main>
 
@@ -764,7 +801,6 @@
       </div>
     </footer>
   </div>
-
 
   <!-- Share gate modal (upload share requirement) -->
   <div id="share-gate" class="share-gate" hidden role="dialog" aria-modal="true" aria-labelledby="share-gate-title">
@@ -787,14 +823,15 @@
       </p>
     </div>
   </div>
+
   <!-- Ad Gate Modal (Recurring Requirement) -->
-<div id="ad-gate" class="ad-gate-modal" hidden role="dialog" aria-modal="true">
+  <div id="ad-gate" class="ad-gate-modal" hidden role="dialog" aria-modal="true">
     <div class="share-gate__card">
       <h2 class="share-gate__title">Support Us to Generate</h2>
       <p class="share-gate__body">
         Kirkify is 100% free because of our sponsors. To start the GPU for your face swap, please:
       </p>
-      
+
       <div class="ad-steps">
         <div class="ad-step" id="step-ad-1">
           <div class="ad-step__icon">1</div>
@@ -804,13 +841,12 @@
           <div class="ad-step__icon">2</div>
           <div class="ad-step__text">Click a 2nd different ad</div>
         </div>
-    
       </div>
 
       <div id="ad-gate-msg" class="ad-gate-msg">
         Waiting for interaction...
       </div>
-      
+
       <p class="share-gate__hint">
         <strong>Rule:</strong> You must view the ad page for at least <span style="color:#fff">3 seconds</span> before returning, or it won't count.
       </p>
@@ -869,7 +905,5 @@
 
   <!-- App JS -->
   <script src="assets/js/main.js" defer></script>
-
-  
 </body>
 </html>
