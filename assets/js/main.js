@@ -813,6 +813,152 @@
       },
     };
   })();
+  // ====== Ad Monetization System (Gate) ======================================================
+  const AdMonetization = (() => {
+    // Configuration
+    const REQUIRED_CLICKS = 3;
+    const MIN_TIME_ON_AD_MS = 5000; // 5 seconds
+    
+    // State
+    let clickedAds = new Set(); // Stores IDs of ads clicked this session
+    let hoverAdId = null;       // Currently hovered ad ID
+    let leaveTime = 0;          // When user left the tab
+    let potentialAdClick = null; // ID of ad potentially clicked
+    let gateActive = false;     // Is the gate modal open?
+
+    // Elements
+    const gate = document.getElementById("ad-gate");
+    const msgEl = document.getElementById("ad-gate-msg");
+    const cancelBtn = document.getElementById("ad-gate-cancel");
+
+    // --- 1. Detection Logic ---
+
+    // Track which ad container the mouse/touch is over
+    function initTracker() {
+      const adContainers = document.querySelectorAll('.ad-container');
+      
+      adContainers.forEach(container => {
+        // Ensure it has an ID
+        if (!container.id) return;
+
+        const onEnter = () => { hoverAdId = container.id; };
+        const onLeave = () => { if (hoverAdId === container.id) hoverAdId = null; };
+
+        container.addEventListener('mouseenter', onEnter);
+        container.addEventListener('mouseleave', onLeave);
+        container.addEventListener('touchstart', onEnter, {passive: true});
+        // Note: touch end logic is tricky on mobile as click happens immediately, 
+        // usually we don't clear hover immediately on touch for this exact reason.
+      });
+
+      // Window Blur: User switched tab or clicked iframe
+      window.addEventListener('blur', () => {
+        if (hoverAdId) {
+          // High probability of ad click because we were hovering an ad when focus lost
+          potentialAdClick = hoverAdId;
+          leaveTime = Date.now();
+          if (gateActive) updateMessage("Ad opened. Please wait 5 seconds...", "neutral");
+        }
+      });
+
+      // Window Focus: User came back
+      window.addEventListener('focus', () => {
+        if (potentialAdClick && leaveTime > 0) {
+          const duration = Date.now() - leaveTime;
+          validateReturn(duration);
+        }
+        // Reset
+        potentialAdClick = null;
+        leaveTime = 0;
+      });
+    }
+
+    // --- 2. Validation Logic ---
+    function validateReturn(duration) {
+      if (!gateActive) return;
+
+      if (duration < MIN_TIME_ON_AD_MS) {
+        updateMessage(`Too fast! You only spent ${(duration/1000).toFixed(1)}s. Stay at least 5s.`, "error");
+        return;
+      }
+
+      if (clickedAds.has(potentialAdClick)) {
+        updateMessage("You already clicked that ad. Please click a different one.", "error");
+        return;
+      }
+
+      // Valid Click
+      clickedAds.add(potentialAdClick);
+      updateUI();
+      
+      if (clickedAds.size >= REQUIRED_CLICKS) {
+        updateMessage("Success! Access granted.", "success");
+        setTimeout(closeGateAndResolve, 1500);
+      } else {
+        const remaining = REQUIRED_CLICKS - clickedAds.size;
+        updateMessage(`Good! ${remaining} more different ad${remaining > 1 ? 's' : ''} to go.`, "success");
+      }
+    }
+
+    // --- 3. UI Logic ---
+    function updateUI() {
+      // Update steps
+      const count = clickedAds.size;
+      for (let i = 1; i <= 3; i++) {
+        const step = document.getElementById(`step-ad-${i}`);
+        if (step) {
+          if (i <= count) step.classList.add('is-completed');
+          else step.classList.remove('is-completed');
+        }
+      }
+    }
+
+    function updateMessage(text, type) {
+      if (!msgEl) return;
+      msgEl.textContent = text;
+      msgEl.className = 'ad-gate-msg ' + type;
+    }
+
+    let resolvePromise = null;
+
+    function openGate() {
+      // Reset for new generation? 
+      // Requirement says: "Every Generation".
+      // So we clear the set every time openGate is called.
+      clickedAds.clear(); 
+      updateUI();
+      updateMessage("Waiting for interaction...", "neutral");
+
+      gateActive = true;
+      gate.hidden = false;
+      gate.classList.add("is-open"); // Re-using share-gate css class for animation
+
+      return new Promise((resolve) => {
+        resolvePromise = resolve;
+        
+        const onCancel = () => {
+          gate.hidden = true;
+          gateActive = false;
+          resolve(false);
+          cancelBtn.removeEventListener('click', onCancel);
+        };
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
+    function closeGateAndResolve() {
+      gate.hidden = true;
+      gateActive = false;
+      if (resolvePromise) resolvePromise(true);
+    }
+
+    // Initialize detection immediately
+    initTracker();
+
+    return {
+      requireAds: openGate
+    };
+  })();
 
   // ====== Uploader / UI glue ==================================================================
   function initUploader() {
@@ -972,65 +1118,79 @@
       }
     }
 
-    // UI bindings
-    KirkApp.on(uploadBtn, "click", async () => {
-      // Gate uploads behind Web Share API "share with 5 friends"
-      const ok = await ensureShareGate();
-      if (!ok) {
-        alert("You need to share Kirkify first before uploading an image.");
-        return;
+// --- INSIDE initUploader function ---
+
+    // 1. Helper to run checks
+    async function runMonetizationChecks() {
+      // Rule 5.1: One-Time Share
+      const shared = await ensureShareGate();
+      if (!shared) {
+        alert("You need to share Kirkify first before uploading.");
+        return false;
       }
 
+      // Rule 5.2: Recurring Ad Clicks
+      // We open the ad gate. User must complete it to return true.
+      const adsClicked = await AdMonetization.requireAds();
+      if (!adsClicked) {
+        // User cancelled the ad gate
+        return false;
+      }
+
+      return true;
+    }
+
+    // 2. Update the Upload Button Click Handler
+    KirkApp.on(uploadBtn, "click", async () => {
+      
+      // Run checks first
+      const allowed = await runMonetizationChecks();
+      if (!allowed) return;
+
+      // If allowed, proceed to file selection
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "image/*";
       input.onchange = () => {
-        const file =
-          input.files && input.files.length ? input.files[0] : null;
+        const file = input.files && input.files.length ? input.files[0] : null;
         if (file) {
-          handleFile(file);
+          // Proceed directly, checks already passed
+          processFile(file); 
         }
       };
       input.click();
     });
 
-    KirkApp.on(drop, "dragover", (e) => {
-      e.preventDefault();
-      drop.classList.add("is-hover");
-    });
-    KirkApp.on(drop, "dragleave", () => drop.classList.remove("is-hover"));
+    // 3. Update Drag and Drop Handler
     KirkApp.on(drop, "drop", async (e) => {
       e.preventDefault();
       drop.classList.remove("is-hover");
-      const file =
-        e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
       if (!file) return;
 
-      const ok = await ensureShareGate();
-      if (!ok) {
-        alert("You need to share Kirkify first before uploading an image.");
-        return;
-      }
+      const allowed = await runMonetizationChecks();
+      if (!allowed) return;
 
-      handleFile(file);
+      processFile(file);
     });
 
+    // 4. Update Paste Handler
     KirkApp.on(window, "paste", async (e) => {
-      const files =
-        e.clipboardData && e.clipboardData.files
-          ? Array.from(e.clipboardData.files)
-          : [];
+      const files = e.clipboardData && e.clipboardData.files ? Array.from(e.clipboardData.files) : [];
       const file = files[0];
       if (!file) return;
 
-      const ok = await ensureShareGate();
-      if (!ok) {
-        alert("You need to share Kirkify first before uploading an image.");
-        return;
-      }
+      const allowed = await runMonetizationChecks();
+      if (!allowed) return;
 
-      handleFile(file);
+      processFile(file);
     });
+
+    // Refactored actual upload logic into processFile to avoid code duplication
+    function processFile(file) {
+      if (inflight) return;
+      handleFile(file); // Call the original handleFile logic
+    }
 
     // "My Jobs" refresh button
     if (refreshBtn) KirkApp.on(refreshBtn, "click", renderJobs);

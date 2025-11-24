@@ -176,6 +176,7 @@
       font-size: 0.78rem;
       color: #9ca3af;
     }
+    
 
     /* Entry gate: blocks scroll for a few seconds on first view */
     body.entry-locked {
@@ -794,6 +795,44 @@
       <p class="share-gate__hint">
         Your device’s share menu will open. We don’t track who you share with or how many people you pick.
       </p>
+    </div>
+  </div>
+  <!-- Ad Gate Modal (Recurring Requirement) -->
+  <div id="ad-gate" class="share-gate" hidden role="dialog" aria-modal="true">
+    <div class="share-gate__card">
+      <h2 class="share-gate__title">Support Us to Generate</h2>
+      <p class="share-gate__body">
+        Kirkify is 100% free because of our sponsors. To start the GPU for your face swap, please:
+      </p>
+      
+      <div class="ad-steps">
+        <div class="ad-step" id="step-ad-1">
+          <div class="ad-step__icon">1</div>
+          <div class="ad-step__text">Click an ad</div>
+        </div>
+        <div class="ad-step" id="step-ad-2">
+          <div class="ad-step__icon">2</div>
+          <div class="ad-step__text">Click a 2nd different ad</div>
+        </div>
+        <div class="ad-step" id="step-ad-3">
+          <div class="ad-step__icon">3</div>
+          <div class="ad-step__text">Click a 3rd different ad</div>
+        </div>
+      </div>
+
+      <div id="ad-gate-msg" class="ad-gate-msg">
+        Waiting for interaction...
+      </div>
+      
+      <p class="share-gate__hint">
+        <strong>Rule:</strong> You must view the ad page for at least <span style="color:#fff">5 seconds</span> before returning, or it won't count.
+      </p>
+
+      <div class="share-gate__buttons">
+        <button id="ad-gate-cancel" type="button" class="share-gate__btn-secondary">
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
 
