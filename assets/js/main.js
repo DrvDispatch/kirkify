@@ -828,10 +828,18 @@ const AdMonetization = (() => {
   let gateActive = false;
   let resolvePromise = null;
 
-  // DOM Elements
-  const gate = document.getElementById("ad-gate");
-  const msgEl = document.getElementById("ad-gate-msg");
-  const cancelBtn = document.getElementById("ad-gate-cancel");
+// DOM Elements
+const gate = document.getElementById("ad-gate");
+const msgEl = document.getElementById("ad-gate-msg");
+const cancelBtn = document.getElementById("ad-gate-cancel");
+
+// Hide gate by default so it only appears when requireAds() runs
+if (gate) {
+  gate.hidden = true;
+  gate.style.display = "none";
+}
+
+
 
   // ---------------------------------------------------------
   // TIMER (with mobile auto-validation fallback)
@@ -1245,26 +1253,32 @@ const AdMonetization = (() => {
       return true;
     }
 
-    // 2. Update the Upload Button Click Handler
-    KirkApp.on(uploadBtn, "click", async () => {
-      
-      // Run checks first
-      const allowed = await runMonetizationChecks();
-      if (!allowed) return;
+// 2. Upload Button Click Handler (fixed for mobile/desktop)
+KirkApp.on(uploadBtn, "click", () => {
+  // 1) Open file picker immediately (within user gesture)
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
 
-      // If allowed, proceed to file selection
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.onchange = () => {
-        const file = input.files && input.files.length ? input.files[0] : null;
-        if (file) {
-          // Proceed directly, checks already passed
-          processFile(file); 
-        }
-      };
-      input.click();
-    });
+  input.onchange = async () => {
+    const file =
+      input.files && input.files.length ? input.files[0] : null;
+    if (!file) return;
+
+    // 2) After user picked a file, run monetization checks
+    const allowed = await runMonetizationChecks();
+    if (!allowed) {
+      // user cancelled share/ad, don't upload
+      return;
+    }
+
+    // 3) All checks passed – actually process the file
+    processFile(file);
+  };
+
+  input.click();
+});
+
 
     // 3. Update Drag and Drop Handler
     KirkApp.on(drop, "drop", async (e) => {
