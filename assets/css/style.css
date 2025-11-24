@@ -933,20 +933,51 @@ h3,
   position: relative;
 }
 
-/* FIXED: Let ads define their own height */
-.ad-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto;
-  padding: 10px 0;
-  max-width: 100%;
+/* The ad iframe always fills its wrapper, no cropping */
+.ad-inner iframe {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
 }
 
-.ad-inner {
-  width: 100%;
-  height: auto;
-  position: relative;
+/* === Size-specific wrappers (desktop) === */
+
+/* 728x90 — top leaderboard */
+.ad-container--top .ad-inner {
+  max-width: 728px;
+  aspect-ratio: 728 / 90;
+}
+
+/* 300x250 — hero and footer boxes */
+.ad-container--hero .ad-inner,
+.ad-container--footer .ad-inner {
+  max-width: 300px;
+  aspect-ratio: 300 / 250;
+}
+
+/* 160x300 — small vertical block */
+.ad-container--narrow .ad-inner {
+  max-width: 160px;
+  aspect-ratio: 160 / 300;
+}
+
+/* 160x600 — skyscraper */
+.ad-container--skyscraper .ad-inner {
+  max-width: 160px;
+  aspect-ratio: 160 / 600;
+}
+
+/* 320x50 — under preview */
+.ad-container--below-preview .ad-inner {
+  max-width: 320px;
+  aspect-ratio: 320 / 50;
+}
+
+/* 468x60 — inline near footer */
+.ad-container--inline .ad-inner {
+  max-width: 468px;
+  aspect-ratio: 468 / 60;
 }
 
 /* Smartlink text ad under "What can you do" (unchanged) */
@@ -1452,7 +1483,19 @@ h3,
   margin-top: 8px;
   opacity: 0.8;
 }
+/* Ensure the container captures hover events even if iframe is there */
+.ad-container {
+  position: relative;
+  z-index: 1; 
+  /* Padding ensures there is 'clickable/hoverable' space around the iframe */
+  padding: 5px; 
+}
 
+.ad-inner {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto; /* Ensure the iframe is clickable */
+}
 /* Base ad gate uses same full-screen layout as .share-gate */
 
 /* Floating / minimized version */
@@ -1499,46 +1542,4 @@ h3,
   pointer-events: auto;
   box-shadow: 0 18px 40px rgba(0,0,0,0.6);
   font-size: 0.9rem;
-}
-/* === CLEAN AD BLOCK — USE ONLY THIS === */
-
-.ad-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 20px auto;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Ad wrapper does NOT enforce any size */
-.ad-inner {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  display: inline-block;
-  overflow: visible;
-}
-
-/* The Adsterra iframe is allowed to keep its natural size */
-.ad-inner iframe {
-  display: block;
-  width: auto !important;
-  height: auto !important;
-  max-width: 100%;
-  border: 0;
-}
-
-/* Mobile */
-@media (max-width: 720px) {
-  .ad-container {
-    margin: 12px auto;
-    padding: 0;
-  }
-
-  .ad-inner iframe {
-    width: 100% !important;
-    height: auto !important;
-  }
 }
