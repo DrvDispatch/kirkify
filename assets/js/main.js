@@ -816,7 +816,33 @@
 // ====== Ad Monetization System (Floating Checklist + DEBUG LOGS) =========================
 const AdMonetization = (() => {
   const REQUIRED_CLICKS = 3;
-  const MIN_TIME_ON_AD_MS = 5000; // 5 seconds
+  const MIN_TIME_ON_AD_MS = 3000; // 5 seconds
+  let progressInterval = null;
+let progressSeconds = 0;
+function startProgressTimer() {
+  stopProgressTimer();
+
+  progressSeconds = 0;
+  progressInterval = setInterval(() => {
+    progressSeconds++;
+
+    // Update message in realtime
+    updateMessage(`Viewing ad… ${progressSeconds}/3 seconds`, "neutral");
+
+    if (progressSeconds >= MIN_TIME_ON_AD_MS / 1000) {
+      stopProgressTimer();
+    }
+  }, 1000);
+}
+
+function stopProgressTimer() {
+  if (progressInterval) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+}
+
+
 
   // State
   let clickedAds = new Set();
@@ -912,7 +938,8 @@ const AdMonetization = (() => {
         console.log(
           `[AdGate] >>> POTENTIAL CLICK DETECTED on ${potentialAdClick}. Timer started.`
         );
-        updateMessage("Ad opened... wait 5s...", "neutral");
+updateMessage("Ad opened… viewing required", "neutral");
+startProgressTimer();
       } else if (!hoverAdId) {
         console.log("[AdGate] Blur ignored (User not hovering an ad).");
       } else if (!gateActive) {
@@ -928,6 +955,8 @@ const AdMonetization = (() => {
       if (potentialAdClick && leaveTime > 0 && gateActive) {
         const duration = Date.now() - leaveTime;
         console.log(`[AdGate] Return validated. Duration: ${duration}ms`);
+        stopProgressTimer();
+
         validateReturn(duration);
       } else {
         console.log("[AdGate] Focus ignored (No pending ad click or gate off).");
