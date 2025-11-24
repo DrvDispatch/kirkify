@@ -998,7 +998,21 @@
     }
 
     // Start tracking immediately
-    initTracker();
+function initTrackerWhenReady() {
+  const observer = new MutationObserver(() => {
+    const ads = document.querySelectorAll('.ad-container');
+
+    if (ads.length > 0) {
+      observer.disconnect();
+      console.log("[AdGate] Ads detected:", ads.length);
+      initTracker();   // now safe
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+initTrackerWhenReady();
 
     return { requireAds };
   })();
